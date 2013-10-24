@@ -1,0 +1,23 @@
+{
+    "name": "aerialship/lightsaml",
+    "license": "proprietary",
+    "type": "project",
+    "description": "BWC Mosaic application for myappsco.com",
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "scripts": {
+        "post-install-cmd": [
+        ],
+        "post-update-cmd": [
+        ]
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "prefer-stable": true,
+    "minimum-stability": "stable"
+}
