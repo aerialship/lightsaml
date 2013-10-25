@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <EntityDescriptor ID="_127800fe-39ac-46ad-b073-6fb6106797a0"
-                  entityID="https://sts.windows.net/554fadfe-f04f-4975-90cb-ddc8b147aaa2/"
-                  xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    entityID="https://sts.windows.net/554fadfe-f04f-4975-90cb-ddc8b147aaa2/"
+    xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+>
     <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
         <ds:SignedInfo>
             <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>

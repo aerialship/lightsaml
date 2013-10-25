@@ -2,7 +2,6 @@
 
 namespace AerialShip\LightSaml;
 
-
 use AerialShip\LightSaml\Error\InvalidBindingException;
 
 final class Binding
@@ -23,7 +22,7 @@ final class Binding
 
     private static function getConstants() {
         if (self::$_constants === null) {
-            $ref = new \ReflectionClass('Profile');
+            $ref = new \ReflectionClass('\AerialShip\LightSaml\Binding');
             self::$_constants = $ref->getConstants();
         }
         return self::$_constants;

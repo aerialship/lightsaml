@@ -3,6 +3,8 @@
 namespace AerialShip\LightSaml\EntityDescriptor\SP;
 
 
+use AerialShip\LightSaml\Binding;
+
 abstract class SpSsoDescriptorItem
 {
     /** @var string   one of \AerialShip\LightSaml\Binding::* constants */
@@ -26,6 +28,7 @@ abstract class SpSsoDescriptorItem
      * @param string $binding
      */
     public function setBinding($binding) {
+        Binding::validate($binding);
         $this->binding = $binding;
     }
 
@@ -58,4 +61,10 @@ abstract class SpSsoDescriptorItem
      */
     public abstract function toXmlString();
 
+
+    /**
+     * @param \DOMElement $root
+     * @return \DOMElement[] unknown elements
+     */
+    abstract public function loadXml(\DOMElement $root);
 }
