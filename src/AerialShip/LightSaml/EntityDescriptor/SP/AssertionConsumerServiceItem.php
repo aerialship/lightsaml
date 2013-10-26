@@ -54,7 +54,7 @@ class AssertionConsumerServiceItem extends SpSsoDescriptorItem
         $binding = htmlspecialchars($this->getBinding());
         $location = htmlspecialchars($this->getLocation());
         $index = $this->getIndex();
-        return "    <md:AssertionConsumerService Binding=\"{$binding}\" Location=\"{$location}\" index=\"{$index}\" />\n";
+        return "<md:AssertionConsumerService Binding=\"{$binding}\" Location=\"{$location}\" index=\"{$index}\" />";
     }
 
     /**

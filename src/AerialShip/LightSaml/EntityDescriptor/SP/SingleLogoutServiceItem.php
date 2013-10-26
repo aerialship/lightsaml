@@ -25,7 +25,7 @@ class SingleLogoutServiceItem extends SpSsoDescriptorItem
     public function toXmlString() {
         $binding = htmlspecialchars($this->getBinding());
         $location = htmlspecialchars($this->getLocation());
-        $result = "    <md:SingleLogoutService Binding=\"{$binding}\" Location=\"{$location}\" />\n";
+        $result = "<md:SingleLogoutService Binding=\"{$binding}\" Location=\"{$location}\" />";
         return $result;
     }
 

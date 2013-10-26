@@ -4,6 +4,7 @@ namespace AerialShip\LightSaml\EntityDescriptor\SP;
 
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\EntityDescriptor\EntityDescriptorItem;
+use AerialShip\LightSaml\EntityDescriptor\KeyDescriptor;
 use AerialShip\LightSaml\Protocol;
 
 class SpSsoDescriptor extends EntityDescriptorItem
@@ -11,10 +12,38 @@ class SpSsoDescriptor extends EntityDescriptorItem
     /** @var SpSsoDescriptorItem[] */
     protected $items;
 
+    /** @var KeyDescriptor[] */
+    protected $keyDescriptors;
 
 
-    function __construct(array $items = null) {
+
+
+    function __construct(array $items = null, array $keyDescriptors = null) {
         $this->items = $items ?: array();
+        $this->keyDescriptors = $keyDescriptors ?: array();
+    }
+
+
+    /**
+     * @return \AerialShip\LightSaml\EntityDescriptor\KeyDescriptor[]
+     */
+    public function getKeyDescriptors() {
+        return $this->keyDescriptors;
+    }
+
+    /**
+     * @param KeyDescriptor[] $keyDescriptors
+     */
+    public function setKeyDescriptors(array $keyDescriptors) {
+        $this->keyDescriptors = $keyDescriptors;
+    }
+
+
+    /**
+     * @param KeyDescriptor $keyDescriptor
+     */
+    public function addKeyDescriptor(KeyDescriptor $keyDescriptor) {
+        $this->keyDescriptors[] = $keyDescriptor;
     }
 
 
@@ -113,11 +142,14 @@ class SpSsoDescriptor extends EntityDescriptorItem
      */
     function toXmlString() {
         $protocolEnumeration = htmlspecialchars($this->getProtocolSupportEnumeration());
-        $result = "  <md:SPSSODescriptor protocolSupportEnumeration=\"{$protocolEnumeration}\">\n";
+        $result = "<md:SPSSODescriptor protocolSupportEnumeration=\"{$protocolEnumeration}\">";
+        foreach ($this->getKeyDescriptors() as $kd) {
+            $result .= $kd->toXmlString();
+        }
         foreach ($this->getItems() as $item) {
             $result .= $item->toXmlString();
         }
-        $result .= "  </md:SPSSODescriptor>\n";
+        $result .= '</md:SPSSODescriptor>';
         return $result;
     }
 
@@ -141,12 +173,19 @@ class SpSsoDescriptor extends EntityDescriptorItem
                 case 'AssertionConsumerService':
                     $child = new AssertionConsumerServiceItem();
                     break;
+                case 'KeyDescriptor':
+                    $child = new KeyDescriptor();
+                    break;
                 default:
                     $result[] = $node;
             }
             if ($child) {
                 $result = array_merge($result, $child->loadXml($node));
-                $this->addItem($child);
+                if ($child instanceof KeyDescriptor) {
+                    $this->addKeyDescriptor($child);
+                } else {
+                    $this->addItem($child);
+                }
             }
         }
         return $result;

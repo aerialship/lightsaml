@@ -4,10 +4,12 @@ namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\EntityDescriptor\EntityDescriptor;
+use AerialShip\LightSaml\EntityDescriptor\KeyDescriptor;
 use AerialShip\LightSaml\EntityDescriptor\SP\AssertionConsumerServiceItem;
 use AerialShip\LightSaml\EntityDescriptor\SP\SingleLogoutServiceItem;
 use AerialShip\LightSaml\EntityDescriptor\SP\SpSsoDescriptor;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Security\X509Certificate;
 
 
 class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
@@ -17,6 +19,8 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $entityID = 'http://example.com';
         $locationLogout = 'http://example.com/logout';
         $locationLogin = 'http://example.com/login';
+        $certificate = new X509Certificate();
+        $certificate->loadFromFile(__DIR__.'/saml.crt');
         $ed = new EntityDescriptor(
             $entityID,
             array(
@@ -25,56 +29,81 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
                         new SingleLogoutServiceItem(Binding::SAML2_HTTP_REDIRECT, $locationLogout),
                         new AssertionConsumerServiceItem(Binding::SAML2_HTTP_POST, $locationLogin, 0),
                         new AssertionConsumerServiceItem(Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1)
+                    ),
+                    array(
+                        new KeyDescriptor(KeyDescriptor::USE_SIGNING, $certificate),
+                        new KeyDescriptor(KeyDescriptor::USE_ENCRYPTION, $certificate)
                     )
                 )
             )
         );
 
         $xml = $ed->toXmlString();
+        //print "\n $xml \n";
         $document = new \DOMDocument();
         $document->loadXML($xml);
         /** @var $root \DOMElement */
         $root = $document->firstChild;
 
-        $this->checkXml($root, $entityID, $locationLogout, $locationLogin);
-        $this->checkDeserializaton($root, $entityID, $locationLogout, $locationLogin);
+        $this->checkXml($document, $entityID, $locationLogout, $locationLogin, $certificate);
+        $this->checkDeserializaton($root, $entityID, $locationLogout, $locationLogin, $certificate);
     }
 
 
-    private function checkXml(\DOMElement $root, $entityID, $locationLogout, $locationLogin) {
-
+    private function checkXml(\DOMDocument $document, $entityID, $locationLogout, $locationLogin, X509Certificate $certificate) {
+        /** @var $root \DOMElement */
+        $root = $document->firstChild;
         $this->assertEquals(Protocol::NS_METADATA, $root->namespaceURI);
         $this->assertEquals('EntityDescriptor', $root->localName);
         $this->assertTrue($root->hasAttribute('entityID'));
         $this->assertEquals($entityID, $root->getAttribute('entityID'));
-        $this->assertEquals(3, $root->childNodes->length);
 
-        $this->assertEquals('', trim($root->childNodes->item(0)->nodeValue));
-        $this->assertEquals('', trim($root->childNodes->item(2)->nodeValue));
+        $xpath = new \DOMXPath($document);
+        $xpath->registerNamespace('md', Protocol::NS_METADATA);
+        $xpath->registerNamespace('ds', Protocol::NS_KEY_INFO);
 
+        $list = $xpath->query("/md:EntityDescriptor/md:SPSSODescriptor");
+        $this->assertEquals(1, $list->length);
         /** @var $sp \DOMElement */
-        $sp = $root->childNodes->item(1);
+        $sp = $list->item(0);
         $this->assertEquals(Protocol::NS_METADATA, $sp->namespaceURI);
-        $this->assertEquals('SPSSODescriptor', $sp->localName);
         $this->assertTrue($sp->hasAttribute('protocolSupportEnumeration'));
         $this->assertEquals(Protocol::SAML2, $sp->getAttribute('protocolSupportEnumeration'));
-        $this->assertEquals(7, $sp->childNodes->length);
-        $this->assertEquals('', trim($sp->childNodes->item(0)->nodeValue));
-        $this->assertEquals('', trim($sp->childNodes->item(2)->nodeValue));
-        $this->assertEquals('', trim($sp->childNodes->item(4)->nodeValue));
-        $this->assertEquals('', trim($sp->childNodes->item(6)->nodeValue));
 
-        /** @var $logout \DOMElement */
-        $logout = $sp->childNodes->item(1);
-        $this->checkSpItemXml($logout, 'SingleLogoutService', Binding::SAML2_HTTP_REDIRECT, $locationLogout, null);
 
-        /** @var $logout \DOMElement */
-        $as1 = $sp->childNodes->item(3);
-        $this->checkSpItemXml($as1, 'AssertionConsumerService', Binding::SAML2_HTTP_POST, $locationLogin, 0);
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:KeyDescriptor');
+        $this->assertEquals(2, $list->length);
 
-        /** @var $logout \DOMElement */
-        $as2 = $sp->childNodes->item(5);
-        $this->checkSpItemXml($as2, 'AssertionConsumerService', Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1);
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:KeyDescriptor[@use="signing"]');
+        $this->assertEquals(1, $list->length);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:KeyDescriptor[@use="encryption"]');
+        $this->assertEquals(1, $list->length);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:KeyDescriptor[@use="signing"]/ds:KeyInfo/ds:X509Data');
+        $this->assertEquals(1, $list->length);
+        /** @var $key \DOMElement */
+        $key = $list->item(0);
+        $this->assertEquals($certificate->getData(), $key->nodeValue);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:KeyDescriptor[@use="encryption"]/ds:KeyInfo/ds:X509Data');
+        $this->assertEquals(1, $list->length);
+        /** @var $key \DOMElement */
+        $key = $list->item(0);
+        $this->assertEquals($certificate->getData(), $key->nodeValue);
+
+
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:SingleLogoutService');
+        $this->assertEquals(1, $list->length);
+        $this->checkSpItemXml($list->item(0), 'SingleLogoutService', Binding::SAML2_HTTP_REDIRECT, $locationLogout, null);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService[@index="0"]');
+        $this->assertEquals(1, $list->length);
+        $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Binding::SAML2_HTTP_POST, $locationLogin, 0);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService[@index="1"]');
+        $this->assertEquals(1, $list->length);
+        $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1);
     }
 
 
@@ -94,7 +123,8 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    private function checkDeserializaton(\DOMElement $root, $entityID, $locationLogout, $locationLogin) {
+
+    private function checkDeserializaton(\DOMElement $root, $entityID, $locationLogout, $locationLogin, X509Certificate $certificate) {
         $ed = new EntityDescriptor();
         $arr = $ed->loadXml($root);
         $this->assertEquals(0, count($arr));
@@ -108,6 +138,13 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $sp = $ed->getSpSsoItem();
         $this->assertNotNull($sp);
         $this->assertTrue($sp instanceof SpSsoDescriptor);
+
+        $keys = $sp->getKeyDescriptors();
+        $this->assertEquals(2, count($keys));
+        $this->assertEquals(KeyDescriptor::USE_SIGNING, $keys[0]->getUse());
+        $this->assertEquals($certificate->getData(), $keys[0]->getCertificate()->getData());
+        $this->assertEquals(KeyDescriptor::USE_ENCRYPTION, $keys[1]->getUse());
+        $this->assertEquals($certificate->getData(), $keys[1]->getCertificate()->getData());
 
         $this->assertEquals(Protocol::SAML2, $sp->getProtocolSupportEnumeration());
 

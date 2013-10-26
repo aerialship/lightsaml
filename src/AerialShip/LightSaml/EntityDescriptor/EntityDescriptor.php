@@ -84,11 +84,11 @@ class EntityDescriptor
     public function toXmlString() {
         $entityID = htmlspecialchars($this->getEntityID());
         $ns = Protocol::NS_METADATA;
-        $result = "<?xml version=\"1.0\"?>\n<md:EntityDescriptor xmlns:md=\"{$ns}\" entityID=\"{$entityID}\">\n";
+        $result = "<?xml version=\"1.0\"?><md:EntityDescriptor xmlns:md=\"{$ns}\" entityID=\"{$entityID}\">";
         foreach ($this->getItems() as $item) {
             $result .= $item->toXmlString();
         }
-        $result .= "</md:EntityDescriptor>";
+        $result .= '</md:EntityDescriptor>';
         return $result;
     }
 
