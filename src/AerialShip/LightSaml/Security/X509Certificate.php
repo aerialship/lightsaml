@@ -2,8 +2,8 @@
 
 namespace AerialShip\LightSaml\Security;
 
-
 use AerialShip\LightSaml\Error\InvalidCertificateException;
+
 
 class X509Certificate
 {

@@ -1,24 +1,20 @@
 <?php
 
-namespace AerialShip\LightSaml\EntityDescriptor\SP;
-
+namespace AerialShip\LightSaml\Model\Service;
 
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Protocol;
 
-class AssertionConsumerServiceItem extends SpSsoDescriptorItem
+
+class AssertionConsumerService extends AbstractService
 {
     /** @var int */
     protected $index;
 
 
     function __construct($binding = null, $location = null, $index = null) {
-        if ($binding !== null) {
-            $this->setBinding($binding);
-        }
-        if ($location !== null) {
-            $this->setLocation($location);
-        }
+        parent::__construct($binding, $location);
         if ($index !== null) {
             $this->setIndex($index);
         }
@@ -44,6 +40,19 @@ class AssertionConsumerServiceItem extends SpSsoDescriptorItem
         return $this->index;
     }
 
+
+    /**
+     * @param \DOMNode $parent
+     * @return \DOMElement
+     */
+    function getXml(\DOMNode $parent) {
+        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:AssertionConsumerService');
+        $parent->appendChild($result);
+        $result->setAttribute('Binding', $this->getBinding());
+        $result->setAttribute('Location', $this->getLocation());
+        $result->setAttribute('index', $this->getIndex());
+        return $result;
+    }
 
 
 

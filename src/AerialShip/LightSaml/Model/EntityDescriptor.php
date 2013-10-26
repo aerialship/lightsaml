@@ -1,25 +1,27 @@
 <?php
 
-namespace AerialShip\LightSaml\EntityDescriptor;
+namespace AerialShip\LightSaml\Model;
 
-use AerialShip\LightSaml\EntityDescriptor\SP\SpSsoDescriptor;
-use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Protocol;
 
-
-class EntityDescriptor
+class EntityDescriptor implements GetXmlInterface
 {
     /** @var string */
     protected $entityID;
 
-    /** @var EntityDescriptorItem[] */
+    /** @var GetXmlInterface[] */
     protected $items;
 
 
 
     function __construct($entityID = null, array $items = null) {
         $this->entityID = $entityID;
-        $this->items = $items ?: array();
+        $this->items = $items?: array();
+        foreach ($items as $item) {
+            if (!$item instanceof GetXmlInterface) {
+                throw new \InvalidArgumentException('All EntityDescriptor items must implement GetXmlInterface');
+            }
+        }
     }
 
 
@@ -38,14 +40,14 @@ class EntityDescriptor
     }
 
     /**
-     * @param EntityDescriptorItem[] $items
+     * @param GetXmlInterface[] $items
      */
     public function setItems(array $items) {
         $this->items = $items;
     }
 
     /**
-     * @return EntityDescriptorItem[]
+     * @return GetXmlInterface[]
      */
     public function getItems() {
         return $this->items;
@@ -53,35 +55,57 @@ class EntityDescriptor
 
 
     /**
-     * @param EntityDescriptorItem $item
+     * @param GetXmlInterface $item
      * @return EntityDescriptor
      */
-    public function addItem(EntityDescriptorItem $item) {
+    public function addItem(GetXmlInterface $item) {
         $this->items[] = $item;
         return $this;
     }
 
 
     /**
-     * @return SpSsoDescriptor|null
+     * @param string $class
+     * @return GetXmlInterface[]
      */
-    public function getSpSsoItem() {
-        $result = null;
+    public function getItemsByType($class) {
+        $result = array();
         foreach ($this->items as $item) {
-            if ($item instanceof SpSsoDescriptor) {
-                $result = $item;
-                break;
+            $itemClass = get_class($item);
+            if ($itemClass == $class) {
+                $result[] = $item;
+            } else {
+                if (($pos = strrpos($itemClass, '\\')) !== false) {
+                    $itemClass = substr($itemClass, $pos);
+                }
+                if ($itemClass == $class) {
+                    $result[] = $item;
+                }
             }
         }
         return $result;
     }
 
 
-
     /**
-     * @return string
+     * @param \DOMNode $parent
+     * @return \DOMElement
      */
-    public function toXmlString() {
+    function getXml(\DOMNode $parent) {
+        /** @var $doc \DOMDocument */
+        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
+        $result = $doc->createElementNS(Protocol::NS_METADATA, 'md:EntityDescriptor');
+        $result->setAttribute('entityID', $this->getEntityID());
+        $parent->appendChild($result);
+        foreach ($this->items as $item) {
+            $item->getXml($result);
+        }
+        return $result;
+    }
+
+
+/*
+    public function _toXmlString() {
         $entityID = htmlspecialchars($this->getEntityID());
         $ns = Protocol::NS_METADATA;
         $result = "<?xml version=\"1.0\"?><md:EntityDescriptor xmlns:md=\"{$ns}\" entityID=\"{$entityID}\">";
@@ -93,12 +117,7 @@ class EntityDescriptor
     }
 
 
-    /**
-     * @param \DOMElement $root
-     * @return \DOMElement[]  Array of unknown elements that are not required
-     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     */
-    public function loadXml(\DOMElement $root) {
+    public function _loadXml(\DOMElement $root) {
         $result = array();
         if ($root->namespaceURI != Protocol::NS_METADATA)
             throw new InvalidXmlException('Expected namespace '.Protocol::NS_METADATA." found $root->namespaceURI");
@@ -112,7 +131,6 @@ class EntityDescriptor
             if ($node->namespaceURI != Protocol::NS_METADATA) {
                 continue;
             }
-            /** @var $node \DOMElement */
             $child = null;
             switch ($node->localName) {
                 case 'SPSSODescriptor':
@@ -128,5 +146,6 @@ class EntityDescriptor
         }
         return $result;
     }
+*/
 
 }

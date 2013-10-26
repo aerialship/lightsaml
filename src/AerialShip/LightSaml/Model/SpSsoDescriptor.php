@@ -1,16 +1,18 @@
 <?php
 
-namespace AerialShip\LightSaml\EntityDescriptor\SP;
+namespace AerialShip\LightSaml\Model;
 
 use AerialShip\LightSaml\Binding;
-use AerialShip\LightSaml\EntityDescriptor\EntityDescriptorItem;
-use AerialShip\LightSaml\EntityDescriptor\KeyDescriptor;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Model\Service\AbstractService;
+use AerialShip\LightSaml\Model\Service\AssertionConsumerService;
+use AerialShip\LightSaml\Model\Service\SingleLogoutService;
 
-class SpSsoDescriptor extends EntityDescriptorItem
+
+class SpSsoDescriptor implements GetXmlInterface
 {
-    /** @var SpSsoDescriptorItem[] */
-    protected $items;
+    /** @var AbstractService[] */
+    protected $services;
 
     /** @var KeyDescriptor[] */
     protected $keyDescriptors;
@@ -18,14 +20,15 @@ class SpSsoDescriptor extends EntityDescriptorItem
 
 
 
-    function __construct(array $items = null, array $keyDescriptors = null) {
-        $this->items = $items ?: array();
+    function __construct(array $services = null, array $keyDescriptors = null) {
+        $this->services = $services ?: array();
         $this->keyDescriptors = $keyDescriptors ?: array();
     }
 
 
+
     /**
-     * @return \AerialShip\LightSaml\EntityDescriptor\KeyDescriptor[]
+     * @return KeyDescriptor[]
      */
     public function getKeyDescriptors() {
         return $this->keyDescriptors;
@@ -46,29 +49,26 @@ class SpSsoDescriptor extends EntityDescriptorItem
         $this->keyDescriptors[] = $keyDescriptor;
     }
 
-
-
     /**
-     * @param SpSsoDescriptorItem[] $items
+     * @param AbstractService[] $services
      */
-    public function setItems(array $items) {
-        $this->items = $items;
+    public function setServices(array $services) {
+        $this->services = $services;
     }
 
     /**
-     * @return SpSsoDescriptorItem[]
+     * @return \AerialShip\LightSaml\Model\Service\AbstractService[]
      */
-    public function getItems() {
-        return $this->items;
+    public function getServices() {
+        return $this->services;
     }
 
-
     /**
-     * @param SpSsoDescriptorItem $item
+     * @param AbstractService $service
      * @return SpSsoDescriptor
      */
-    public function addItem(SpSsoDescriptorItem $item) {
-        $this->items[] = $item;
+    public function addService(AbstractService $service) {
+        $this->services[] = $service;
         return $this;
     }
 
@@ -78,8 +78,8 @@ class SpSsoDescriptor extends EntityDescriptorItem
      */
     public function getSupportedProtocols() {
         $arr = array();
-        foreach ($this->getItems() as $item) {
-            $protocol = Binding::getBindingProtocol($item->getBinding());
+        foreach ($this->getServices() as $service) {
+            $protocol = Binding::getBindingProtocol($service->getBinding());
             $arr[$protocol] = $protocol;
         }
         return array_values($arr);
@@ -94,14 +94,13 @@ class SpSsoDescriptor extends EntityDescriptorItem
 
 
     /**
-     * @return SingleLogoutServiceItem|null
+     * @return SingleLogoutService[]
      */
-    public function getSingleLogoutItem() {
-        $result = null;
-        foreach ($this->items as $item) {
-            if ($item instanceof SingleLogoutServiceItem) {
-                $result = $item;
-                break;
+    public function getSingleLogoutServices() {
+        $result = array();
+        foreach ($this->getServices() as $service) {
+            if ($service instanceof SingleLogoutService) {
+                $result[] = $service;
             }
         }
         return $result;
@@ -109,13 +108,13 @@ class SpSsoDescriptor extends EntityDescriptorItem
 
 
     /**
-     * @return AssertionConsumerServiceItem[]
+     * @return AssertionConsumerService[]
      */
-    public function getAllAssertionConsumerItems() {
+    public function getAllAssertionConsumerServices() {
         $result = array();
-        foreach ($this->items as $item) {
-            if ($item instanceof AssertionConsumerServiceItem) {
-                $result[] = $item;
+        foreach ($this->getServices() as $service) {
+            if ($service instanceof AssertionConsumerService) {
+                $result[] = $service;
             }
         }
         return $result;
@@ -123,13 +122,13 @@ class SpSsoDescriptor extends EntityDescriptorItem
 
     /**
      * @param string $binding
-     * @return AssertionConsumerServiceItem|null
+     * @return AssertionConsumerService|null
      */
-    public function getAssertionConsumerItemForBinding($binding) {
+    public function getAssertionConsumerServicesForBinding($binding) {
         $result = null;
-        foreach ($this->items as $item) {
-            if ($item instanceof AssertionConsumerServiceItem && $item->getBinding() == $binding) {
-                $result = $item;
+        foreach ($this->getServices() as $service) {
+            if ($service instanceof AssertionConsumerService && $service->getBinding() == $binding) {
+                $result = $service;
                 break;
             }
         }
@@ -137,9 +136,26 @@ class SpSsoDescriptor extends EntityDescriptorItem
     }
 
 
+
     /**
-     * @return string
+     * @param \DOMNode $parent
+     * @return \DOMNode
      */
+    function getXml(\DOMNode $parent) {
+        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:SPSSODescriptor');
+        $parent->appendChild($result);
+        $result->setAttribute('protocolSupportEnumeration', $this->getProtocolSupportEnumeration());
+        foreach ($this->getKeyDescriptors() as $kd) {
+            $kd->getXml($result);
+        }
+        foreach ($this->getServices() as $service) {
+            $service->getXml($result);
+        }
+        return $result;
+    }
+
+
+/*
     function toXmlString() {
         $protocolEnumeration = htmlspecialchars($this->getProtocolSupportEnumeration());
         $result = "<md:SPSSODescriptor protocolSupportEnumeration=\"{$protocolEnumeration}\">";
@@ -154,17 +170,12 @@ class SpSsoDescriptor extends EntityDescriptorItem
     }
 
 
-    /**
-     * @param \DOMElement $root
-     * @return \DOMElement[] unknown elements
-     */
     public function loadXml(\DOMElement $root) {
         $result = array();
         for ($node = $root->firstChild; $node !== NULL; $node = $node->nextSibling) {
             if ($node->namespaceURI != Protocol::NS_METADATA) {
                 continue;
             }
-            /** @var $node \DOMElement */
             $child = null;
             switch ($node->localName) {
                 case 'SingleLogoutService':
@@ -190,6 +201,6 @@ class SpSsoDescriptor extends EntityDescriptorItem
         }
         return $result;
     }
-
+*/
 
 }

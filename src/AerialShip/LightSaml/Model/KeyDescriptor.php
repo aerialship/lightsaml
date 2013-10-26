@@ -1,13 +1,13 @@
 <?php
 
-namespace AerialShip\LightSaml\EntityDescriptor;
+namespace AerialShip\LightSaml\Model;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
-class KeyDescriptor
+class KeyDescriptor implements GetXmlInterface
 {
     const USE_SIGNING = 'signing';
     const USE_ENCRYPTION = 'encryption';
@@ -58,6 +58,24 @@ class KeyDescriptor
     }
 
 
+
+    /**
+     * @param \DOMNode $parent
+     * @return \DOMNode
+     */
+    function getXml(\DOMNode $parent) {
+        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:KeyDescriptor');
+        $parent->appendChild($result);
+        $result->setAttribute('use', $this->getUse());
+        $keyInfo = $parent->ownerDocument->createElementNS(Protocol::NS_KEY_INFO, 'ds:KeyInfo');
+        $result->appendChild($keyInfo);
+        $xData = $parent->ownerDocument->createElementNS(Protocol::NS_KEY_INFO, 'ds:X509Data');
+        $keyInfo->appendChild($xData);
+        $xCert = $parent->ownerDocument->createElementNS(Protocol::NS_KEY_INFO, 'ds:X509Certificate');
+        $xData->appendChild($xCert);
+        $xCert->nodeValue = $this->getCertificate()->getData();
+        return $result;
+    }
 
 
     /**

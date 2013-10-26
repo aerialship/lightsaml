@@ -1,22 +1,22 @@
 <?php
 
-namespace AerialShip\LightSaml\EntityDescriptor\SP;
+namespace AerialShip\LightSaml\Model\Service;
 
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Protocol;
 
-class SingleLogoutServiceItem extends SpSsoDescriptorItem
+
+class SingleLogoutService extends AbstractService
 {
 
-    function __construct($binding = null, $location = null) {
-        if ($binding) {
-            $this->setBinding($binding);
-        }
-        if ($location) {
-            $this->setLocation($location);
-        }
+    function getXml(\DOMNode $parent) {
+        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:SingleLogoutService');
+        $parent->appendChild($result);
+        $result->setAttribute('Binding', $this->getBinding());
+        $result->setAttribute('Location', $this->getLocation());
+        return $result;
     }
-
 
 
     /**

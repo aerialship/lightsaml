@@ -1,25 +1,29 @@
 <?php
 
-namespace AerialShip\LightSaml\EntityDescriptor\SP;
-
+namespace AerialShip\LightSaml\Model\Service;
 
 use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Model\GetXmlInterface;
 
-abstract class SpSsoDescriptorItem
+
+abstract class AbstractService implements GetXmlInterface
 {
-    /** @var string   one of \AerialShip\LightSaml\Binding::* constants */
+    /** @var string   one of \AerialShip\LightSaml\Binding constants */
     protected $binding;
 
-    /** @var string url */
+    /** @var string */
     protected $location;
 
 
 
 
-    function __construct($binding, $location, $protocol) {
-        $this->binding = $binding;
-        $this->location = $location;
-        $this->protocol = $protocol;
+    function __construct($binding = null, $location = null) {
+        if ($binding !== null) {
+            $this->setBinding($binding);
+        }
+        if ($location !== null) {
+            $this->setLocation($location);
+        }
     }
 
 
@@ -54,17 +58,6 @@ abstract class SpSsoDescriptorItem
     }
 
 
+    abstract function getXml(\DOMNode $parent);
 
-
-    /**
-     * @return string
-     */
-    public abstract function toXmlString();
-
-
-    /**
-     * @param \DOMElement $root
-     * @return \DOMElement[] unknown elements
-     */
-    abstract public function loadXml(\DOMElement $root);
 }

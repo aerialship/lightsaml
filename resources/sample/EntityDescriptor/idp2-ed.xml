@@ -1,5 +1,8 @@
-<EntityDescriptor ID="_1bfc79b7-5231-409c-abd4-e4c1884b9051" entityID="https://B1.bead.loc/adfs/services/trust"
-                  xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+<?xml version="1.0" encoding="utf-8"?>
+<EntityDescriptor ID="_1bfc79b7-5231-409c-abd4-e4c1884b9051"
+    entityID="https://B1.bead.loc/adfs/services/trust"
+    xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+>
     <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
         <ds:SignedInfo>
             <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
