@@ -3,10 +3,12 @@
 namespace AerialShip\LightSaml\Model\Service;
 
 use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Model\GetXmlInterface;
+use AerialShip\LightSaml\Model\LoadFromXmlInterface;
 
 
-abstract class AbstractService implements GetXmlInterface
+abstract class AbstractService implements GetXmlInterface, LoadFromXmlInterface
 {
     /** @var string   one of \AerialShip\LightSaml\Binding constants */
     protected $binding;
@@ -58,6 +60,21 @@ abstract class AbstractService implements GetXmlInterface
     }
 
 
-    abstract function getXml(\DOMNode $parent);
 
+    /**
+     * @param \DOMElement $xml
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     * @return \DOMElement[]
+     */
+    function loadFromXml(\DOMElement $xml) {
+        if (!$xml->hasAttribute('Binding')) {
+            throw new InvalidXmlException("Missing Binding attribute");
+        }
+        if (!$xml->hasAttribute('Location')) {
+            throw new InvalidXmlException("Missing Location attribute");
+        }
+        $this->setBinding($xml->getAttribute('Binding'));
+        $this->setLocation($xml->getAttribute('Location'));
+        return array();
+    }
 }

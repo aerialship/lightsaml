@@ -3,14 +3,19 @@
 namespace AerialShip\LightSaml\Model;
 
 use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Model\Service\AbstractService;
 use AerialShip\LightSaml\Model\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Service\SingleLogoutService;
 
 
-class SpSsoDescriptor implements GetXmlInterface
+class SpSsoDescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
+    use XmlChildrenLoaderTrait;
+    use GetItemsByClassTrait;
+
+
     /** @var AbstractService[] */
     protected $services;
 
@@ -96,14 +101,8 @@ class SpSsoDescriptor implements GetXmlInterface
     /**
      * @return SingleLogoutService[]
      */
-    public function getSingleLogoutServices() {
-        $result = array();
-        foreach ($this->getServices() as $service) {
-            if ($service instanceof SingleLogoutService) {
-                $result[] = $service;
-            }
-        }
-        return $result;
+    public function getAllSingleLogoutServices() {
+        return $this->getItemsByClass($this->getServices(), '\AerialShip\LightSaml\Model\Service\SingleLogoutService');
     }
 
 
@@ -111,13 +110,7 @@ class SpSsoDescriptor implements GetXmlInterface
      * @return AssertionConsumerService[]
      */
     public function getAllAssertionConsumerServices() {
-        $result = array();
-        foreach ($this->getServices() as $service) {
-            if ($service instanceof AssertionConsumerService) {
-                $result[] = $service;
-            }
-        }
-        return $result;
+        return $this->getItemsByClass($this->getServices(), '\AerialShip\LightSaml\Model\Service\AssertionConsumerService');
     }
 
     /**
@@ -155,52 +148,74 @@ class SpSsoDescriptor implements GetXmlInterface
     }
 
 
-/*
-    function toXmlString() {
-        $protocolEnumeration = htmlspecialchars($this->getProtocolSupportEnumeration());
-        $result = "<md:SPSSODescriptor protocolSupportEnumeration=\"{$protocolEnumeration}\">";
-        foreach ($this->getKeyDescriptors() as $kd) {
-            $result .= $kd->toXmlString();
+    function loadFromXml(\DOMElement $xml) {
+        if ($xml->localName != 'SPSSODescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
+            throw new InvalidXmlException('Expected SPSSODescriptor element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
-        foreach ($this->getItems() as $item) {
-            $result .= $item->toXmlString();
-        }
-        $result .= '</md:SPSSODescriptor>';
-        return $result;
-    }
 
-
-    public function loadXml(\DOMElement $root) {
-        $result = array();
-        for ($node = $root->firstChild; $node !== NULL; $node = $node->nextSibling) {
-            if ($node->namespaceURI != Protocol::NS_METADATA) {
-                continue;
-            }
-            $child = null;
-            switch ($node->localName) {
-                case 'SingleLogoutService':
-                    $child = new SingleLogoutServiceItem();
-                    break;
-                case 'AssertionConsumerService':
-                    $child = new AssertionConsumerServiceItem();
-                    break;
-                case 'KeyDescriptor':
-                    $child = new KeyDescriptor();
-                    break;
-                default:
-                    $result[] = $node;
-            }
-            if ($child) {
-                $result = array_merge($result, $child->loadXml($node));
-                if ($child instanceof KeyDescriptor) {
-                    $this->addKeyDescriptor($child);
+        $result = $this->loadXmlChildren(
+            $xml,
+            array(
+                array(
+                    'node' => array('name'=>'SingleLogoutService', 'ns'=>Protocol::NS_METADATA),
+                    'class' => '\AerialShip\LightSaml\Model\Service\SingleLogoutService'
+                ),
+                array(
+                    'node' => array('name'=>'AssertionConsumerService', 'ns'=>Protocol::NS_METADATA),
+                    'class' => '\AerialShip\LightSaml\Model\Service\AssertionConsumerService'
+                ),
+                array(
+                    'node' => array('name'=>'KeyDescriptor', 'ns'=>Protocol::NS_METADATA),
+                    'class' => '\AerialShip\LightSaml\Model\KeyDescriptor'
+                ),
+            ),
+            function(LoadFromXmlInterface $obj) {
+                if ($obj instanceof AbstractService) {
+                    $this->addService($obj);
+                } else if ($obj instanceof KeyDescriptor) {
+                    $this->addKeyDescriptor($obj);
                 } else {
-                    $this->addItem($child);
+                    throw new \InvalidArgumentException('Invalid item type '.get_class($obj));
                 }
             }
-        }
+        );
         return $result;
     }
-*/
+
+
+    /*
+
+        public function loadXml(\DOMElement $root) {
+            $result = array();
+            for ($node = $root->firstChild; $node !== NULL; $node = $node->nextSibling) {
+                if ($node->namespaceURI != Protocol::NS_METADATA) {
+                    continue;
+                }
+                $child = null;
+                switch ($node->localName) {
+                    case 'SingleLogoutService':
+                        $child = new SingleLogoutServiceItem();
+                        break;
+                    case 'AssertionConsumerService':
+                        $child = new AssertionConsumerServiceItem();
+                        break;
+                    case 'KeyDescriptor':
+                        $child = new KeyDescriptor();
+                        break;
+                    default:
+                        $result[] = $node;
+                }
+                if ($child) {
+                    $result = array_merge($result, $child->loadXml($node));
+                    if ($child instanceof KeyDescriptor) {
+                        $this->addKeyDescriptor($child);
+                    } else {
+                        $this->addItem($child);
+                    }
+                }
+            }
+            return $result;
+        }
+    */
 
 }

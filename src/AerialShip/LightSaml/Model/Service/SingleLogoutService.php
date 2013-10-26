@@ -18,16 +18,18 @@ class SingleLogoutService extends AbstractService
         return $result;
     }
 
-
     /**
-     * @return string
+     * @param \DOMElement $xml
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     * @return \DOMElement[]
      */
-    public function toXmlString() {
-        $binding = htmlspecialchars($this->getBinding());
-        $location = htmlspecialchars($this->getLocation());
-        $result = "<md:SingleLogoutService Binding=\"{$binding}\" Location=\"{$location}\" />";
-        return $result;
+    function loadFromXml(\DOMElement $xml) {
+        if ($xml->localName != 'SingleLogoutService' || $xml->namespaceURI != Protocol::NS_METADATA) {
+            throw new InvalidXmlException('Expected SingleLogoutService element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
+        }
+        return parent::loadFromXml($xml);
     }
+
 
     /**
      * @param \DOMElement $root

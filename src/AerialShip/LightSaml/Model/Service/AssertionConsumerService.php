@@ -54,38 +54,25 @@ class AssertionConsumerService extends AbstractService
         return $result;
     }
 
-
-
     /**
-     * @return string
-     */
-    public function toXmlString() {
-        $binding = htmlspecialchars($this->getBinding());
-        $location = htmlspecialchars($this->getLocation());
-        $index = $this->getIndex();
-        return "<md:AssertionConsumerService Binding=\"{$binding}\" Location=\"{$location}\" index=\"{$index}\" />";
-    }
-
-    /**
-     * @param \DOMElement $root
+     * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[] unknown elements
+     * @return \DOMElement[]
      */
-    public function loadXml(\DOMElement $root) {
-        if (!$root->hasAttribute('Binding')) {
-            throw new InvalidXmlException("Missing Binding attribute");
+    function loadFromXml(\DOMElement $xml) {
+        if ($xml->localName != 'AssertionConsumerService' || $xml->namespaceURI != Protocol::NS_METADATA) {
+            throw new InvalidXmlException('Expected AssertionConsumerService element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
-        if (!$root->hasAttribute('Location')) {
-            throw new InvalidXmlException("Missing Location attribute");
-        }
-        if (!$root->hasAttribute('index')) {
+        parent::loadFromXml($xml);
+        if (!$xml->hasAttribute('index')) {
             throw new InvalidXmlException("Missing index attribute");
         }
-        $this->setBinding($root->getAttribute('Binding'));
-        $this->setLocation($root->getAttribute('Location'));
-        $this->setIndex($root->getAttribute('index'));
+        $this->setIndex($xml->getAttribute('index'));
         return array();
     }
+
+
+
 
 
 }

@@ -7,7 +7,7 @@ use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
-class KeyDescriptor implements GetXmlInterface
+class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
     const USE_SIGNING = 'signing';
     const USE_ENCRYPTION = 'encryption';
@@ -77,21 +77,52 @@ class KeyDescriptor implements GetXmlInterface
         return $result;
     }
 
-
     /**
-     * @return string
+     * @param \DOMElement $xml
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     * @return \DOMElement[]
      */
-    public function toXmlString() {
-        $ns = Protocol::NS_KEY_INFO;
-        $cert = htmlspecialchars($this->getCertificate()->getData());
-        $result = "<md:KeyDescriptor use=\"{$this->use}\">";
-        $result .= "<ds:KeyInfo xmlns:ds=\"$ns\">";
-        $result .= "<ds:X509Data>";
-        $result .= "<ds:X509Certificate>{$cert}</ds:X509Certificate>";
-        $result .= "</ds:X509Data>";
-        $result .= "</ds:KeyInfo>";
-        $result .= "</md:KeyDescriptor>\n";
-        return $result;
+    function loadFromXml(\DOMElement $xml) {
+        if ($xml->localName != 'KeyDescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
+            throw new InvalidXmlException('Expected KeyDescriptor element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
+        }
+        if (!$xml->hasAttribute('use')) {
+            throw new InvalidXmlException("Missing use attribute");
+        }
+        $this->setUse($xml->getAttribute('use'));
+
+        $list = $xml->getElementsByTagName('KeyInfo');
+        if ($list->length != 1) {
+            throw new InvalidXmlException("Missing KeyInfo node");
+        }
+        /** @var $keyInfoNode \DOMElement */
+        $keyInfoNode = $list->item(0);
+        if ($keyInfoNode->namespaceURI != Protocol::NS_KEY_INFO) {
+            throw new InvalidXmlException("Invalid namespace of KeyInfo node");
+        }
+
+        $list = $keyInfoNode->getElementsByTagName('X509Data');
+        if ($list->length != 1) {
+            throw new InvalidXmlException("Missing X509Data node");
+        }
+        /** @var $x509DataNode \DOMElement */
+        $x509DataNode = $list->item(0);
+
+        $list = $x509DataNode->getElementsByTagName('X509Certificate');
+        if ($list->length != 1) {
+            throw new InvalidXmlException("Missing X509Certificate node");
+        }
+        /** @var $x509CertificateNode \DOMElement */
+        $x509CertificateNode = $list->item(0);
+        $certificateData = trim($x509CertificateNode->nodeValue);
+        if (!$certificateData) {
+            throw new InvalidXmlException("Missing certificate data");
+        }
+
+        $this->certificate = new X509Certificate();
+        $this->certificate->setData($certificateData);
+        return array();
+
     }
 
 

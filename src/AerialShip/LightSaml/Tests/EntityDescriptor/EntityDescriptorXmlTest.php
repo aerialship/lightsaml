@@ -43,7 +43,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
         $document->formatOutput = true;
         $xml = $document->saveXML();
-        print "\n $xml \n";
+        //print "\n $xml \n";
 
 
         $document = new \DOMDocument();
@@ -52,7 +52,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $root = $document->firstChild;
 
         $this->checkXml($document, $entityID, $locationLogout, $locationLogin, $certificate);
-        //$this->checkDeserializaton($root, $entityID, $locationLogout, $locationLogin, $certificate);
+        $this->checkDeserializaton($root, $entityID, $locationLogout, $locationLogin, $certificate);
     }
 
 
@@ -132,8 +132,15 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
     private function checkDeserializaton(\DOMElement $root, $entityID, $locationLogout, $locationLogin, X509Certificate $certificate) {
         $ed = new EntityDescriptor();
-        $arr = $ed->loadXml($root);
-        $this->assertEquals(0, count($arr));
+        $arr = $ed->loadFromXml($root);
+        $this->assertTrue(is_array($arr));
+        if (($count = count($arr))>0) {
+            $arrNodeNames = array();
+            foreach ($arr as $n) {
+                $arrNodeNames[$n->localName] = $n->localName;
+            }
+            $this->fail("There are $count unrecognized xml nodes: ".implode(', ', $arrNodeNames));
+        }
 
         $this->assertEquals($entityID, $ed->getEntityID());
 
@@ -141,7 +148,10 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($items));
         $this->assertTrue($items[0] instanceof SpSsoDescriptor);
 
-        $sp = $ed->getSpSsoItem();
+        $arrSP = $ed->getItemsByType('SpSsoDescriptor');
+        $this->assertNotEmpty($arrSP);
+        /** @var $sp SpSsoDescriptor */
+        $sp = $arrSP[0];
         $this->assertNotNull($sp);
         $this->assertTrue($sp instanceof SpSsoDescriptor);
 
@@ -154,24 +164,26 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Protocol::SAML2, $sp->getProtocolSupportEnumeration());
 
-        $items = $sp->getItems();
+        $items = $sp->getServices();
         $this->assertEquals(3, count($items), print_r($items, true));
 
-        $logout = $sp->getSingleLogoutItem();
+        $arrLogout = $sp->getAllSingleLogoutServices();
+        $this->assertNotEmpty($arrLogout);
+        $logout = $arrLogout[0];
         $this->assertNotNull($logout);
         $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $logout->getBinding());
         $this->assertEquals($locationLogout, $logout->getLocation());
 
-        $arr = $sp->getAllAssertionConsumerItems();
+        $arr = $sp->getAllAssertionConsumerServices();
         $this->assertEquals(2, count($arr));
 
-        $as1 = $sp->getAssertionConsumerItemForBinding(Binding::SAML2_HTTP_POST);
+        $as1 = $sp->getAssertionConsumerServicesForBinding(Binding::SAML2_HTTP_POST);
         $this->assertNotNull($as1);
         $this->assertEquals(Binding::SAML2_HTTP_POST, $as1->getBinding());
         $this->assertEquals($locationLogin, $as1->getLocation());
         $this->assertEquals(0, $as1->getIndex());
 
-        $as2 = $sp->getAssertionConsumerItemForBinding(Binding::SAML2_HTTP_ARTIFACT);
+        $as2 = $sp->getAssertionConsumerServicesForBinding(Binding::SAML2_HTTP_ARTIFACT);
         $this->assertNotNull($as2);
         $this->assertEquals(Binding::SAML2_HTTP_ARTIFACT, $as2->getBinding());
         $this->assertEquals($locationLogin, $as2->getLocation());

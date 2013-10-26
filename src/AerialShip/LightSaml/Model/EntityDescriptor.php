@@ -2,22 +2,27 @@
 
 namespace AerialShip\LightSaml\Model;
 
+use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Protocol;
 
-class EntityDescriptor implements GetXmlInterface
+class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
+    use XmlChildrenLoaderTrait;
+    use GetItemsByClassTrait;
+
+
     /** @var string */
     protected $entityID;
 
-    /** @var GetXmlInterface[] */
+    /** @var GetXmlInterface[]|LoadFromXmlInterface[] */
     protected $items;
 
 
 
     function __construct($entityID = null, array $items = null) {
         $this->entityID = $entityID;
-        $this->items = $items?: array();
-        foreach ($items as $item) {
+        $this->items = $items ?: array();
+        foreach ($this->items as $item) {
             if (!$item instanceof GetXmlInterface) {
                 throw new \InvalidArgumentException('All EntityDescriptor items must implement GetXmlInterface');
             }
@@ -40,14 +45,14 @@ class EntityDescriptor implements GetXmlInterface
     }
 
     /**
-     * @param GetXmlInterface[] $items
+     * @param GetXmlInterface[]|LoadFromXmlInterface[] $items
      */
     public function setItems(array $items) {
         $this->items = $items;
     }
 
     /**
-     * @return GetXmlInterface[]
+     * @return GetXmlInterface[]|LoadFromXmlInterface[]
      */
     public function getItems() {
         return $this->items;
@@ -55,10 +60,14 @@ class EntityDescriptor implements GetXmlInterface
 
 
     /**
-     * @param GetXmlInterface $item
+     * @param GetXmlInterface|LoadFromXmlInterface $item
+     * @throws \InvalidArgumentException
      * @return EntityDescriptor
      */
-    public function addItem(GetXmlInterface $item) {
+    public function addItem($item) {
+        if (!$item instanceof GetXmlInterface || !$item instanceof LoadFromXmlInterface) {
+            throw new \InvalidArgumentException('Item must implement GetXmlInterface and LoadFromXmlInterface');
+        }
         $this->items[] = $item;
         return $this;
     }
@@ -69,21 +78,7 @@ class EntityDescriptor implements GetXmlInterface
      * @return GetXmlInterface[]
      */
     public function getItemsByType($class) {
-        $result = array();
-        foreach ($this->items as $item) {
-            $itemClass = get_class($item);
-            if ($itemClass == $class) {
-                $result[] = $item;
-            } else {
-                if (($pos = strrpos($itemClass, '\\')) !== false) {
-                    $itemClass = substr($itemClass, $pos);
-                }
-                if ($itemClass == $class) {
-                    $result[] = $item;
-                }
-            }
-        }
-        return $result;
+        return $this->getItemsByClass($this->getItems(), $class);
     }
 
 
@@ -103,49 +98,72 @@ class EntityDescriptor implements GetXmlInterface
         return $result;
     }
 
-
-/*
-    public function _toXmlString() {
-        $entityID = htmlspecialchars($this->getEntityID());
-        $ns = Protocol::NS_METADATA;
-        $result = "<?xml version=\"1.0\"?><md:EntityDescriptor xmlns:md=\"{$ns}\" entityID=\"{$entityID}\">";
-        foreach ($this->getItems() as $item) {
-            $result .= $item->toXmlString();
+    /**
+     * @param \DOMElement $xml
+     * @return array|\DOMElement[]
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     * @throws \Exception
+     */
+    function loadFromXml(\DOMElement $xml) {
+        if ($xml->localName != 'EntityDescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
+            throw new InvalidXmlException('Expected EntityDescriptor element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
-        $result .= '</md:EntityDescriptor>';
+        if (!$xml->hasAttribute('entityID')) {
+            throw new InvalidXmlException('Missing entityID attribute');
+        }
+        $this->setEntityID($xml->getAttribute('entityID'));
+
+        $result = $this->loadXmlChildren(
+            $xml,
+            array(
+                array(
+                    'node' => array('name'=>'SPSSODescriptor', 'ns'=>Protocol::NS_METADATA),
+                    'class' => '\AerialShip\LightSaml\Model\SpSsoDescriptor'
+                ),
+                array(
+                    'node' => array('name'=>'IDPSSODescriptor', 'ns'=>Protocol::NS_METADATA),
+                    'class' => '\AerialShip\LightSaml\Model\IdpSsoDescriptor'
+                ),
+            ),
+            function(LoadFromXmlInterface $obj) {
+                $this->addItem($obj);
+            }
+        );
         return $result;
     }
 
 
-    public function _loadXml(\DOMElement $root) {
-        $result = array();
-        if ($root->namespaceURI != Protocol::NS_METADATA)
-            throw new InvalidXmlException('Expected namespace '.Protocol::NS_METADATA." found $root->namespaceURI");
-        if ($root->localName != 'EntityDescriptor')
-            throw new InvalidXmlException("Expected element EntityDescriptor found $root->localName");
-        if (!$root->hasAttribute('entityID'))
-            throw new InvalidXmlException("Missing element entityID");
-        $this->entityID = $root->getAttribute('entityID');
+    /*
 
-        for ($node = $root->firstChild; $node !== NULL; $node = $node->nextSibling) {
-            if ($node->namespaceURI != Protocol::NS_METADATA) {
-                continue;
+        public function _loadXml(\DOMElement $root) {
+            $result = array();
+            if ($root->namespaceURI != Protocol::NS_METADATA)
+                throw new InvalidXmlException('Expected namespace '.Protocol::NS_METADATA." found $root->namespaceURI");
+            if ($root->localName != 'EntityDescriptor')
+                throw new InvalidXmlException("Expected element EntityDescriptor found $root->localName");
+            if (!$root->hasAttribute('entityID'))
+                throw new InvalidXmlException("Missing element entityID");
+            $this->entityID = $root->getAttribute('entityID');
+
+            for ($node = $root->firstChild; $node !== NULL; $node = $node->nextSibling) {
+                if ($node->namespaceURI != Protocol::NS_METADATA) {
+                    continue;
+                }
+                $child = null;
+                switch ($node->localName) {
+                    case 'SPSSODescriptor':
+                        $child = new SpSsoDescriptor();
+                        break;
+                    default:
+                        $result[] = $node;
+                }
+                if ($child) {
+                    $result = array_merge($result, $child->loadXml($node));
+                    $this->addItem($child);
+                }
             }
-            $child = null;
-            switch ($node->localName) {
-                case 'SPSSODescriptor':
-                    $child = new SpSsoDescriptor();
-                    break;
-                default:
-                    $result[] = $node;
-            }
-            if ($child) {
-                $result = array_merge($result, $child->loadXml($node));
-                $this->addItem($child);
-            }
+            return $result;
         }
-        return $result;
-    }
-*/
+    */
 
 }
