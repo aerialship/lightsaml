@@ -38,10 +38,15 @@ class X509Certificate
 
     function loadFromFile($filename) {
         if (!is_file($filename)) {
-            throw new \InvalidCertificateException("File not found $filename");
+            throw new InvalidCertificateException("File not found $filename");
         }
         $content = file_get_contents($filename);
         $this->loadPem($content);
+    }
+
+    function toPem() {
+        $result = "-----BEGIN CERTIFICATE-----\n".chunk_split($this->getData(), 64, "\n")."-----END CERTIFICATE-----\n";
+        return $result;
     }
 
 }

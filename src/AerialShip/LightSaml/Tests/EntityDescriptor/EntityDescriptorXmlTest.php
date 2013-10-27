@@ -20,7 +20,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $locationLogout = 'http://example.com/logout';
         $locationLogin = 'http://example.com/login';
         $certificate = new X509Certificate();
-        $certificate->loadFromFile(__DIR__.'/saml.crt');
+        $certificate->loadFromFile(__DIR__.'/../../../../../resources/sample/Certificate/saml.crt');
         $ed = new EntityDescriptor(
             $entityID,
             array(
@@ -39,9 +39,9 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         );
 
         $document = new \DOMDocument('1.0', 'utf-8');
+        $document->formatOutput = true;
         $ed->getXml($document);
 
-        $document->formatOutput = true;
         $xml = $document->saveXML();
         //print "\n $xml \n";
 
@@ -66,7 +66,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
         $xpath = new \DOMXPath($document);
         $xpath->registerNamespace('md', Protocol::NS_METADATA);
-        $xpath->registerNamespace('ds', Protocol::NS_KEY_INFO);
+        $xpath->registerNamespace('ds', Protocol::NS_XMLDSIG);
 
         $list = $xpath->query("/md:EntityDescriptor/md:SPSSODescriptor");
         $this->assertEquals(1, $list->length);

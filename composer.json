@@ -4,10 +4,24 @@
     "type": "project",
     "description": "BWC Mosaic application for myappsco.com",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-0": { "": "src/" },
+        "files": [
+            "vendor/xmlseclibs/xmlseclibs/xmlseclibs.php"
+        ]
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "xmlseclibs/xmlseclibs",
+                "version": "1.3.1",
+                "dist": { "type": "tar", "url": "https://xmlseclibs.googlecode.com/files/xmlseclibs-1.3.1.tar.gz" }
+            }
+        }
+    ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "xmlseclibs/xmlseclibs": "1.3.1"
     },
     "scripts": {
         "post-install-cmd": [

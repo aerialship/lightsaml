@@ -67,11 +67,11 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
         $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:KeyDescriptor');
         $parent->appendChild($result);
         $result->setAttribute('use', $this->getUse());
-        $keyInfo = $parent->ownerDocument->createElementNS(Protocol::NS_KEY_INFO, 'ds:KeyInfo');
+        $keyInfo = $parent->ownerDocument->createElementNS(Protocol::NS_XMLDSIG, 'ds:KeyInfo');
         $result->appendChild($keyInfo);
-        $xData = $parent->ownerDocument->createElementNS(Protocol::NS_KEY_INFO, 'ds:X509Data');
+        $xData = $parent->ownerDocument->createElementNS(Protocol::NS_XMLDSIG, 'ds:X509Data');
         $keyInfo->appendChild($xData);
-        $xCert = $parent->ownerDocument->createElementNS(Protocol::NS_KEY_INFO, 'ds:X509Certificate');
+        $xCert = $parent->ownerDocument->createElementNS(Protocol::NS_XMLDSIG, 'ds:X509Certificate');
         $xData->appendChild($xCert);
         $xCert->nodeValue = $this->getCertificate()->getData();
         return $result;
@@ -97,7 +97,7 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
         }
         /** @var $keyInfoNode \DOMElement */
         $keyInfoNode = $list->item(0);
-        if ($keyInfoNode->namespaceURI != Protocol::NS_KEY_INFO) {
+        if ($keyInfoNode->namespaceURI != Protocol::NS_XMLDSIG) {
             throw new InvalidXmlException("Invalid namespace of KeyInfo node");
         }
 
@@ -143,7 +143,7 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
         }
         /** @var $keyInfoNode \DOMElement */
         $keyInfoNode = $list->item(0);
-        if ($keyInfoNode->namespaceURI != Protocol::NS_KEY_INFO) {
+        if ($keyInfoNode->namespaceURI != Protocol::NS_XMLDSIG) {
             throw new InvalidXmlException("Invalid namespace of KeyInfo node");
         }
 
