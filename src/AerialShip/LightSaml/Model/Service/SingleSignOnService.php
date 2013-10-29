@@ -2,17 +2,31 @@
 
 namespace AerialShip\LightSaml\Model\Service;
 
-use AerialShip\LightSaml\Model\GetXmlInterface;
 
-class SingleSignOnService implements GetXmlInterface
+class SingleSignOnService extends AbstractService
 {
+
+    protected function getXmlNodeName() {
+        return 'SingleSignOnService';
+    }
+
     /**
      * @param \DOMNode $parent
      * @return \DOMNode
      */
     function getXml(\DOMNode $parent) {
-        // TODO: Implement getXml() method.
-        throw new \Exception('Not implemented');
+        $result = parent::getXml($parent);
+        return $result;
     }
+
+    /**
+     * @param \DOMElement $xml
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     * @return \DOMElement[]
+     */
+    function loadFromXml(\DOMElement $xml) {
+        return parent::loadFromXml($xml);
+    }
+
 
 }

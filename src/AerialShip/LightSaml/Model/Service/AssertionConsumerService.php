@@ -41,15 +41,16 @@ class AssertionConsumerService extends AbstractService
     }
 
 
+    protected function getXmlNodeName() {
+        return 'AssertionConsumerService';
+    }
+
     /**
      * @param \DOMNode $parent
      * @return \DOMElement
      */
     function getXml(\DOMNode $parent) {
-        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:AssertionConsumerService');
-        $parent->appendChild($result);
-        $result->setAttribute('Binding', $this->getBinding());
-        $result->setAttribute('Location', $this->getLocation());
+        $result = $result = parent::getXml($parent);
         $result->setAttribute('index', $this->getIndex());
         return $result;
     }
@@ -60,9 +61,6 @@ class AssertionConsumerService extends AbstractService
      * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
-        if ($xml->localName != 'AssertionConsumerService' || $xml->namespaceURI != Protocol::NS_METADATA) {
-            throw new InvalidXmlException('Expected AssertionConsumerService element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
-        }
         parent::loadFromXml($xml);
         if (!$xml->hasAttribute('index')) {
             throw new InvalidXmlException("Missing index attribute");

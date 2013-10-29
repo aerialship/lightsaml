@@ -167,23 +167,27 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $items = $sp->getServices();
         $this->assertEquals(3, count($items), print_r($items, true));
 
-        $arrLogout = $sp->getAllSingleLogoutServices();
+        $arrLogout = $sp->findSingleLogoutServices();
         $this->assertNotEmpty($arrLogout);
         $logout = $arrLogout[0];
         $this->assertNotNull($logout);
         $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $logout->getBinding());
         $this->assertEquals($locationLogout, $logout->getLocation());
 
-        $arr = $sp->getAllAssertionConsumerServices();
+        $arr = $sp->findAssertionConsumerServices();
         $this->assertEquals(2, count($arr));
 
-        $as1 = $sp->getAssertionConsumerServicesForBinding(Binding::SAML2_HTTP_POST);
+        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_POST);
+        $this->assertNotEmpty($arr);
+        $as1 = $arr[0];
         $this->assertNotNull($as1);
         $this->assertEquals(Binding::SAML2_HTTP_POST, $as1->getBinding());
         $this->assertEquals($locationLogin, $as1->getLocation());
         $this->assertEquals(0, $as1->getIndex());
 
-        $as2 = $sp->getAssertionConsumerServicesForBinding(Binding::SAML2_HTTP_ARTIFACT);
+        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_ARTIFACT);
+        $this->assertNotEmpty($arr);
+        $as2 = $arr[0];
         $this->assertNotNull($as2);
         $this->assertEquals(Binding::SAML2_HTTP_ARTIFACT, $as2->getBinding());
         $this->assertEquals($locationLogin, $as2->getLocation());

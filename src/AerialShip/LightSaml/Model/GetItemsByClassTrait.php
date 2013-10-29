@@ -3,6 +3,8 @@
 namespace AerialShip\LightSaml\Model;
 
 
+use AerialShip\LightSaml\Helper;
+
 trait GetItemsByClassTrait
 {
 
@@ -12,19 +14,10 @@ trait GetItemsByClassTrait
      * @return \object[]
      */
     protected function getItemsByClass(array $items, $class) {
-        $class = ltrim($class, '\\');
         $result = array();
         foreach ($items as $item) {
-            $itemClass = get_class($item);
-            if ($itemClass == $class) {
+            if (Helper::doClassNameMatch($item, $class)) {
                 $result[] = $item;
-            } else {
-                if (($pos = strrpos($itemClass, '\\')) !== false) {
-                    $itemClass = substr($itemClass, $pos+1);
-                }
-                if ($itemClass == $class) {
-                    $result[] = $item;
-                }
             }
         }
         return $result;
