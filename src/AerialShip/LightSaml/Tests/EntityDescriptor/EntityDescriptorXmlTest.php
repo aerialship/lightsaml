@@ -4,9 +4,11 @@ namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\Model\EntityDescriptor;
+use AerialShip\LightSaml\Model\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\KeyDescriptor;
 use AerialShip\LightSaml\Model\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Service\SingleLogoutService;
+use AerialShip\LightSaml\Model\Service\SingleSignOnService;
 use AerialShip\LightSaml\Model\SpSsoDescriptor;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
@@ -29,6 +31,18 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
                         new SingleLogoutService(Binding::SAML2_HTTP_REDIRECT, $locationLogout),
                         new AssertionConsumerService(Binding::SAML2_HTTP_POST, $locationLogin, 0),
                         new AssertionConsumerService(Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1)
+                    ),
+                    array(
+                        new KeyDescriptor(KeyDescriptor::USE_SIGNING, $certificate),
+                        new KeyDescriptor(KeyDescriptor::USE_ENCRYPTION, $certificate)
+                    )
+                ),
+                new IdpSsoDescriptor(
+                    array(
+                        new SingleLogoutService(Binding::SAML2_HTTP_REDIRECT, $locationLogout),
+                        new SingleLogoutService(Binding::SAML2_HTTP_POST, $locationLogout),
+                        new SingleSignOnService(Binding::SAML2_HTTP_REDIRECT, $locationLogin),
+                        new SingleSignOnService(Binding::SAML2_HTTP_POST, $locationLogin)
                     ),
                     array(
                         new KeyDescriptor(KeyDescriptor::USE_SIGNING, $certificate),
@@ -67,6 +81,9 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $xpath = new \DOMXPath($document);
         $xpath->registerNamespace('md', Protocol::NS_METADATA);
         $xpath->registerNamespace('ds', Protocol::NS_XMLDSIG);
+
+
+        // SP ------------------------------------------------
 
         $list = $xpath->query("/md:EntityDescriptor/md:SPSSODescriptor");
         $this->assertEquals(1, $list->length);
@@ -110,6 +127,49 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService[@index="1"]');
         $this->assertEquals(1, $list->length);
         $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1);
+
+
+
+        // IDP ---------------------------------------------------------
+
+        $list = $xpath->query("/md:EntityDescriptor/md:IDPSSODescriptor");
+        $this->assertEquals(1, $list->length);
+        /** @var $sp \DOMElement */
+        $idp = $list->item(0);
+        $this->assertEquals(Protocol::NS_METADATA, $idp->namespaceURI);
+        $this->assertTrue($idp->hasAttribute('protocolSupportEnumeration'));
+        $this->assertEquals(Protocol::SAML2, $idp->getAttribute('protocolSupportEnumeration'));
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor');
+        $this->assertEquals(2, $list->length);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor[@use="signing"]');
+        $this->assertEquals(1, $list->length);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor[@use="encryption"]');
+        $this->assertEquals(1, $list->length);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor[@use="signing"]/ds:KeyInfo/ds:X509Data');
+        $this->assertEquals(1, $list->length);
+        /** @var $key \DOMElement */
+        $key = $list->item(0);
+        $this->assertEquals($certificate->getData(), trim($key->nodeValue));
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:KeyDescriptor[@use="encryption"]/ds:KeyInfo/ds:X509Data');
+        $this->assertEquals(1, $list->length);
+        /** @var $key \DOMElement */
+        $key = $list->item(0);
+        $this->assertEquals($certificate->getData(), trim($key->nodeValue));
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleLogoutService');
+        $this->assertEquals(2, $list->length);
+        $this->checkSpItemXml($list->item(0), 'SingleLogoutService', Binding::SAML2_HTTP_REDIRECT, $locationLogout, null);
+        $this->checkSpItemXml($list->item(1), 'SingleLogoutService', Binding::SAML2_HTTP_POST, $locationLogout, null);
+
+        $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleSignOnService');
+        $this->assertEquals(2, $list->length);
+        $this->checkSpItemXml($list->item(0), 'SingleSignOnService', Binding::SAML2_HTTP_REDIRECT, $locationLogin, null);
+        $this->checkSpItemXml($list->item(1), 'SingleSignOnService', Binding::SAML2_HTTP_POST, $locationLogin, null);
     }
 
 
@@ -145,7 +205,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($entityID, $ed->getEntityID());
 
         $items = $ed->getItems();
-        $this->assertEquals(1, count($items));
+        $this->assertEquals(2, count($items));
         $this->assertTrue($items[0] instanceof SpSsoDescriptor);
 
         $arrSP = $ed->getItemsByType('SpSsoDescriptor');
