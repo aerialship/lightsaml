@@ -3,12 +3,12 @@
 namespace AerialShip\LightSaml\Model;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Protocol;
 
 class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
     use XmlChildrenLoaderTrait;
-    use GetItemsByClassTrait;
 
 
     /** @var string */
@@ -75,12 +75,33 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param string $class
-     * @return GetXmlInterface[]
+     * @return GetXmlInterface[]|LoadFromXmlInterface[]
      */
     public function getItemsByType($class) {
-        return $this->getItemsByClass($this->getItems(), $class);
+        $result = array();
+        foreach ($this->items as $item) {
+            if (Helper::doClassNameMatch($item, $class)) {
+                $result[] = $item;
+            }
+        }
+        return $result;
     }
 
+    /**
+     * @return SpSsoDescriptor[]
+     */
+    public function getSpSsoDescriptors() {
+        $result = $this->getItemsByType('AerialShip\LightSaml\Model\SpSsoDescriptor');
+        return $result;
+    }
+
+    /**
+     * @return IdpSsoDescriptor[]
+     */
+    public function getIdpSsoDescriptors() {
+        $result = $this->getItemsByType('AerialShip\LightSaml\Model\IdpSsoDescriptor');
+        return $result;
+    }
 
     /**
      * @param \DOMNode $parent

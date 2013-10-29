@@ -7,7 +7,7 @@ interface GetXmlInterface
 {
     /**
      * @param \DOMNode $parent
-     * @return \DOMNode
+     * @return \DOMElement
      */
     function getXml(\DOMNode $parent);
 }

@@ -13,7 +13,6 @@ use AerialShip\LightSaml\Protocol;
 abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
     use XmlChildrenLoaderTrait;
-    use GetItemsByClassTrait;
 
 
     /** @var AbstractService[] */
@@ -99,6 +98,20 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
 
 
     /**
+     * @param string $use
+     * @return KeyDescriptor[]
+     */
+    function findKeyDescriptors($use) {
+        $result = array();
+        foreach ($this->getKeyDescriptors() as $kd) {
+            if ($kd->getUse() == $use) {
+                $result[] = $kd;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param string $class
      * @param string|null $binding
      * @return AbstractService[]
@@ -148,7 +161,7 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
 
     /**
      * @param \DOMNode $parent
-     * @return \DOMNode
+     * @return \DOMElement
      */
     function getXml(\DOMNode $parent) {
         $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:'.$this->getXmlNodeName());
