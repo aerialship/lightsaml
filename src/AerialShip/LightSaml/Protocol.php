@@ -5,6 +5,7 @@ namespace AerialShip\LightSaml;
 
 final class Protocol
 {
+    const VERSION_2_0 = '2.0';
     const SAML2 = 'urn:oasis:names:tc:SAML:2.0:protocol';
 
     const NS_METADATA = 'urn:oasis:names:tc:SAML:2.0:metadata';

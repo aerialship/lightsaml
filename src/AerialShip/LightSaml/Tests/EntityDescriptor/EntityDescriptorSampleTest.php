@@ -67,7 +67,6 @@ class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($arr));
         $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
-
     }
 
     private function checkSP(EntityDescriptor $ed, $url) {
