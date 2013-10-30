@@ -71,7 +71,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($request->getNameIdPolicyAllowCreate());
     }
 
-    
+
     private function checkRequestXml(\DOMDocument $doc, $id) {
         //$xml = $doc->saveXML();
         //print "\n\n$xml\n\n";
@@ -91,6 +91,19 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->destination, $node->getAttribute('Destination'));
         $this->assertEquals($this->ascURL, $node->getAttribute('AssertionConsumerServiceURL'));
         $this->assertEquals($this->protocolBinding, $node->getAttribute('ProtocolBinding'));
+
+        $list = $xpath->query('/samlp:AuthnRequest/saml:Issuer');
+        $this->assertEquals(1, $list->length);
+        /** @var $node \DOMElement */
+        $node = $list->item(0);
+        $this->assertEquals($this->issuer, $node->textContent);
+
+        $list = $xpath->query('/samlp:AuthnRequest/samlp:NameIDPolicy');
+        $this->assertEquals(1, $list->length);
+        /** @var $node \DOMElement */
+        $node = $list->item(0);
+        $this->assertEquals($this->nameIDPolicyFormat, $node->getAttribute('Format'));
+        $this->assertEquals('true', $node->getAttribute('AllowCreate'));
     }
 
 }
