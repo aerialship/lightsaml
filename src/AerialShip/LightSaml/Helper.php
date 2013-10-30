@@ -59,4 +59,48 @@ final class Helper
         }
         return $result;
     }
+
+
+    /**
+     * @param int $length
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    static function generateRandomBytes($length) {
+        $length = intval($length);
+        if (!$length) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes($length);
+        }
+
+        $data = '';
+        for($i = 0; $i < $length; $i++) {
+            $data .= chr(mt_rand(0, 255));
+        }
+        return $data;
+    }
+
+    /**
+     * @param string $bytes
+     * @return string
+     */
+    static function stringToHex($bytes) {
+        $result = '';
+        for($i = 0; $i < strlen($bytes); $i++) {
+            $result .= sprintf('%02x', ord($bytes[$i]));
+        }
+        return $result;
+    }
+
+
+    /**
+     * @return string
+     */
+    static function generateID() {
+        return '_'.self::stringToHex(self::generateRandomBytes(21));
+    }
+
 }

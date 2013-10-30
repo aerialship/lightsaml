@@ -10,11 +10,15 @@ final class Binding
     const SAML2_HTTP_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
     const SAML2_HTTP_ARTIFACT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact';
 
+    const SAML1_BROWSER_POST = 'urn:oasis:names:tc:SAML:1.0:profiles:browser-post';
+    const SAML1_ARTIFACT1 = 'urn:oasis:names:tc:SAML:1.0:profiles:artifact-01';
 
     private static $_binding2protocol = array(
         self::SAML2_HTTP_REDIRECT => Protocol::SAML2,
         self::SAML2_HTTP_POST => Protocol::SAML2,
-        self::SAML2_HTTP_ARTIFACT => Protocol::SAML2
+        self::SAML2_HTTP_ARTIFACT => Protocol::SAML2,
+        self::SAML1_BROWSER_POST => Protocol::SAML1,
+        self::SAML1_ARTIFACT1 => Protocol::SAML1
     );
 
 

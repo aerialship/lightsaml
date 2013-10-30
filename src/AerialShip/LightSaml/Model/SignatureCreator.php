@@ -103,23 +103,6 @@ class SignatureCreator extends Signature implements GetXmlInterface
         $objXMLSecDSig->insertSignature($parent, $firstChild);
     }
 
-    /**
-     * @param \DOMElement $xml
-     * @throws InvalidXmlException
-     * @return \DOMElement[]
-     */
-    function loadFromXml(\DOMElement $xml) {
-        if ($xml->localName != 'Signature' || $xml->namespaceURI != Protocol::NS_XMLDSIG) {
-            throw new InvalidXmlException('Expected Signature element and '.Protocol::NS_XMLDSIG.' namespace but got '.$xml->localName);
-        }
-        $this->xmlDomElement = $xml;
-        // output: xmlseclib signature + certificates from xml
 
-        // get key from metadata as $pem where key type must be XMLSecurityKey::RSA_SHA1
-//        $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'public'));
-//        $key->loadKey($pem);
-
-        // SAML2/Utils.php validateSignature($info[], $key)
-    }
 
 }

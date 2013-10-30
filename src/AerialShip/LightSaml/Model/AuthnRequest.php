@@ -2,12 +2,12 @@
 
 namespace AerialShip\LightSaml\Model;
 
-
 use AerialShip\LightSaml\Error\InvalidRequestException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
+
 
 class AuthnRequest implements GetXmlInterface, LoadFromXmlInterface
 {
@@ -183,6 +183,18 @@ class AuthnRequest implements GetXmlInterface, LoadFromXmlInterface
 
 
 
+    function build(EntityDescriptor $sp, EntityDescriptor $idp) {
+        $arr = $sp->getSpSsoDescriptors();
+        if (empty($arr)) {
+            throw new \InvalidArgumentException('SP EntityDescripto has no SpSsoDescriptor');
+        }
+        $sp = $arr[0];
+
+    }
+
+
+
+
     protected function prepareForXml() {
         $id = trim($this->getId());
         if (!$id) {
@@ -217,6 +229,7 @@ class AuthnRequest implements GetXmlInterface, LoadFromXmlInterface
         $this->prepareForXml();
         $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
         $result = $doc->createElementNS(Protocol::SAML2, 'samlp:AuthnRequest');
+        $parent->appendChild($result);
         $result->setAttribute('ID', $this->getId());
         $result->setAttribute('Version', $this->getVersion());
         $result->setAttribute('IssueInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getIssueInstant()));
