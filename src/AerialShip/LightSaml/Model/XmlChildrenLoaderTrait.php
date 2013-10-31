@@ -32,7 +32,7 @@ trait XmlChildrenLoaderTrait
             if (!$meta) continue;
             $this->getNodeNameAndNamespaceFromMeta($meta, $nodeName, $nodeNS);
             if ($nodeName == $node->localName
-                    && (!$nodeNS || $nodeNS == $node->namespaceURI)
+                && (!$nodeNS || $nodeNS == $node->namespaceURI)
             ) {
                 $obj = $this->getObjectFromMetaClass($meta, $node, $result);
                 $itemCallback($obj);

@@ -41,7 +41,11 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($id);
         $this->assertEquals(43, strlen($id));
 
-        $this->checkRequestObject($request, $id);
+        $time = $request->getIssueInstant();
+        $this->assertNotEmpty($time);
+        $this->assertLessThan(1, abs(time()-$time));
+
+        $this->checkRequestObject($request, $id, $time);
 
         // serialize to XML Document and check xml
         $doc = new \DOMDocument();
@@ -51,7 +55,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         // Deserialize new request out of xml
         $request = new AuthnRequest();
         $request->loadFromXml($doc->firstChild);
-        $this->checkRequestObject($request, $id);
+        $this->checkRequestObject($request, $id, $time);
 
         // serialize again to xml and check xml
         $doc = new \DOMDocument();
@@ -59,12 +63,13 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $this->checkRequestXml($doc, $id);
     }
 
-    private function checkRequestObject(AuthnRequest $request, $id) {
+    private function checkRequestObject(AuthnRequest $request, $id, $time) {
         $this->assertEquals($id, $request->getId());
         $this->assertEquals('2.0', $request->getVersion());
         $this->assertEquals($this->destination, $request->getDestination());
         $this->assertEquals($this->ascURL, $request->getAssertionConsumerServiceURL());
         $this->assertEquals($this->protocolBinding, $request->getProtocolBinding());
+        $this->assertEquals($time, $request->getIssueInstant());
 
         $this->assertEquals($this->issuer, $request->getIssuer());
         $this->assertEquals($this->nameIDPolicyFormat, $request->getNameIdPolicyFormat());

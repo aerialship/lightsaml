@@ -89,7 +89,7 @@ class AuthnRequest implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @param string $issueInstant
+     * @param int $issueInstant
      * @throws \InvalidArgumentException
      */
     public function setIssueInstant($issueInstant) {

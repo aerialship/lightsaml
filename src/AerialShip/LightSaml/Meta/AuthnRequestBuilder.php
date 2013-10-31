@@ -144,6 +144,7 @@ class AuthnRequestBuilder
 
         $result->setId(Helper::generateID());
         $result->setDestination($edIDP->getEntityID());
+        $result->setIssueInstant(time());
 
         $asc = $this->getAssertionConsumerService($sp);
         $result->setProtocolBinding($asc->getBinding());

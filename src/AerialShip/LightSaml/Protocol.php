@@ -13,7 +13,15 @@ final class Protocol
     const NS_XMLDSIG = 'http://www.w3.org/2000/09/xmldsig#';
     const NS_ASSERTION = 'urn:oasis:names:tc:SAML:2.0:assertion';
 
+    /** Password authentication context */
+    const AC_PASSWORD = 'urn:oasis:names:tc:SAML:2.0:ac:classes:Password';
+    /** Unspecified authentication context */
+    const AC_UNSPECIFIED = 'urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified';
+
+
     const XMLSEC_TRANSFORM_ALGORITHM_ENVELOPED_SIGNATURE = 'http://www.w3.org/2000/09/xmldsig#enveloped-signature';
+
+
 
     protected function __construct() { }
 }
