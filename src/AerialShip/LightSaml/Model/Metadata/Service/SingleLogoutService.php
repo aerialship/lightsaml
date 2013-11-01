@@ -1,19 +1,17 @@
 <?php
 
-namespace AerialShip\LightSaml\Model\Service;
+namespace AerialShip\LightSaml\Model\Metadata\Service;
+
+use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Error\InvalidXmlException;
 
 
-class SingleSignOnService extends AbstractService
+class SingleLogoutService extends AbstractService
 {
-
     protected function getXmlNodeName() {
-        return 'SingleSignOnService';
+        return 'SingleLogoutService';
     }
 
-    /**
-     * @param \DOMNode $parent
-     * @return \DOMNode
-     */
     function getXml(\DOMNode $parent) {
         $result = parent::getXml($parent);
         return $result;

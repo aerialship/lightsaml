@@ -1,12 +1,12 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Metadata;
 
 use AerialShip\LightSaml\Helper;
-use AerialShip\LightSaml\Model\Service\AbstractService;
+use AerialShip\LightSaml\Model\Metadata\Service\AbstractService;
 
 
-class SpSsoDescriptor extends AbstractDescriptor
+class SpSsoDescriptor extends SSODescriptor
 {
     /** @var bool */
     protected $wantAssertionsSigned = false;

@@ -1,11 +1,14 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\Assertion;
 
 use AerialShip\LightSaml\Error\InvalidSubjectException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Protocol;
+
 
 class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
 {
@@ -38,28 +41,28 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\NameID $nameID
+     * @param NameID $nameID
      */
     public function setNameID($nameID) {
         $this->nameID = $nameID;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\NameID
+     * @return NameID
      */
     public function getNameID() {
         return $this->nameID;
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\SubjectConfirmationData $data
+     * @param SubjectConfirmationData $data
      */
     public function setData($data) {
         $this->data = $data;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\SubjectConfirmationData
+     * @return SubjectConfirmationData
      */
     public function getData() {
         return $this->data;
@@ -88,11 +91,14 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
         $this->prepareForXml();
 
         $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElement('SubjectConfirmation', $this->getValue());
+        $result = $doc->createElement('SubjectConfirmation');
         $parent->appendChild($result);
 
         $result->setAttribute('Method', $this->getMethod());
 
+        $this->getNameID()->getAttribute($result);
+
+        $this->getData()->getXml($result);
 
         return $result;
     }
@@ -120,11 +126,11 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
             array(
                 array(
                     'node' => array('name'=>'NameID', 'ns'=>Protocol::NS_ASSERTION),
-                    'class' => '\AerialShip\LightSaml\Model\NameID'
+                    'class' => '\AerialShip\LightSaml\Model\Assertion\NameID'
                 ),
                 array(
                     'node' => array('name'=>'SubjectConfirmationData', 'ns'=>Protocol::NS_ASSERTION),
-                    'class' => '\AerialShip\LightSaml\Model\SubjectConfirmationData'
+                    'class' => '\AerialShip\LightSaml\Model\Assertion\SubjectConfirmationData'
                 )
             ),
             function ($obj) {

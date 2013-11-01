@@ -2,10 +2,10 @@
 
 namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
-
 use AerialShip\LightSaml\Binding;
-use AerialShip\LightSaml\Model\EntityDescriptor;
-use AerialShip\LightSaml\Model\KeyDescriptor;
+use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
+use AerialShip\LightSaml\Model\Metadata\KeyDescriptor;
+
 
 class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
 {

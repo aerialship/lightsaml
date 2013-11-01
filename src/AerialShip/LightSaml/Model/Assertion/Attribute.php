@@ -1,15 +1,20 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\Assertion;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
+
 
 class Attribute implements GetXmlInterface, LoadFromXmlInterface
 {
     /** @var string */
     protected $name;
+
+    /** @var string */
+    protected $friendlyName;
 
     /** @var string[] */
     protected $values = array();
@@ -28,6 +33,20 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
      */
     public function getName() {
         return $this->name;
+    }
+
+    /**
+     * @param string $friendlyName
+     */
+    public function setFriendlyName($friendlyName) {
+        $this->friendlyName = $friendlyName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFriendlyName() {
+        return $this->friendlyName;
     }
 
     /**

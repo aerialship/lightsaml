@@ -1,11 +1,14 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\Assertion;
 
 use AerialShip\LightSaml\Error\InvalidSubjectException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Protocol;
+
 
 class Subject implements GetXmlInterface, LoadFromXmlInterface
 {
@@ -22,28 +25,28 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
 
 
     /**
-     * @param \AerialShip\LightSaml\Model\NameID $nameID
+     * @param NameID $nameID
      */
     public function setNameID($nameID) {
         $this->nameID = $nameID;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\NameID
+     * @return NameID
      */
     public function getNameID() {
         return $this->nameID;
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\SubjectConfirmation $subjectConfirmation
+     * @param SubjectConfirmation $subjectConfirmation
      */
     public function addSubjectConfirmation($subjectConfirmation) {
         $this->subjectConfirmations[] = $subjectConfirmation;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\SubjectConfirmation[]
+     * @return SubjectConfirmation[]
      */
     public function getSubjectConfirmations() {
         return $this->subjectConfirmations;
@@ -98,11 +101,11 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
             array(
                 array(
                     'node' => array('name'=>'NameID', 'ns'=>Protocol::NS_ASSERTION),
-                    'class' => '\AerialShip\LightSaml\Model\NameID'
+                    'class' => '\AerialShip\LightSaml\Model\Assertion\NameID'
                 ),
                 array(
                     'node' => array('name'=>'SubjectConfirmation', 'ns'=>Protocol::NS_ASSERTION),
-                    'class' => '\AerialShip\LightSaml\Model\SubjectConfirmation'
+                    'class' => '\AerialShip\LightSaml\Model\Assertion\SubjectConfirmation'
                 )
             ),
             function ($object) {

@@ -1,11 +1,13 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\Assertion;
 
 use AerialShip\LightSaml\Error\InvalidNameIDException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
+
 
 class NameID implements GetXmlInterface, LoadFromXmlInterface
 {

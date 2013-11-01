@@ -3,13 +3,13 @@
 namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
 use AerialShip\LightSaml\Binding;
-use AerialShip\LightSaml\Model\EntityDescriptor;
-use AerialShip\LightSaml\Model\IdpSsoDescriptor;
-use AerialShip\LightSaml\Model\KeyDescriptor;
-use AerialShip\LightSaml\Model\Service\AssertionConsumerService;
-use AerialShip\LightSaml\Model\Service\SingleLogoutService;
-use AerialShip\LightSaml\Model\Service\SingleSignOnService;
-use AerialShip\LightSaml\Model\SpSsoDescriptor;
+use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
+use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
+use AerialShip\LightSaml\Model\Metadata\KeyDescriptor;
+use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
+use AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService;
+use AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService;
+use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 
@@ -134,7 +134,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
         $list = $xpath->query("/md:EntityDescriptor/md:IDPSSODescriptor");
         $this->assertEquals(1, $list->length);
-        /** @var $sp \DOMElement */
+        /** @var $idp \DOMElement */
         $idp = $list->item(0);
         $this->assertEquals(Protocol::NS_METADATA, $idp->namespaceURI);
         $this->assertTrue($idp->hasAttribute('protocolSupportEnumeration'));

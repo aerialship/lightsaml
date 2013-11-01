@@ -1,9 +1,12 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Metadata;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Protocol;
 
 class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
@@ -91,7 +94,7 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @return SpSsoDescriptor[]
      */
     public function getSpSsoDescriptors() {
-        $result = $this->getItemsByType('AerialShip\LightSaml\Model\SpSsoDescriptor');
+        $result = $this->getItemsByType('AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor');
         return $result;
     }
 
@@ -99,7 +102,7 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @return IdpSsoDescriptor[]
      */
     public function getIdpSsoDescriptors() {
-        $result = $this->getItemsByType('AerialShip\LightSaml\Model\IdpSsoDescriptor');
+        $result = $this->getItemsByType('AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor');
         return $result;
     }
 
@@ -139,11 +142,11 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
             array(
                 array(
                     'node' => array('name'=>'SPSSODescriptor', 'ns'=>Protocol::NS_METADATA),
-                    'class' => '\AerialShip\LightSaml\Model\SpSsoDescriptor'
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor'
                 ),
                 array(
                     'node' => array('name'=>'IDPSSODescriptor', 'ns'=>Protocol::NS_METADATA),
-                    'class' => '\AerialShip\LightSaml\Model\IdpSsoDescriptor'
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor'
                 ),
             ),
             function(LoadFromXmlInterface $obj) {

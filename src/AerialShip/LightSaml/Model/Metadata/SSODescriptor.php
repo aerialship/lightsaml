@@ -1,16 +1,20 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Metadata;
 
 use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
-use AerialShip\LightSaml\Model\Service\AbstractService;
-use AerialShip\LightSaml\Model\Service\AssertionConsumerService;
-use AerialShip\LightSaml\Model\Service\SingleLogoutService;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
+use AerialShip\LightSaml\Model\Metadata\Service\AbstractService;
+use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
+use AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService;
 use AerialShip\LightSaml\Protocol;
 
 
-abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterface
+abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
     use XmlChildrenLoaderTrait;
 
@@ -61,7 +65,7 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\Service\AbstractService[]
+     * @return AbstractService[]
      */
     public function getServices() {
         return $this->services;
@@ -133,7 +137,7 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
      * @return SingleLogoutService[]
      */
     public function findSingleLogoutServices($binding = null) {
-        return $this->findServices('AerialShip\LightSaml\Model\Service\SingleLogoutService', $binding);
+        return $this->findServices('AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService', $binding);
     }
 
     /**
@@ -141,7 +145,7 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
      * @return AssertionConsumerService[]
      */
     public function findAssertionConsumerServices($binding = null) {
-        return $this->findServices('AerialShip\LightSaml\Model\Service\AssertionConsumerService', $binding);
+        return $this->findServices('AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService', $binding);
     }
 
     /**
@@ -149,7 +153,7 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
      * @return Service\AbstractService[]
      */
     public function findSingleSignOnServices($binding = null) {
-        return $this->findServices('AerialShip\LightSaml\Model\Service\SingleSignOnService', $binding);
+        return $this->findServices('AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService', $binding);
     }
 
 
@@ -188,19 +192,19 @@ abstract class AbstractDescriptor implements GetXmlInterface, LoadFromXmlInterfa
             array(
                 array(
                     'node' => array('name'=>'SingleLogoutService', 'ns'=>Protocol::NS_METADATA),
-                    'class' => '\AerialShip\LightSaml\Model\Service\SingleLogoutService'
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService'
                 ),
                 array(
                     'node' => array('name'=>'SingleSignOnService', 'ns'=>Protocol::NS_METADATA),
-                    'class' => '\AerialShip\LightSaml\Model\Service\SingleSignOnService'
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService'
                 ),
                 array(
                     'node' => array('name'=>'AssertionConsumerService', 'ns'=>Protocol::NS_METADATA),
-                    'class' => '\AerialShip\LightSaml\Model\Service\AssertionConsumerService'
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService'
                 ),
                 array(
                     'node' => array('name'=>'KeyDescriptor', 'ns'=>Protocol::NS_METADATA),
-                    'class' => '\AerialShip\LightSaml\Model\KeyDescriptor'
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\KeyDescriptor'
                 ),
             ),
             function(LoadFromXmlInterface $obj) {

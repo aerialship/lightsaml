@@ -1,8 +1,10 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Metadata;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 

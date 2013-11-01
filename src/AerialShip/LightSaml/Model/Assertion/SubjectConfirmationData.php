@@ -1,11 +1,13 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\Assertion;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
+
 
 class SubjectConfirmationData implements GetXmlInterface, LoadFromXmlInterface
 {

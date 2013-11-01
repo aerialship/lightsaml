@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Tests\Signature;
 
-use AerialShip\LightSaml\Model\SignatureValidator;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 

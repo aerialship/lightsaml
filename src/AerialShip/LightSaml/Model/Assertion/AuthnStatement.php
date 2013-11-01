@@ -2,9 +2,10 @@
 
 namespace AerialShip\LightSaml\Model;
 
-
-use AerialShip\LightSaml\Error\InvalidAuthnStatementException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
+
 
 class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
 {

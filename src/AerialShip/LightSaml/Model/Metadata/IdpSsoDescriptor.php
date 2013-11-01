@@ -1,13 +1,12 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\Metadata;
 
 use AerialShip\LightSaml\Helper;
-use AerialShip\LightSaml\Model\Service\AbstractService;
-use AerialShip\LightSaml\Model\Service\SingleLogoutService;
+use AerialShip\LightSaml\Model\Metadata\Service\AbstractService;
 
-class IdpSsoDescriptor extends AbstractDescriptor
+
+class IdpSsoDescriptor extends SSODescriptor
 {
     public function addService(AbstractService $service) {
         $class = Helper::getClassNameOnly($service);

@@ -1,10 +1,14 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Protocol;
 
 use AerialShip\LightSaml\Error\InvalidRequestException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
+use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
 
@@ -178,18 +182,6 @@ class AuthnRequest implements GetXmlInterface, LoadFromXmlInterface
      */
     public function getVersion() {
         return $this->version;
-    }
-
-
-
-
-    function build(EntityDescriptor $sp, EntityDescriptor $idp) {
-        $arr = $sp->getSpSsoDescriptors();
-        if (empty($arr)) {
-            throw new \InvalidArgumentException('SP EntityDescripto has no SpSsoDescriptor');
-        }
-        $sp = $arr[0];
-
     }
 
 

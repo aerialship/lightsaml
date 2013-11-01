@@ -1,11 +1,11 @@
 <?php
 
-namespace AerialShip\LightSaml\Model\Service;
+namespace AerialShip\LightSaml\Model\Metadata\Service;
 
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\Error\InvalidXmlException;
-use AerialShip\LightSaml\Model\GetXmlInterface;
-use AerialShip\LightSaml\Model\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
 
 

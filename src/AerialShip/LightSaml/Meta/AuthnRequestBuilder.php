@@ -2,14 +2,16 @@
 
 namespace AerialShip\LightSaml\Meta;
 
-
 use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\Error\BuildRequestException;
 use AerialShip\LightSaml\Helper;
-use AerialShip\LightSaml\Model\AuthnRequest;
-use AerialShip\LightSaml\Model\EntityDescriptor;
-use AerialShip\LightSaml\Model\SpSsoDescriptor;
+use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
+use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
+use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
+use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
+use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
 use AerialShip\LightSaml\Protocol;
+
 
 class AuthnRequestBuilder
 {
@@ -38,28 +40,28 @@ class AuthnRequestBuilder
 
 
     /**
-     * @param \AerialShip\LightSaml\Model\EntityDescriptor $edIDP
+     * @param EntityDescriptor $edIDP
      */
     public function setEdIDP($edIDP) {
         $this->edIDP = $edIDP;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\EntityDescriptor
+     * @return EntityDescriptor
      */
     public function getEdIDP() {
         return $this->edIDP;
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\EntityDescriptor $edSP
+     * @param EntityDescriptor $edSP
      */
     public function setEdSP($edSP) {
         $this->edSP = $edSP;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\EntityDescriptor
+     * @return EntityDescriptor
      */
     public function getEdSP() {
         return $this->edSP;
@@ -67,8 +69,8 @@ class AuthnRequestBuilder
 
 
     /**
-     * @return \AerialShip\LightSaml\Model\SpSsoDescriptor
-     * @throws \AerialShip\LightSaml\Error\BuildRequestException
+     * @return SpSsoDescriptor
+     * @throws BuildRequestException
      */
     protected function getSpSsoDescriptor() {
         $ed = $this->getEdSP();
@@ -88,8 +90,8 @@ class AuthnRequestBuilder
 
 
     /**
-     * @return \AerialShip\LightSaml\Model\IdpSsoDescriptor
-     * @throws \AerialShip\LightSaml\Error\BuildRequestException
+     * @return IdpSsoDescriptor
+     * @throws BuildRequestException
      */
     protected function getIdpSsoDescriptor() {
         $ed = $this->getEdIDP();
@@ -110,8 +112,8 @@ class AuthnRequestBuilder
 
     /**
      * @param SpSsoDescriptor $sp
-     * @return \AerialShip\LightSaml\Model\Service\AssertionConsumerService
-     * @throws \AerialShip\LightSaml\Error\BuildRequestException
+     * @return AssertionConsumerService
+     * @throws BuildRequestException
      */
     protected function getAssertionConsumerService(SpSsoDescriptor $sp) {
         $arr = $sp->findAssertionConsumerServices();

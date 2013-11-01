@@ -1,6 +1,6 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Meta;
 
 
 trait XmlChildrenLoaderTrait
@@ -24,6 +24,7 @@ trait XmlChildrenLoaderTrait
      * @param \DOMElement $node
      * @param array $node2ClassMap
      * @param callable $itemCallback
+     * @param array $result
      * @return \DOMElement|null
      */
     private function doMapping(\DOMElement $node, array $node2ClassMap, \Closure $itemCallback, array &$result) {
@@ -67,8 +68,9 @@ trait XmlChildrenLoaderTrait
     /**
      * @param $meta
      * @param \DOMElement $node
-     * @return LoadFromXmlInterface
+     * @param array $result
      * @throws \InvalidArgumentException
+     * @return LoadFromXmlInterface
      */
     private function getObjectFromMetaClass($meta, \DOMElement $node, array &$result) {
         $class = @$meta['class'];

@@ -1,6 +1,6 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Meta;
 
 
 interface GetXmlInterface

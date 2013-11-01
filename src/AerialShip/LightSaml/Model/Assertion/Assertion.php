@@ -1,10 +1,14 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Assertion;
 
 use AerialShip\LightSaml\Error\InvalidAssertionException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Model\AuthnStatement;
+use AerialShip\LightSaml\Model\XmlDSig\Signature;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -80,7 +84,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\Attribute[]
+     * @return Attribute[]
      */
     public function getAllAttributes() {
         return $this->attributes;
@@ -122,14 +126,14 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\Subject $subject
+     * @param Subject $subject
      */
     public function setSubject($subject) {
         $this->subject = $subject;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\Subject
+     * @return Subject
      */
     public function getSubject() {
         return $this->subject;
@@ -161,7 +165,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
      */
     public function setNotOnOrAfter($notOnOrAfter) {
         if (is_string($notOnOrAfter)) {
-            $notBefore = Helper::parseSAMLTime($notOnOrAfter);
+            $notOnOrAfter = Helper::parseSAMLTime($notOnOrAfter);
         } else if (!is_int($notOnOrAfter) || $notOnOrAfter < 1) {
             throw new \InvalidArgumentException();
         }
@@ -176,14 +180,14 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\Signature|null $signature
+     * @param Signature|null $signature
      */
     public function setSignature($signature) {
         $this->signature = $signature;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\Signature|null
+     * @return Signature|null
      */
     public function getSignature() {
         return $this->signature;

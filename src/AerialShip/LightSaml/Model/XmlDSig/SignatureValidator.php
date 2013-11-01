@@ -1,12 +1,13 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
-
+namespace AerialShip\LightSaml\Model\XmlDSig;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Error\SecurityException;
+use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\KeyHelper;
+
 
 class SignatureValidator extends Signature implements LoadFromXmlInterface
 {

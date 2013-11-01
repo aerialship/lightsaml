@@ -1,10 +1,9 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\XmlDSig;
 
-use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Protocol;
-use AerialShip\LightSaml\Security\Key;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
