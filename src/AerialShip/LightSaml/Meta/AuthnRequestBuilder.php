@@ -143,7 +143,7 @@ class AuthnRequestBuilder
         $edIDP = $this->getEdIDP();
         $sp = $this->getSpSsoDescriptor();
 
-        $result->setId(Helper::generateID());
+        $result->setID(Helper::generateID());
         $result->setDestination($edIDP->getEntityID());
         $result->setIssueInstant(time());
 

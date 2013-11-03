@@ -37,7 +37,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $builder = new AuthnRequestBuilder($edSP, $edIDP, $spMeta);
         $request = $builder->build();
 
-        $id = $request->getId();
+        $id = $request->getID();
         $this->assertNotEmpty($id);
         $this->assertEquals(43, strlen($id));
 
@@ -64,7 +64,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
     }
 
     private function checkRequestObject(AuthnRequest $request, $id, $time) {
-        $this->assertEquals($id, $request->getId());
+        $this->assertEquals($id, $request->getID());
         $this->assertEquals('2.0', $request->getVersion());
         $this->assertEquals($this->destination, $request->getDestination());
         $this->assertEquals($this->ascURL, $request->getAssertionConsumerServiceURL());
