@@ -5,17 +5,22 @@ namespace AerialShip\LightSaml\Meta;
 
 trait XmlChildrenLoaderTrait
 {
+    protected function iterateChildrenElements(\DOMElement $xml, \Closure $elementCallback) {
+        for ($node = $xml->firstChild; $node !== NULL; $node = $node->nextSibling) {
+            if ($node instanceof \DOMElement) {
+                $elementCallback($node);
+            }
+        }
+    }
 
     protected function loadXmlChildren(\DOMElement $xml, array $node2ClassMap, \Closure $itemCallback) {
         $result = array();
-        for ($node = $xml->firstChild; $node !== NULL; $node = $node->nextSibling) {
-            if ($node instanceof \DOMElement) {
-                $recognized = $this->doMapping($node, $node2ClassMap, $itemCallback, $result);
-                if (!$recognized) {
-                    $result[] = $node;
-                }
-            } // if xml element
-        } // for children xml nodes
+        $this->iterateChildrenElements($xml, function(\DOMElement $node) use (&$result, $node2ClassMap, $itemCallback) {
+            $recognized = $this->doMapping($node, $node2ClassMap, $itemCallback, $result);
+            if (!$recognized) {
+                $result[] = $node;
+            }
+        });
         return $result;
     }
 

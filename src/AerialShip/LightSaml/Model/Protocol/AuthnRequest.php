@@ -8,7 +8,6 @@ use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
-use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
 
