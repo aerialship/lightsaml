@@ -7,8 +7,9 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
-use AerialShip\LightSaml\Model\AuthnStatement;
+use AerialShip\LightSaml\Model\Assertion\AuthnStatement;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -229,14 +230,14 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @param \AerialShip\LightSaml\Model\AuthnStatement $authnStatement
+     * @param AuthnStatement $authnStatement
      */
     public function setAuthnStatement(AuthnStatement $authnStatement) {
         $this->authnStatement = $authnStatement;
     }
 
     /**
-     * @return \AerialShip\LightSaml\Model\AuthnStatement
+     * @return AuthnStatement
      */
     public function getAuthnStatement() {
         return $this->authnStatement;
@@ -336,7 +337,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
         $xpath->registerNamespace('saml', Protocol::NS_ASSERTION);
 
         $result = array();
-
+        $signatureNode = null;
         /** @var $node \DOMElement */
         for ($node = $xml->firstChild; $node !== NULL; $node = $node->nextSibling) {
             if ($node->localName == 'Issuer') {
@@ -352,7 +353,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
                     $this->setNotOnOrAfter($node->getAttribute('NotOnOrAfter'));
                 }
                 /** @var $list \DOMElement[] */
-                $list = $xpath->query('./saml:AudienceRestriction/saml:Audience', $xml);
+                $list = $xpath->query('./saml:AudienceRestriction/saml:Audience', $node);
                 foreach ($list as $a) {
                     $this->addValidAudience($a->textContent);
                 }
@@ -367,9 +368,17 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
             } else if ($node->localName == 'AuthnStatement') {
                 $this->setAuthnStatement(new AuthnStatement());
                 $result = array_merge($result, $this->getAuthnStatement()->loadFromXml($node));
+            } else if ($node->localName == 'Signature' && $node->namespaceURI == Protocol::NS_XMLDSIG) {
+                $signatureNode = $node;
             } else {
                 $result[] = $node;
             }
+        }
+
+        if ($signatureNode) {
+            $signature = new SignatureValidator();
+            $signature->loadFromXml($signatureNode);
+            $this->setSignature($signature);
         }
 
         return $result;

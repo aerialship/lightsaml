@@ -95,7 +95,7 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
             throw new InvalidXmlException('Expected NameID element got '.$xml->localName);
         }
         $this->value = trim($xml->textContent);
-        foreach (array_values(self::$validAttributes) as $name) {
+        foreach (array_keys(self::$validAttributes) as $name) {
             if ($xml->hasAttribute($name)) {
                 $this->addAttribute($name, $xml->getAttribute($name));
             }

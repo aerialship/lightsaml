@@ -150,8 +150,8 @@ class SubjectConfirmationData implements GetXmlInterface, LoadFromXmlInterface
      * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
-        if ($xml->localName != 'SubjectConfirmation' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
-            throw new InvalidXmlException('Expected Subject element but got '.$xml->localName);
+        if ($xml->localName != 'SubjectConfirmationData' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
+            throw new InvalidXmlException('Expected SubjectConfirmationData element but got '.$xml->localName);
         }
 
         foreach (array('NotBefore', 'NotOnOrAfter', 'Recipient', 'InResponseTo', 'Address') as $name) {

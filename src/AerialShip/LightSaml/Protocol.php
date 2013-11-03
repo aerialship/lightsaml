@@ -13,11 +13,10 @@ final class Protocol
     const NS_XMLDSIG = 'http://www.w3.org/2000/09/xmldsig#';
     const NS_ASSERTION = 'urn:oasis:names:tc:SAML:2.0:assertion';
 
-    /** Password authentication context */
-    const AC_PASSWORD = 'urn:oasis:names:tc:SAML:2.0:ac:classes:Password';
-    /** Unspecified authentication context */
-    const AC_UNSPECIFIED = 'urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified';
 
+    const AC_PASSWORD = 'urn:oasis:names:tc:SAML:2.0:ac:classes:Password';
+    const AC_UNSPECIFIED = 'urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified';
+    const AC_WINDOWS = 'urn:federation:authentication:windows';
 
     const XMLSEC_TRANSFORM_ALGORITHM_ENVELOPED_SIGNATURE = 'http://www.w3.org/2000/09/xmldsig#enveloped-signature';
 
@@ -30,6 +29,9 @@ final class Protocol
     const STATUS_PARTIAL_LOGOUT = 'urn:oasis:names:tc:SAML:2.0:status:PartialLogout';
     const STATUS_PROXY_COUNT_EXCEEDED = 'urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded';
 
+
+    const CM_BEARER = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
+    const CM_HOK = 'urn:oasis:names:tc:SAML:2.0:cm:holder-of-key';
 
 
     protected function __construct() { }

@@ -1,14 +1,20 @@
 <?php
 
-namespace AerialShip\LightSaml\Model;
+namespace AerialShip\LightSaml\Model\Assertion;
 
+use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Protocol;
 
 
 class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
 {
+    use XmlRequiredAttributesTrait;
+
+
     /** @var int */
     protected $authnInstant;
 
@@ -16,7 +22,7 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
     protected $sessionIndex;
 
     /** @var string */
-    protected $authnContext = Protocol::AC_UNSPECIFIED;
+    protected $authnContext;
 
 
 
@@ -25,7 +31,7 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
      * @param string $authnContext
      */
     public function setAuthnContext($authnContext) {
-        $this->authnContext = $authnContext;
+        $this->authnContext = trim($authnContext);
     }
 
     /**
@@ -36,9 +42,15 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @param int $authnInstant
+     * @param int|string $authnInstant
+     * @throws \InvalidArgumentException
      */
     public function setAuthnInstant($authnInstant) {
+        if (is_string($authnInstant)) {
+            $authnInstant = Helper::parseSAMLTime($authnInstant);
+        } else if (!is_int($authnInstant) || $authnInstant < 1) {
+            throw new \InvalidArgumentException('Invalid AuthnInstant');
+        }
         $this->authnInstant = $authnInstant;
     }
 
@@ -96,10 +108,30 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMElement $xml
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
-        // TODO: Implement loadFromXml() method.
+        if ($xml->localName != 'AuthnStatement' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
+            throw new InvalidXmlException('Expected AuthnStatement element but got '.$xml->localName);
+        }
+
+        $this->checkRequiredAttributes($xml, array('AuthnInstant'));
+        $this->setAuthnInstant($xml->getAttribute('AuthnInstant'));
+
+        if ($xml->hasAttribute('SessionIndex')) {
+            $this->setSessionIndex($xml->getAttribute('SessionIndex'));
+        }
+
+        $xpath = new \DOMXPath($xml->ownerDocument);
+        $xpath->registerNamespace('saml', Protocol::NS_ASSERTION);
+        $xpath->registerNamespace('samlp', Protocol::SAML2);
+
+        $list = $xpath->query('./saml:AuthnContext/saml:AuthnContextClassRef', $xml);
+        if ($list->length) {
+            $this->setAuthnContext($list->item(0)->textContent);
+        }
+        return array();
     }
 
 

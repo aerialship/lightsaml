@@ -72,6 +72,10 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
     }
 
 
+    public function getFirstValue() {
+        return $this->values[0];
+    }
+
 
     /**
      * @param \DOMNode $parent
