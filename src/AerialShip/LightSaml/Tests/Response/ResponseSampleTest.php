@@ -105,7 +105,10 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
         $doc = new \DOMDocument();
         $doc->load(__DIR__.'/../../../../../resources/sample/EntityDescriptor/idp2-ed.xml');
         $ed->loadFromXml($doc->firstChild);
-        $k = $ed->getIdpSsoDescriptors()[0]->findKeyDescriptors('signing')[0];
+        $arrIdp = $ed->getIdpSsoDescriptors();
+        $idp = $arrIdp[0];
+        $arrKeys = $idp->findKeyDescriptors('signing');
+        $k = $arrKeys[0];
         $cert = $k->getCertificate();
         return $cert;
     }

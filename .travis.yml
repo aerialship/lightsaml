@@ -1,14 +1,14 @@
 language: php
 
 php:
-    - 5.2
     - 5.3
     - 5.4
     - 5.5
 
 before_script:
+    - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update
     - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install
-    
+
 script:
     phpunit
 
