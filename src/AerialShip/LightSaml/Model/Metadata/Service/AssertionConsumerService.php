@@ -2,7 +2,6 @@
 
 namespace AerialShip\LightSaml\Model\Metadata\Service;
 
-use AerialShip\LightSaml\Binding;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 
 
@@ -57,7 +56,6 @@ class AssertionConsumerService extends AbstractService
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         parent::loadFromXml($xml);
@@ -65,7 +63,6 @@ class AssertionConsumerService extends AbstractService
             throw new InvalidXmlException("Missing index attribute");
         }
         $this->setIndex($xml->getAttribute('index'));
-        return array();
     }
 
 

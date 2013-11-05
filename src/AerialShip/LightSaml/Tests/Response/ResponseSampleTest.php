@@ -25,8 +25,7 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
         $doc->load(__DIR__.'/../../../../../resources/sample/Response/response01.xml');
 
         $response = new Response();
-        $arrUnrecognized = $response->loadFromXml($doc->firstChild);
-        $this->assertEmpty($arrUnrecognized);
+        $response->loadFromXml($doc->firstChild);
 
         $this->assertEquals('_c34b38b9-5da6-4ee8-af49-2af20423d8f5', $response->getID());
         $this->assertEquals(Protocol::VERSION_2_0, $response->getVersion());

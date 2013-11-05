@@ -4,7 +4,7 @@ namespace AerialShip\LightSaml;
 
 use AerialShip\LightSaml\Error\InvalidBindingException;
 
-final class Binding
+final class Bindings
 {
     const SAML2_HTTP_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
     const SAML2_HTTP_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
@@ -26,7 +26,7 @@ final class Binding
 
     private static function getConstants() {
         if (self::$_constants === null) {
-            $ref = new \ReflectionClass('\AerialShip\LightSaml\Binding');
+            $ref = new \ReflectionClass('\AerialShip\LightSaml\Bindings');
             self::$_constants = $ref->getConstants();
         }
         return self::$_constants;
@@ -50,7 +50,7 @@ final class Binding
 
 
     /**
-     * @param string $binding   one of \AerialShip\LightSaml\Binding
+     * @param string $binding   one of \AerialShip\LightSaml\Bindings
      * @return string  one of \AerialShip\LightSaml\Protocol::* constants
      */
     static function getBindingProtocol($binding) {

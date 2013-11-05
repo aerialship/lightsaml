@@ -88,7 +88,6 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'NameID' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
@@ -100,7 +99,6 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
                 $this->addAttribute($name, $xml->getAttribute($name));
             }
         }
-        return array();
     }
 
 

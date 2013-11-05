@@ -3,7 +3,7 @@
 namespace AerialShip\LightSaml\Error;
 
 
-class InvalidSubjectException extends LightSamlBaseException
+class InvalidSubjectException extends InvalidMessageException
 {
 
 }

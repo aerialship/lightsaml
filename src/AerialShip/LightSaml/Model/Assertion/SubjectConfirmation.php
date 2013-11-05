@@ -107,7 +107,6 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
      * @param \DOMElement $xml
      * @throws \LogicException
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'SubjectConfirmation' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
@@ -121,7 +120,7 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
 
 
         $this->nameID = null;
-        $result = $this->loadXmlChildren(
+        $this->loadXmlChildren(
             $xml,
             array(
                 array(
@@ -146,8 +145,6 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
                 }
             }
         );
-
-        return $result;
     }
 
 }

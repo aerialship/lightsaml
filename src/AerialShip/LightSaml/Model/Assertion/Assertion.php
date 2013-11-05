@@ -318,7 +318,6 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'Assertion' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
@@ -336,7 +335,6 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
         $xpath = new \DOMXPath($xml instanceof \DOMDocument ? $xml : $xml->ownerDocument);
         $xpath->registerNamespace('saml', Protocol::NS_ASSERTION);
 
-        $result = array();
         $signatureNode = null;
         /** @var $node \DOMElement */
         for ($node = $xml->firstChild; $node !== NULL; $node = $node->nextSibling) {
@@ -344,7 +342,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
                 $this->setIssuer(trim($node->textContent));
             } else if ($node->localName == 'Subject') {
                 $this->setSubject(new Subject());
-                $result = array_merge($result, $this->getSubject()->loadFromXml($node));
+                $this->getSubject()->loadFromXml($node);
             } else if ($node->localName == 'Conditions') {
                 if ($node->hasAttribute('NotBefore')) {
                     $this->setNotBefore($node->getAttribute('NotBefore'));
@@ -367,11 +365,9 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
                 }
             } else if ($node->localName == 'AuthnStatement') {
                 $this->setAuthnStatement(new AuthnStatement());
-                $result = array_merge($result, $this->getAuthnStatement()->loadFromXml($node));
+                $this->getAuthnStatement()->loadFromXml($node);
             } else if ($node->localName == 'Signature' && $node->namespaceURI == Protocol::NS_XMLDSIG) {
                 $signatureNode = $node;
-            } else {
-                $result[] = $node;
             }
         }
 
@@ -380,8 +376,6 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
             $signature->loadFromXml($signatureNode);
             $this->setSignature($signature);
         }
-
-        return $result;
     }
 
 

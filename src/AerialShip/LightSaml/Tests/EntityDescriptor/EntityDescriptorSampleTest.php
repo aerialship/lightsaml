@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
-use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\KeyDescriptor;
 
@@ -46,26 +46,26 @@ class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($idp->findSingleLogoutServices()));
 
-        $arr = $idp->findSingleLogoutServices(Binding::SAML2_HTTP_REDIRECT);
+        $arr = $idp->findSingleLogoutServices(Bindings::SAML2_HTTP_REDIRECT);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
 
-        $arr = $idp->findSingleLogoutServices(Binding::SAML2_HTTP_POST);
+        $arr = $idp->findSingleLogoutServices(Bindings::SAML2_HTTP_POST);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_POST, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_POST, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
 
         $this->assertEquals(2, count($idp->findSingleSignOnServices()));
 
-        $arr = $idp->findSingleLogoutServices(Binding::SAML2_HTTP_POST);
+        $arr = $idp->findSingleLogoutServices(Bindings::SAML2_HTTP_POST);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_POST, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_POST, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
 
-        $arr = $idp->findSingleLogoutServices(Binding::SAML2_HTTP_REDIRECT);
+        $arr = $idp->findSingleLogoutServices(Bindings::SAML2_HTTP_REDIRECT);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
     }
 
@@ -94,34 +94,34 @@ class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($sp->findSingleLogoutServices()));
 
-        $arr = $sp->findSingleLogoutServices(Binding::SAML2_HTTP_REDIRECT);
+        $arr = $sp->findSingleLogoutServices(Bindings::SAML2_HTTP_REDIRECT);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
 
-        $arr = $sp->findSingleLogoutServices(Binding::SAML2_HTTP_POST);
+        $arr = $sp->findSingleLogoutServices(Bindings::SAML2_HTTP_POST);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_POST, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_POST, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
 
 
         $this->assertEquals(3, count($sp->findAssertionConsumerServices()));
 
-        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_POST);
+        $arr = $sp->findAssertionConsumerServices(Bindings::SAML2_HTTP_POST);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_POST, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_POST, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
         $this->assertEquals(0, $arr[0]->getIndex());
 
-        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_ARTIFACT);
+        $arr = $sp->findAssertionConsumerServices(Bindings::SAML2_HTTP_ARTIFACT);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_ARTIFACT, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_ARTIFACT, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
         $this->assertEquals(1, $arr[0]->getIndex());
 
-        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_REDIRECT);
+        $arr = $sp->findAssertionConsumerServices(Bindings::SAML2_HTTP_REDIRECT);
         $this->assertEquals(1, count($arr));
-        $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_REDIRECT, $arr[0]->getBinding());
         $this->assertEquals($url, $arr[0]->getLocation());
         $this->assertEquals(2, $arr[0]->getIndex());
     }

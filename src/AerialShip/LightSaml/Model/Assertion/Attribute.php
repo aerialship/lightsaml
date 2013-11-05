@@ -99,7 +99,6 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'Attribute' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
@@ -117,8 +116,6 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
             }
             $this->addValue($node->textContent);
         }
-
-        return array();
     }
 
 

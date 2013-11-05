@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
-use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\KeyDescriptor;
@@ -28,9 +28,9 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
             array(
                 new SpSsoDescriptor(
                     array(
-                        new SingleLogoutService(Binding::SAML2_HTTP_REDIRECT, $locationLogout),
-                        new AssertionConsumerService(Binding::SAML2_HTTP_POST, $locationLogin, 0),
-                        new AssertionConsumerService(Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1)
+                        new SingleLogoutService(Bindings::SAML2_HTTP_REDIRECT, $locationLogout),
+                        new AssertionConsumerService(Bindings::SAML2_HTTP_POST, $locationLogin, 0),
+                        new AssertionConsumerService(Bindings::SAML2_HTTP_ARTIFACT, $locationLogin, 1)
                     ),
                     array(
                         new KeyDescriptor(KeyDescriptor::USE_SIGNING, $certificate),
@@ -39,10 +39,10 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
                 ),
                 new IdpSsoDescriptor(
                     array(
-                        new SingleLogoutService(Binding::SAML2_HTTP_REDIRECT, $locationLogout),
-                        new SingleLogoutService(Binding::SAML2_HTTP_POST, $locationLogout),
-                        new SingleSignOnService(Binding::SAML2_HTTP_REDIRECT, $locationLogin),
-                        new SingleSignOnService(Binding::SAML2_HTTP_POST, $locationLogin)
+                        new SingleLogoutService(Bindings::SAML2_HTTP_REDIRECT, $locationLogout),
+                        new SingleLogoutService(Bindings::SAML2_HTTP_POST, $locationLogout),
+                        new SingleSignOnService(Bindings::SAML2_HTTP_REDIRECT, $locationLogin),
+                        new SingleSignOnService(Bindings::SAML2_HTTP_POST, $locationLogin)
                     ),
                     array(
                         new KeyDescriptor(KeyDescriptor::USE_SIGNING, $certificate),
@@ -118,15 +118,15 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
         $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:SingleLogoutService');
         $this->assertEquals(1, $list->length);
-        $this->checkSpItemXml($list->item(0), 'SingleLogoutService', Binding::SAML2_HTTP_REDIRECT, $locationLogout, null);
+        $this->checkSpItemXml($list->item(0), 'SingleLogoutService', Bindings::SAML2_HTTP_REDIRECT, $locationLogout, null);
 
         $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService[@index="0"]');
         $this->assertEquals(1, $list->length);
-        $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Binding::SAML2_HTTP_POST, $locationLogin, 0);
+        $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Bindings::SAML2_HTTP_POST, $locationLogin, 0);
 
         $list = $xpath->query('/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService[@index="1"]');
         $this->assertEquals(1, $list->length);
-        $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Binding::SAML2_HTTP_ARTIFACT, $locationLogin, 1);
+        $this->checkSpItemXml($list->item(0), 'AssertionConsumerService', Bindings::SAML2_HTTP_ARTIFACT, $locationLogin, 1);
 
 
 
@@ -163,13 +163,13 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
         $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleLogoutService');
         $this->assertEquals(2, $list->length);
-        $this->checkSpItemXml($list->item(0), 'SingleLogoutService', Binding::SAML2_HTTP_REDIRECT, $locationLogout, null);
-        $this->checkSpItemXml($list->item(1), 'SingleLogoutService', Binding::SAML2_HTTP_POST, $locationLogout, null);
+        $this->checkSpItemXml($list->item(0), 'SingleLogoutService', Bindings::SAML2_HTTP_REDIRECT, $locationLogout, null);
+        $this->checkSpItemXml($list->item(1), 'SingleLogoutService', Bindings::SAML2_HTTP_POST, $locationLogout, null);
 
         $list = $xpath->query('/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleSignOnService');
         $this->assertEquals(2, $list->length);
-        $this->checkSpItemXml($list->item(0), 'SingleSignOnService', Binding::SAML2_HTTP_REDIRECT, $locationLogin, null);
-        $this->checkSpItemXml($list->item(1), 'SingleSignOnService', Binding::SAML2_HTTP_POST, $locationLogin, null);
+        $this->checkSpItemXml($list->item(0), 'SingleSignOnService', Bindings::SAML2_HTTP_REDIRECT, $locationLogin, null);
+        $this->checkSpItemXml($list->item(1), 'SingleSignOnService', Bindings::SAML2_HTTP_POST, $locationLogin, null);
     }
 
 
@@ -192,15 +192,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
 
     private function checkDeserializaton(\DOMElement $root, $entityID, $locationLogout, $locationLogin, X509Certificate $certificate) {
         $ed = new EntityDescriptor();
-        $arr = $ed->loadFromXml($root);
-        $this->assertTrue(is_array($arr));
-        if (($count = count($arr))>0) {
-            $arrNodeNames = array();
-            foreach ($arr as $n) {
-                $arrNodeNames[$n->localName] = $n->localName;
-            }
-            $this->fail("There are $count unrecognized xml nodes: ".implode(', ', $arrNodeNames));
-        }
+        $ed->loadFromXml($root);
 
         $this->assertEquals($entityID, $ed->getEntityID());
 
@@ -231,25 +223,25 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($arrLogout);
         $logout = $arrLogout[0];
         $this->assertNotNull($logout);
-        $this->assertEquals(Binding::SAML2_HTTP_REDIRECT, $logout->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_REDIRECT, $logout->getBinding());
         $this->assertEquals($locationLogout, $logout->getLocation());
 
         $arr = $sp->findAssertionConsumerServices();
         $this->assertEquals(2, count($arr));
 
-        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_POST);
+        $arr = $sp->findAssertionConsumerServices(Bindings::SAML2_HTTP_POST);
         $this->assertNotEmpty($arr);
         $as1 = $arr[0];
         $this->assertNotNull($as1);
-        $this->assertEquals(Binding::SAML2_HTTP_POST, $as1->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_POST, $as1->getBinding());
         $this->assertEquals($locationLogin, $as1->getLocation());
         $this->assertEquals(0, $as1->getIndex());
 
-        $arr = $sp->findAssertionConsumerServices(Binding::SAML2_HTTP_ARTIFACT);
+        $arr = $sp->findAssertionConsumerServices(Bindings::SAML2_HTTP_ARTIFACT);
         $this->assertNotEmpty($arr);
         $as2 = $arr[0];
         $this->assertNotNull($as2);
-        $this->assertEquals(Binding::SAML2_HTTP_ARTIFACT, $as2->getBinding());
+        $this->assertEquals(Bindings::SAML2_HTTP_ARTIFACT, $as2->getBinding());
         $this->assertEquals($locationLogin, $as2->getLocation());
         $this->assertEquals(1, $as2->getIndex());
 

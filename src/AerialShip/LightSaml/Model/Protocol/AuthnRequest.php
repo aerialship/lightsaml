@@ -145,7 +145,6 @@ class AuthnRequest extends AbstractRequest
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         $result = parent::loadFromXml($xml);
@@ -159,11 +158,8 @@ class AuthnRequest extends AbstractRequest
                 $this->checkRequiredAttributes($node, array('Format', 'AllowCreate'));
                 $this->setNameIdPolicyFormat($node->getAttribute('Format'));
                 $this->setNameIdPolicyAllowCreate($node->getAttribute('AllowCreate') == 'true');
-            } else {
-                $result[] = $node;
             }
         });
-        return $result;
     }
 
 }

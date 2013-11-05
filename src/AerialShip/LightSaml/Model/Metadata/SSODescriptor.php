@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Model\Metadata;
 
-use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
@@ -87,7 +87,7 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
     public function getSupportedProtocols() {
         $arr = array();
         foreach ($this->getServices() as $service) {
-            $protocol = Binding::getBindingProtocol($service->getBinding());
+            $protocol = Bindings::getBindingProtocol($service->getBinding());
             $arr[$protocol] = $protocol;
         }
         return array_values($arr);
@@ -181,13 +181,17 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
     }
 
 
+    /**
+     * @param \DOMElement $xml
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     */
     function loadFromXml(\DOMElement $xml) {
         $name = $this->getXmlNodeName();
         if ($xml->localName != $name || $xml->namespaceURI != Protocol::NS_METADATA) {
             throw new InvalidXmlException("Expected $name element and ".Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
 
-        $result = $this->loadXmlChildren(
+        $this->loadXmlChildren(
             $xml,
             array(
                 array(
@@ -217,6 +221,5 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
                 }
             }
         );
-        return $result;
     }
 }

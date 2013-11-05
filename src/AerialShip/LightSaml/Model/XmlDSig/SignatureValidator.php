@@ -22,7 +22,6 @@ class SignatureValidator extends Signature implements LoadFromXmlInterface
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\SecurityException
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'Signature' || $xml->namespaceURI != Protocol::NS_XMLDSIG) {
@@ -46,17 +45,6 @@ class SignatureValidator extends Signature implements LoadFromXmlInterface
             $certData = str_replace(array("\r", "\n", "\t", ' '), '', $certData);
             $this->certificates[] = $certData;
         }
-
-
-
-
-        // output: xmlseclib signature + certificates from xml
-
-        // get key from metadata as $pem where key type must be XMLSecurityKey::RSA_SHA1
-//        $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'public'));
-//        $key->loadKey($pem);
-
-        // SAML2/Utils.php validateSignature($info[], $key)
     }
 
 

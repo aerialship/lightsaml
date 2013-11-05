@@ -3,7 +3,7 @@
 namespace AerialShip\LightSaml\Error;
 
 
-class InvalidAuthnStatementException extends LightSamlBaseException
+class InvalidAuthnStatementException extends InvalidMessageException
 {
 
 }

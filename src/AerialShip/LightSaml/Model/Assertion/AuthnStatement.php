@@ -109,7 +109,6 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'AuthnStatement' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
@@ -131,7 +130,6 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
         if ($list->length) {
             $this->setAuthnContext($list->item(0)->textContent);
         }
-        return array();
     }
 
 

@@ -22,10 +22,9 @@ class SingleSignOnService extends AbstractService
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
-        return parent::loadFromXml($xml);
+        parent::loadFromXml($xml);
     }
 
 

@@ -95,15 +95,13 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'Status' || $xml->namespaceURI != Protocol::SAML2) {
             throw new InvalidXmlException('Expected Status element but got '.$xml->localName);
         }
 
-        $result = array();
-        $this->iterateChildrenElements($xml, function(\DOMElement $node) use (&$result) {
+        $this->iterateChildrenElements($xml, function(\DOMElement $node) {
             if ($node->localName == 'StatusCode' && $node->namespaceURI == Protocol::SAML2) {
                 if (!$node->hasAttribute('Value')) {
                     throw new InvalidXmlException('StatusCode element missing Value attribute');
@@ -111,16 +109,12 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
                 $this->setCode($node->getAttribute('Value'));
             } else if ($node->localName == 'StatusMessage' && $node->namespaceURI == Protocol::SAML2) {
                 $this->setMessage($node->textContent);
-            } else {
-                $result[] = $node;
             }
         });
 
         if (!$this->getCode()) {
             throw new InvalidXmlException('Missing Status node');
         }
-
-        return $result;
     }
 
 }

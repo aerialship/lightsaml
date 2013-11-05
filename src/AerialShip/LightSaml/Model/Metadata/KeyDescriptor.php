@@ -82,7 +82,6 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         if ($xml->localName != 'KeyDescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
@@ -123,8 +122,6 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
 
         $this->certificate = new X509Certificate();
         $this->certificate->setData($certificateData);
-        return array();
-
     }
 
 

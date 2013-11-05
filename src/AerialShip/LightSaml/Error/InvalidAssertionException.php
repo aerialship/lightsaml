@@ -3,7 +3,7 @@
 namespace AerialShip\LightSaml\Error;
 
 
-class InvalidAssertionException extends LightSamlBaseException
+class InvalidAssertionException extends InvalidMessageException
 {
 
 }

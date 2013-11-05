@@ -16,7 +16,7 @@ trait XmlChildrenLoaderTrait
     protected function loadXmlChildren(\DOMElement $xml, array $node2ClassMap, \Closure $itemCallback) {
         $result = array();
         $this->iterateChildrenElements($xml, function(\DOMElement $node) use (&$result, $node2ClassMap, $itemCallback) {
-            $recognized = $this->doMapping($node, $node2ClassMap, $itemCallback, $result);
+            $recognized = $this->doMapping($node, $node2ClassMap, $itemCallback);
             if (!$recognized) {
                 $result[] = $node;
             }
@@ -29,10 +29,9 @@ trait XmlChildrenLoaderTrait
      * @param \DOMElement $node
      * @param array $node2ClassMap
      * @param callable $itemCallback
-     * @param array $result
      * @return \DOMElement|null
      */
-    private function doMapping(\DOMElement $node, array $node2ClassMap, \Closure $itemCallback, array &$result) {
+    private function doMapping(\DOMElement $node, array $node2ClassMap, \Closure $itemCallback) {
         $recognized = false;
         foreach ($node2ClassMap as $meta) {
             if (!$meta) continue;
@@ -40,7 +39,7 @@ trait XmlChildrenLoaderTrait
             if ($nodeName == $node->localName
                 && (!$nodeNS || $nodeNS == $node->namespaceURI)
             ) {
-                $obj = $this->getObjectFromMetaClass($meta, $node, $result);
+                $obj = $this->getObjectFromMetaClass($meta, $node);
                 $itemCallback($obj);
                 $recognized = true;
                 break;
@@ -73,18 +72,17 @@ trait XmlChildrenLoaderTrait
     /**
      * @param $meta
      * @param \DOMElement $node
-     * @param array $result
      * @throws \InvalidArgumentException
      * @return LoadFromXmlInterface
      */
-    private function getObjectFromMetaClass($meta, \DOMElement $node, array &$result) {
+    private function getObjectFromMetaClass($meta, \DOMElement $node) {
         $class = @$meta['class'];
         if (!$class) {
             throw new \InvalidArgumentException('Missing class meta');
         }
         $obj = new $class();
         if ($obj instanceof LoadFromXmlInterface) {
-            $result = array_merge($result, $obj->loadFromXml($node));
+            $obj->loadFromXml($node);
         } else {
             throw new \InvalidArgumentException("Class $class must implement LoadFromXmlInterface");
         }

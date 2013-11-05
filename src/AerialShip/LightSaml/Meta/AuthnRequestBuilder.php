@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Meta;
 
-use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Error\BuildRequestException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
@@ -122,7 +122,7 @@ class AuthnRequestBuilder
         }
         $result = null;
         foreach ($arr as $asc) {
-            if (Binding::getBindingProtocol($asc->getBinding()) == Protocol::SAML2) {
+            if (Bindings::getBindingProtocol($asc->getBinding()) == Protocol::SAML2) {
                 $result = $asc;
                 break;
             }

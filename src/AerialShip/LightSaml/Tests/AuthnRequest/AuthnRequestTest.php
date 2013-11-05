@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Tests\AuthnRequest;
 
-use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Meta\AuthnRequestBuilder;
 use AerialShip\LightSaml\Meta\SpMeta;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
@@ -16,7 +16,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
     private $issuer = 'https://mt.evo.team/simplesaml/module.php/saml/sp/metadata.php/default-sp';
     private $destination = 'https://B1.bead.loc/adfs/services/trust';
     private $ascURL = 'https://mt.evo.team/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp';
-    private $protocolBinding = Binding::SAML2_HTTP_POST;
+    private $protocolBinding = Bindings::SAML2_HTTP_POST;
     private $nameIDPolicyFormat = NameIDPolicy::PERSISTENT;
 
 

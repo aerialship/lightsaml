@@ -54,12 +54,15 @@ class SpSsoDescriptor extends SSODescriptor
         return $result;
     }
 
+
+    /**
+     * @param \DOMElement $xml
+     */
     function loadFromXml(\DOMElement $xml) {
-        $result = parent::loadFromXml($xml);
+        parent::loadFromXml($xml);
         if ($xml->hasAttribute('WantAssertionsSigned')) {
             $this->setWantAssertionsSigned($xml->getAttribute('WantAssertionsSigned'));
         }
-        return $result;
     }
 
 

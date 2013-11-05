@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Model\Metadata\Service;
 
-use AerialShip\LightSaml\Binding;
+use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
@@ -11,7 +11,7 @@ use AerialShip\LightSaml\Protocol;
 
 abstract class AbstractService implements GetXmlInterface, LoadFromXmlInterface
 {
-    /** @var string   one of \AerialShip\LightSaml\Binding constants */
+    /** @var string   one of \AerialShip\LightSaml\Bindings constants */
     protected $binding;
 
     /** @var string */
@@ -35,7 +35,7 @@ abstract class AbstractService implements GetXmlInterface, LoadFromXmlInterface
      * @param string $binding
      */
     public function setBinding($binding) {
-        Binding::validate($binding);
+        Bindings::validate($binding);
         $this->binding = $binding;
     }
 
@@ -81,7 +81,6 @@ abstract class AbstractService implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
         $name = $this->getXmlNodeName();
@@ -96,6 +95,5 @@ abstract class AbstractService implements GetXmlInterface, LoadFromXmlInterface
         }
         $this->setBinding($xml->getAttribute('Binding'));
         $this->setLocation($xml->getAttribute('Location'));
-        return array();
     }
 }

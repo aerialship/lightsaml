@@ -72,23 +72,19 @@ class Response extends StatusResponse
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
-        $result = parent::loadFromXml($xml);
-        $this->iterateChildrenElements($xml, function(\DOMElement $node) use (&$result) {
+        parent::loadFromXml($xml);
+        $this->iterateChildrenElements($xml, function(\DOMElement $node) {
             if ($node->localName == 'Assertion' && $node->namespaceURI == Protocol::NS_ASSERTION) {
                 $assertion = new Assertion();
-                $result = array_merge($result, $assertion->loadFromXml($node));
+                $assertion->loadFromXml($node);
                 $this->addAssertion($assertion);
-            } else if ($node->localName != 'Issuer' && $node->localName != 'Status') {
-                $result[] = $node;
             }
         });
         if (!$this->getAllAssertions()) {
             throw new InvalidXmlException('Missing Assertion element');
         }
-        return $result;
     }
 
 

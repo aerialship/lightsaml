@@ -124,7 +124,6 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMElement $xml
-     * @return array|\DOMElement[]
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      * @throws \Exception
      */
@@ -137,7 +136,7 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
         }
         $this->setEntityID($xml->getAttribute('entityID'));
 
-        $result = $this->loadXmlChildren(
+        $this->loadXmlChildren(
             $xml,
             array(
                 array(
@@ -153,7 +152,6 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
                 $this->addItem($obj);
             }
         );
-        return $result;
     }
 
 

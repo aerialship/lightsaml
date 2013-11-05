@@ -2,9 +2,6 @@
 
 namespace AerialShip\LightSaml\Model\Metadata\Service;
 
-use AerialShip\LightSaml\Binding;
-use AerialShip\LightSaml\Error\InvalidXmlException;
-
 
 class SingleLogoutService extends AbstractService
 {
@@ -20,10 +17,9 @@ class SingleLogoutService extends AbstractService
     /**
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     * @return \DOMElement[]
      */
     function loadFromXml(\DOMElement $xml) {
-        return parent::loadFromXml($xml);
+        parent::loadFromXml($xml);
     }
 
 
