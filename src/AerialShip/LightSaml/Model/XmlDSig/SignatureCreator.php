@@ -3,6 +3,7 @@
 namespace AerialShip\LightSaml\Model\XmlDSig;
 
 use AerialShip\LightSaml\Meta\GetXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 
@@ -62,17 +63,14 @@ class SignatureCreator extends Signature implements GetXmlInterface
     }
 
 
-
-
-
-
-
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMNode
      */
-    function getXml(\DOMNode $parent) {
+    function getXml(\DOMNode $parent, SerializationContext $context) {
         $objXMLSecDSig = new \XMLSecurityDSig();
+        $objXMLSecDSig->setCanonicalMethod($this->getCanonicalMethod());
         $objXMLSecDSig->setCanonicalMethod($this->getCanonicalMethod());
         $key = $this->getXmlSecurityKey();
         switch ($key->type) {

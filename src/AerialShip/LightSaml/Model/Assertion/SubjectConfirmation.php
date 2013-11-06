@@ -6,6 +6,7 @@ use AerialShip\LightSaml\Error\InvalidSubjectException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Protocol;
 
@@ -85,20 +86,20 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
+    function getXml(\DOMNode $parent, SerializationContext $context) {
         $this->prepareForXml();
 
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElement('SubjectConfirmation');
+        $result = $context->getDocument()->createElement('SubjectConfirmation');
         $parent->appendChild($result);
 
         $result->setAttribute('Method', $this->getMethod());
 
         $this->getNameID()->getAttribute($result);
 
-        $this->getData()->getXml($result);
+        $this->getData()->getXml($result, $context);
 
         return $result;
     }

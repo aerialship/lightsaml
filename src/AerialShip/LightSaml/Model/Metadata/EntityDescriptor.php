@@ -6,6 +6,7 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Protocol;
 
@@ -108,16 +109,15 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        /** @var $doc \DOMDocument */
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElementNS(Protocol::NS_METADATA, 'md:EntityDescriptor');
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $context->getDocument()->createElementNS(Protocol::NS_METADATA, 'md:EntityDescriptor');
         $result->setAttribute('entityID', $this->getEntityID());
         $parent->appendChild($result);
         foreach ($this->items as $item) {
-            $item->getXml($result);
+            $item->getXml($result, $context);
         }
         return $result;
     }
@@ -155,37 +155,5 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
     }
 
 
-    /*
-
-        public function _loadXml(\DOMElement $root) {
-            $result = array();
-            if ($root->namespaceURI != Protocol::NS_METADATA)
-                throw new InvalidXmlException('Expected namespace '.Protocol::NS_METADATA." found $root->namespaceURI");
-            if ($root->localName != 'EntityDescriptor')
-                throw new InvalidXmlException("Expected element EntityDescriptor found $root->localName");
-            if (!$root->hasAttribute('entityID'))
-                throw new InvalidXmlException("Missing element entityID");
-            $this->entityID = $root->getAttribute('entityID');
-
-            for ($node = $root->firstChild; $node !== NULL; $node = $node->nextSibling) {
-                if ($node->namespaceURI != Protocol::NS_METADATA) {
-                    continue;
-                }
-                $child = null;
-                switch ($node->localName) {
-                    case 'SPSSODescriptor':
-                        $child = new SpSsoDescriptor();
-                        break;
-                    default:
-                        $result[] = $node;
-                }
-                if ($child) {
-                    $result = array_merge($result, $child->loadXml($node));
-                    $this->addItem($child);
-                }
-            }
-            return $result;
-        }
-    */
 
 }

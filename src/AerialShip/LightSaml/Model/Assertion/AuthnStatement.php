@@ -6,6 +6,7 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Protocol;
 
@@ -86,11 +87,11 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElement('AuthnStatement');
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $context->getDocument()->createElement('AuthnStatement');
         $parent->appendChild($result);
 
         $result->setAttribute('AuthnInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getAuthnInstant()));
@@ -98,9 +99,9 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
             $result->setAttribute('SessionIndex', $this->getSessionIndex());
         }
 
-        $authnContextNode = $doc->createElement('AuthnContext');
+        $authnContextNode = $context->getDocument()->createElement('AuthnContext');
         $result->appendChild($authnContextNode);
-        $refNode = $doc->createElement('AuthnContextClassRef', $this->getAuthnContext());
+        $refNode = $context->getDocument()->createElement('AuthnContextClassRef', $this->getAuthnContext());
         $authnContextNode->appendChild($refNode);
 
         return $result;

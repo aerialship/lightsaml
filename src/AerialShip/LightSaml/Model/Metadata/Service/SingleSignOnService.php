@@ -2,6 +2,8 @@
 
 namespace AerialShip\LightSaml\Model\Metadata\Service;
 
+use AerialShip\LightSaml\Meta\SerializationContext;
+
 
 class SingleSignOnService extends AbstractService
 {
@@ -12,10 +14,11 @@ class SingleSignOnService extends AbstractService
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMNode
      */
-    function getXml(\DOMNode $parent) {
-        $result = parent::getXml($parent);
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = parent::getXml($parent, $context);
         return $result;
     }
 

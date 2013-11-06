@@ -2,14 +2,13 @@
 
 namespace AerialShip\LightSaml\Tests\Response;
 
-
 use AerialShip\LightSaml\ClaimTypes;
-use AerialShip\LightSaml\Model\Assertion\NameID;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Protocol\Response;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
+
 
 class ResponseSampleTest extends \PHPUnit_Framework_TestCase
 {

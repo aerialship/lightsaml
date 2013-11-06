@@ -2,6 +2,7 @@
 
 namespace AerialShip\LightSaml\Tests\Signature;
 
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\Protocol;
@@ -67,7 +68,8 @@ class SignatureCreatorValidatorTest extends \PHPUnit_Framework_TestCase
         $signatureCreator->setCertificate($certificate);
         $signatureCreator->setXmlSecurityKey($key);
 
-        $signatureCreator->getXml($root);
+        $context = new SerializationContext($doc);
+        $signatureCreator->getXml($root, $context);
 
         $xml = $doc->saveXML();
 

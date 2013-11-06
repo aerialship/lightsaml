@@ -4,6 +4,7 @@ namespace AerialShip\LightSaml\Tests\AuthnRequest;
 
 use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Meta\AuthnRequestBuilder;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\SpMeta;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
@@ -30,6 +31,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $doc->load(__DIR__.'/../../../../../resources/sample/EntityDescriptor/sp-ed2.xml');
         $edSP = new EntityDescriptor();
         $edSP->loadFromXml($doc->firstChild);
+        unset($doc);
 
         $spMeta = new SpMeta();
         $spMeta->setNameIdFormat(NameIDPolicy::PERSISTENT);
@@ -48,19 +50,19 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $this->checkRequestObject($request, $id, $time);
 
         // serialize to XML Document and check xml
-        $doc = new \DOMDocument();
-        $request->getXml($doc);
-        $this->checkRequestXml($doc, $id);
+        $context = new SerializationContext();
+        $request->getXml($context->getDocument(), $context);
+        $this->checkRequestXml($context->getDocument(), $id);
 
         // Deserialize new request out of xml
         $request = new AuthnRequest();
-        $request->loadFromXml($doc->firstChild);
+        $request->loadFromXml($context->getDocument()->firstChild);
         $this->checkRequestObject($request, $id, $time);
 
         // serialize again to xml and check xml
-        $doc = new \DOMDocument();
-        $request->getXml($doc);
-        $this->checkRequestXml($doc, $id);
+        $context = new SerializationContext();
+        $request->getXml($context->getDocument(), $context);
+        $this->checkRequestXml($context->getDocument(), $id);
     }
 
     private function checkRequestObject(AuthnRequest $request, $id, $time) {

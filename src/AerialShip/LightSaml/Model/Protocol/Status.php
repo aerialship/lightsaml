@@ -5,6 +5,7 @@ namespace AerialShip\LightSaml\Model\Protocol;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Protocol;
 
@@ -70,21 +71,21 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
+    function getXml(\DOMNode $parent, SerializationContext $context) {
         $this->prepareForXml();
 
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElementNS(Protocol::SAML2, 'samlp:Status');
+        $result = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:Status');
         $parent->appendChild($result);
 
-        $statusCodeNode = $doc->createElementNS(Protocol::SAML2, 'samlp:StatusCode');
+        $statusCodeNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:StatusCode');
         $result->appendChild($statusCodeNode);
         $statusCodeNode->setAttribute('Value', $this->getCode());
 
         if ($this->getMessage()) {
-            $statusMessageNode = $doc->createElementNS(Protocol::SAML2, 'samlp:StatusMessage', $this->getMessage());
+            $statusMessageNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:StatusMessage', $this->getMessage());
             $result->appendChild($statusMessageNode);
         }
 

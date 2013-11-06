@@ -7,6 +7,7 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
@@ -36,6 +37,46 @@ abstract class Message implements GetXmlInterface, LoadFromXmlInterface
 
     /** @var Signature */
     protected $signature;
+
+
+    /** @var string */
+    protected $relayState;
+
+
+
+
+
+    public static function fromXML(\DOMElement $xml) {
+        if ($xml->namespaceURI !== Protocol::SAML2) {
+            throw new InvalidXmlException("Invalid namespace {$xml->namespaceURI}");
+        }
+
+        $result = null;
+        switch ($xml->localName) {
+//            case 'AttributeQuery':
+//                return new SAML2_AttributeQuery($xml);
+            case 'AuthnRequest':
+                $result = new AuthnRequest();
+                break;
+//            case 'LogoutResponse':
+//                return new SAML2_LogoutResponse($xml);
+//            case 'LogoutRequest':
+//                return new SAML2_LogoutRequest($xml);
+            case 'Response':
+                $result = new Response();
+                break;
+//            case 'ArtifactResponse':
+//                return new SAML2_ArtifactResponse($xml);
+//            case 'ArtifactResolve':
+//                return new SAML2_ArtifactResolve($xml);
+            default:
+                throw new InvalidXmlException("Unknown SAML message $xml->localName");
+        }
+
+        $result->loadFromXml($xml);
+        return $result;
+    }
+
 
 
     /**
@@ -131,6 +172,39 @@ abstract class Message implements GetXmlInterface, LoadFromXmlInterface
         return $this->issuer;
     }
 
+    /**
+     * @param \AerialShip\LightSaml\Model\XmlDSig\Signature $signature
+     */
+    public function setSignature($signature) {
+        $this->signature = $signature;
+    }
+
+    /**
+     * @return \AerialShip\LightSaml\Model\XmlDSig\Signature
+     */
+    public function getSignature() {
+        return $this->signature;
+    }
+
+
+    /**
+     * @param string $relayState
+     */
+    public function setRelayState($relayState) {
+        $this->relayState = $relayState;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelayState() {
+        return $this->relayState;
+    }
+
+
+
+
+
 
     /**
      * @throws \AerialShip\LightSaml\Error\InvalidRequestException
@@ -156,16 +230,16 @@ abstract class Message implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
+    function getXml(\DOMNode $parent, SerializationContext $context) {
         $this->prepareForXml();
 
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
         if ($this->getXmlNodeNamespace()) {
-            $result = $doc->createElementNS($this->getXmlNodeNamespace(), $this->getXmlNodeLocalName());
+            $result = $context->getDocument()->createElementNS($this->getXmlNodeNamespace(), $this->getXmlNodeLocalName());
         } else {
-            $result = $doc->createElement($this->getXmlNodeLocalName());
+            $result = $context->getDocument()->createElement($this->getXmlNodeLocalName());
         }
         $parent->appendChild($result);
 
@@ -174,7 +248,7 @@ abstract class Message implements GetXmlInterface, LoadFromXmlInterface
         $result->setAttribute('IssueInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getIssueInstant()));
         $result->setAttribute('Destination', $this->getDestination());
 
-        $issuerNode = $doc->createElementNS(Protocol::NS_ASSERTION, 'saml:Issuer', $this->getIssuer());
+        $issuerNode = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:Issuer', $this->getIssuer());
         $result->appendChild($issuerNode);
 
         return $result;

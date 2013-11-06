@@ -3,6 +3,7 @@
 namespace AerialShip\LightSaml\Model\Metadata\Service;
 
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Meta\SerializationContext;
 
 
 class AssertionConsumerService extends AbstractService
@@ -45,10 +46,11 @@ class AssertionConsumerService extends AbstractService
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $result = $result = parent::getXml($parent);
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $result = parent::getXml($parent, $context);
         $result->setAttribute('index', $this->getIndex());
         return $result;
     }

@@ -4,7 +4,7 @@ namespace AerialShip\LightSaml\Model\Protocol;
 
 use AerialShip\LightSaml\Error\InvalidResponseException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
-use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\Assertion\Assertion;
@@ -58,12 +58,13 @@ class Response extends StatusResponse
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $result = parent::getXml($parent);
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = parent::getXml($parent, $context);
         foreach ($this->getAllAssertions() as $assertion) {
-            $assertion->getXml($result);
+            $assertion->getXml($result, $context);
         }
         return $result;
     }

@@ -3,6 +3,7 @@
 namespace AerialShip\LightSaml\Model\Metadata;
 
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\Metadata\Service\AbstractService;
 
 
@@ -48,8 +49,14 @@ class SpSsoDescriptor extends SSODescriptor
         return 'SPSSODescriptor';
     }
 
-    function getXml(\DOMNode $parent) {
-        $result = parent::getXml($parent);
+
+    /**
+     * @param \DOMNode $parent
+     * @param SerializationContext $context
+     * @return \DOMElement
+     */
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = parent::getXml($parent, $context);
         $result->setAttribute('WantAssertionsSigned', $this->getWantAssertionsSigned() ? 'true' : 'false');
         return $result;
     }

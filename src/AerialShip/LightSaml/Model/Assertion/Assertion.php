@@ -7,7 +7,7 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
-use AerialShip\LightSaml\Model\Assertion\AuthnStatement;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\Protocol;
@@ -273,44 +273,44 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
+    function getXml(\DOMNode $parent, SerializationContext $context) {
         $this->prepareForXml();
 
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElementNS(Protocol::NS_ASSERTION, 'saml:Assertion');
+        $result = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:Assertion');
         $parent->appendChild($result);
 
         $result->setAttribute('ID', $this->getID());
         $result->setAttribute('Version', $this->getVersion());
         $result->setAttribute('IssueInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getIssueInstant()));
 
-        $issuerNode = $doc->createElement('Issuer', $this->getIssuer());
+        $issuerNode = $context->getDocument()->createElement('Issuer', $this->getIssuer());
         $result->appendChild($issuerNode);
 
-        $this->getSubject()->getXml($result);
+        $this->getSubject()->getXml($result, $context);
 
-        $conditionsNode = $doc->createElement('Conditions');
+        $conditionsNode = $context->getDocument()->createElement('Conditions');
         $result->appendChild($conditionsNode);
         $conditionsNode->setAttribute('NotBefore', gmdate('Y-m-d\TH:i:s\Z', $this->getNotBefore()));
         $conditionsNode->setAttribute('NotOnOrAfter', gmdate('Y-m-d\TH:i:s\Z', $this->getNotOnOrAfter()));
         if ($this->getValidAudience()) {
-            $audienceRestrictionNode = $doc->createElement('AudienceRestriction');
+            $audienceRestrictionNode = $context->getDocument()->createElement('AudienceRestriction');
             $conditionsNode->appendChild($audienceRestrictionNode);
             foreach ($this->getValidAudience() as $v) {
-                $audienceNode = $doc->createElement('Audience', $v);
+                $audienceNode = $context->getDocument()->createElement('Audience', $v);
                 $audienceRestrictionNode->appendChild($audienceNode);
             }
         }
 
-        $attributeStatementNode = $doc->createElement('AttributeStatement');
+        $attributeStatementNode = $context->getDocument()->createElement('AttributeStatement');
         $result->appendChild($attributeStatementNode);
         foreach ($this->getAllAttributes() as $attribute) {
-            $attribute->getXml($attributeStatementNode);
+            $attribute->getXml($attributeStatementNode, $context);
         }
 
-        $this->getAuthnStatement()->getXml($result);
+        $this->getAuthnStatement()->getXml($result, $context);
 
         return $result;
     }

@@ -3,10 +3,7 @@
 namespace AerialShip\LightSaml\Model\Protocol;
 
 use AerialShip\LightSaml\Error\InvalidRequestException;
-use AerialShip\LightSaml\Error\InvalidXmlException;
-use AerialShip\LightSaml\Helper;
-use AerialShip\LightSaml\Meta\GetXmlInterface;
-use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
@@ -123,17 +120,16 @@ class AuthnRequest extends AbstractRequest
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $result = parent::getXml($parent);
-
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = parent::getXml($parent, $context);
 
         $result->setAttribute('AssertionConsumerServiceURL', $this->getAssertionConsumerServiceURL());
         $result->setAttribute('ProtocolBinding', $this->getProtocolBinding());
 
-        $nameIDPolicyNode = $doc->createElementNS(Protocol::SAML2, 'samlp:NameIDPolicy');
+        $nameIDPolicyNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:NameIDPolicy');
         $result->appendChild($nameIDPolicyNode);
         $nameIDPolicyNode->setAttribute('Format', $this->getNameIdPolicyFormat());
         $nameIDPolicyNode->setAttribute('AllowCreate', $this->getNameIdPolicyAllowCreate() ? 'true' : 'false');
@@ -147,7 +143,7 @@ class AuthnRequest extends AbstractRequest
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
     function loadFromXml(\DOMElement $xml) {
-        $result = parent::loadFromXml($xml);
+        parent::loadFromXml($xml);
 
         $this->checkRequiredAttributes($xml, array('AssertionConsumerServiceURL', 'ProtocolBinding'));
         $this->setAssertionConsumerServiceURL($xml->getAttribute('AssertionConsumerServiceURL'));

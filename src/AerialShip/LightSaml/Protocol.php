@@ -34,5 +34,8 @@ final class Protocol
     const CM_HOK = 'urn:oasis:names:tc:SAML:2.0:cm:holder-of-key';
 
 
+    const ENCODING_DEFLATE = 'urn:oasis:names:tc:SAML:2.0:bindings:URL-Encoding:DEFLATE';
+
+
     protected function __construct() { }
 }

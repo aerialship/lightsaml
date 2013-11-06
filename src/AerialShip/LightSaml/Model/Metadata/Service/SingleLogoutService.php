@@ -2,6 +2,8 @@
 
 namespace AerialShip\LightSaml\Model\Metadata\Service;
 
+use AerialShip\LightSaml\Meta\SerializationContext;
+
 
 class SingleLogoutService extends AbstractService
 {
@@ -9,8 +11,13 @@ class SingleLogoutService extends AbstractService
         return 'SingleLogoutService';
     }
 
-    function getXml(\DOMNode $parent) {
-        $result = parent::getXml($parent);
+    /**
+     * @param \DOMNode $parent
+     * @param SerializationContext $context
+     * @return \DOMElement
+     */
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = parent::getXml($parent, $context);
         return $result;
     }
 

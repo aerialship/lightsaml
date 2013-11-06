@@ -3,6 +3,7 @@
 namespace AerialShip\LightSaml\Tests\EntityDescriptor;
 
 use AerialShip\LightSaml\Bindings;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\KeyDescriptor;
@@ -52,11 +53,10 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $document = new \DOMDocument('1.0', 'utf-8');
-        $document->formatOutput = true;
-        $ed->getXml($document);
+        $context = new SerializationContext();
+        $ed->getXml($context->getDocument(), $context);
 
-        $xml = $document->saveXML();
+        $xml = $context->getDocument()->saveXML();
         //print "\n $xml \n";
 
 

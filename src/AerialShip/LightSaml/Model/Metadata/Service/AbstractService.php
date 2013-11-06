@@ -6,6 +6,7 @@ use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -67,10 +68,11 @@ abstract class AbstractService implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
-     * @return \DOMElement|\DOMNode
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
+     * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:'.$this->getXmlNodeName());
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $context->getDocument()->createElementNS(Protocol::NS_METADATA, 'md:'.$this->getXmlNodeName());
         $parent->appendChild($result);
         $result->setAttribute('Binding', $this->getBinding());
         $result->setAttribute('Location', $this->getLocation());

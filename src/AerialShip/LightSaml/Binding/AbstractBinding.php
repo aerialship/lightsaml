@@ -2,15 +2,12 @@
 
 namespace AerialShip\LightSaml\Binding;
 
-
-use AerialShip\LightSaml\Meta\GetXmlInterface;
-use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Model\Protocol\Message;
 
 abstract class AbstractBinding
 {
     /** @var string */
     protected $destination;
-
 
 
 
@@ -33,17 +30,15 @@ abstract class AbstractBinding
 
 
 
-
-
     /**
-     * @param GetXmlInterface $message
+     * @param Message $message
      * @return void
      */
-    abstract function send(GetXmlInterface $message);
+    abstract function send(Message $message);
 
 
     /**
-     * @return LoadFromXmlInterface
+     * @return Message
      */
     abstract function receive();
 

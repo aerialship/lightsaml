@@ -7,6 +7,7 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Model\Metadata\Service\AbstractService;
 use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
@@ -165,17 +166,18 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $result = $parent->ownerDocument->createElementNS(Protocol::NS_METADATA, 'md:'.$this->getXmlNodeName());
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $context->getDocument()->createElementNS(Protocol::NS_METADATA, 'md:'.$this->getXmlNodeName());
         $parent->appendChild($result);
         $result->setAttribute('protocolSupportEnumeration', $this->getProtocolSupportEnumeration());
         foreach ($this->getKeyDescriptors() as $kd) {
-            $kd->getXml($result);
+            $kd->getXml($result, $context);
         }
         foreach ($this->getServices() as $service) {
-            $service->getXml($result);
+            $service->getXml($result, $context);
         }
         return $result;
     }

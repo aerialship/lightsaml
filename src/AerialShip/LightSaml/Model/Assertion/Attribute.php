@@ -5,6 +5,7 @@ namespace AerialShip\LightSaml\Model\Assertion;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -79,17 +80,17 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param \DOMNode $parent
+     * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent) {
-        $doc = $parent instanceof \DOMDocument ? $parent : $parent->ownerDocument;
-        $result = $doc->createElement('Attribute');
+    function getXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $context->getDocument()->createElement('Attribute');
         $parent->appendChild($result);
 
         $result->setAttribute('Name', $this->getName());
 
         foreach ($this->getValues() as $v) {
-            $valueNode = $doc->createElement('AttributeValue', $v);
+            $valueNode = $context->getDocument()->createElement('AttributeValue', $v);
             $result->appendChild($valueNode);
         }
 
