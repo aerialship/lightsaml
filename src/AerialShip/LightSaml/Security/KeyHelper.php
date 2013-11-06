@@ -7,6 +7,20 @@ use AerialShip\LightSaml\Error\SecurityException;
 
 class KeyHelper
 {
+
+
+
+    /**
+     * @param X509Certificate $certificate
+     * @return \XMLSecurityKey
+     */
+    static function createPublicKey(X509Certificate $certificate) {
+        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type'=>'public'));
+        $key->loadKey($certificate->toPem(), false, true);
+        return $key;
+    }
+
+
     /**
      * @param \XMLSecurityKey $key
      * @param string $algorithm

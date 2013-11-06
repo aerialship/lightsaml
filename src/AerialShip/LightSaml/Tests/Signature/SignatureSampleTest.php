@@ -4,6 +4,7 @@ namespace AerialShip\LightSaml\Tests\Signature;
 
 use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Security\KeyHelper;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
@@ -32,13 +33,10 @@ class SignatureSampleTest extends \PHPUnit_Framework_TestCase
         /** @var $signatureNode \DOMElement */
         $certificateDataNode = $list->item(0);
 
-        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type'=>'public'));
         $certData = $certificateDataNode->textContent;
         $certificate = new X509Certificate();
         $certificate->setData($certData);
-        $certData = $certificate->toPem();
-        //print "\n\n$certData\n\n";
-        $key->loadKey($certData);
+        $key = KeyHelper::createPublicKey($certificate);
 
         $ok = $signatureValidator->validate($key);
         $this->assertTrue($ok);

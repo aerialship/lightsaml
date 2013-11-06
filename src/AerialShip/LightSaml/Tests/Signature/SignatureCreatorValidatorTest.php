@@ -6,6 +6,7 @@ use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Security\KeyHelper;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
@@ -37,8 +38,7 @@ class SignatureCreatorValidatorTest extends \PHPUnit_Framework_TestCase
         $certificate = new X509Certificate();
         $certificate->loadFromFile(__DIR__.'/../../../../../resources/sample/Certificate/saml.crt');
 
-        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type'=>'public'));
-        $key->loadKey(__DIR__.'/../../../../../resources/sample/Certificate/saml.crt', true, true);
+        $key = KeyHelper::createPublicKey($certificate);
 
         $ok = $signatureValidator->validate($key);
 

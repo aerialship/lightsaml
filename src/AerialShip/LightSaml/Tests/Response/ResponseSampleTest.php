@@ -8,6 +8,7 @@ use AerialShip\LightSaml\Model\Protocol\Response;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Security\KeyHelper;
 
 
 class ResponseSampleTest extends \PHPUnit_Framework_TestCase
@@ -88,11 +89,12 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @return \XMLSecurityKey
+     */
     private function getXmlKey() {
         $cert = $this->getCertificate();
-        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type'=>'public'));
-        $key->loadKey($cert->toPem(), false, true);
-        return $key;
+        return KeyHelper::createPublicKey($cert);
     }
 
     /**
