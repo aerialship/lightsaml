@@ -37,7 +37,7 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
 
         $time = $request->getIssueInstant();
         $this->assertNotEmpty($time);
-        $this->assertLessThan(1, abs(time()-$time));
+        $this->assertLessThan(2, abs(time()-$time));
 
         $this->checkRequestObject($request, $id, $time);
 
