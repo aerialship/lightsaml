@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<LogoutRequest
+        xmlns="urn:oasis:names:tc:SAML:2.0:protocol"
+        ID="_e909cca78fa47391c1c5e4a986ed70c6adae31f366"
+        Version="2.0"
+        IssueInstant="2013-11-07T09:35:17Z"
+        Destination="https://b1.bead.loc/adfs/ls/"
+        NotOnOrAfter="2013-11-07T09:35:17Z"
+        Reason="LogoutRequestBuilder"
+>
+    <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://mt.evo.team/simplesaml/module.php/saml/sp/metadata.php/default-sp</saml:Issuer>
+</LogoutRequest>

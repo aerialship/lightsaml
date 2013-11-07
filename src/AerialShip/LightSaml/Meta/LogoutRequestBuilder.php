@@ -1,22 +1,27 @@
 <?php
+/**
+ * @desc
+ * @author Ostojić Aleksandar <ao@boutsourcing.com> 11/7/13
+ */
 
 namespace AerialShip\LightSaml\Meta;
 
-use AerialShip\LightSaml\Helper;
-use AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService;
-use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 
-class AuthnRequestBuilder extends AbstractRequestBuilder
-{
+use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService;
+use AerialShip\LightSaml\Model\Protocol\LogoutRequest;
+
+class LogoutRequestBuilder extends AbstractRequestBuilder{
+
     private function getDestination() {
         $idp = $this->getIdpSsoDescriptor();
         $result = null;
         if ($this->spMeta->getAuthnRequestBinding()) {
-            $result = $idp->findSingleSignOnServices($this->spMeta->getAuthnRequestBinding());
+            $result = $idp->findSingleLogoutServices($this->spMeta->getAuthnRequestBinding());
         }
         if (!$result) {
-            $arr = $idp->findSingleSignOnServices();
-            /** @var SingleSignOnService $sso */
+            $arr = $idp->findSingleLogoutServices();
+            /** @var SingleLogoutService $sso */
             $sso = array_shift($arr);
             $result = $sso->getLocation();
         }
@@ -28,27 +33,21 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
 
 
     /**
-     * @return AuthnRequest
+     * @return LogoutRequest
      */
     function build() {
-        $result = new AuthnRequest();
+        $result = new LogoutRequest();
         $edSP = $this->getEdSP();
         $sp = $this->getSpSsoDescriptor();
 
         $result->setID(Helper::generateID());
         $result->setDestination($this->getDestination());
         $result->setIssueInstant(time());
+        $result->setNotOnOrAfter(new \DateTime('now', new \DateTimeZone('UTC')));
+        $result->setReason('LogoutRequestBuilder');
 
         $asc = $this->getAssertionConsumerService($sp);
-        $result->setProtocolBinding($asc->getBinding());
-        $result->setAssertionConsumerServiceURL($asc->getLocation());
-
         $result->setIssuer($edSP->getEntityID());
-
-        $result->setNameIdPolicyAllowCreate(true);
-        $result->setNameIdPolicyFormat($this->spMeta->getNameIdFormat());
-
         return $result;
     }
-
-}
+} 

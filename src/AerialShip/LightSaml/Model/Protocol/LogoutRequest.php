@@ -8,12 +8,13 @@ namespace AerialShip\LightSaml\Model\Protocol;
 
 
 use AerialShip\LightSaml\Error\InvalidRequestException;
+use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Protocol;
 
 class LogoutRequest extends AbstractRequest{
 
-    const FORMAT_NotOnOrAfter = 'Y-m-d\TG:i:s\Z';
+    const FORMAT_NotOnOrAfter = 'Y-m-d\Th:i:s\Z';
 
     /**
      * @var DateTime|null UTC
@@ -91,12 +92,13 @@ class LogoutRequest extends AbstractRequest{
     function loadFromXml(\DOMElement $xml) {
         parent::loadFromXml($xml);
 
-        $this->iterateChildrenElements($xml, function(\DOMElement $node) {
-            if ($node->localName == 'NameIDPolicy' && $node->namespaceURI == Protocol::SAML2) {
-                $this->checkRequiredAttributes($node, array('Format', 'AllowCreate'));
-                $this->setNameIdPolicyFormat($node->getAttribute('Format'));
-                $this->setNameIdPolicyAllowCreate($node->getAttribute('AllowCreate') == 'true');
-            }
-        });
+        if($reason =$xml->getAttribute('Reason')){
+            $this->setReason($reason);
+        }
+        if($time = $xml->getAttribute('NotOnOrAfter')){
+            $time = Helper::parseSAMLTime($time);
+            $this->setNotOnOrAfter(new \DateTime(strtotime($time), new \DateTimeZone('UTC')));
+        }
+
     }
 }
