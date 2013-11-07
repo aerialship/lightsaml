@@ -87,7 +87,7 @@ class CommonHelper
         }
 
         $builder = new LogoutRequestBuilder($sp, $idp, $spMeta);
-        $result = $builder->build();
+        $result = $builder->build('urn:oasis:names:tc:SAML:2.0:nameid-format:transient', 'user', '_677952a2-7fb3-4e7a-b439-326366e677db');
         return $result;
     }
 } 

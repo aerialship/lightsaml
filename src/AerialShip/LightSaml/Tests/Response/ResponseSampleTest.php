@@ -59,7 +59,7 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($assertion->getSubject());
         $this->assertNotNull($assertion->getSubject()->getNameID());
         $this->assertEquals($nameID, $assertion->getSubject()->getNameID()->getValue());
-        $this->assertEquals(NameIDPolicy::TRANSIENT, $assertion->getSubject()->getNameID()->getAttribute('Format'));
+        $this->assertEquals(NameIDPolicy::TRANSIENT, $assertion->getSubject()->getNameID()->getFormat());
 
         $arrSubjectConfirmations = $assertion->getSubject()->getSubjectConfirmations();
         $this->assertEquals(1, count($arrSubjectConfirmations));

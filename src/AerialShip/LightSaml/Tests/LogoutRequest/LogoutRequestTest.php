@@ -69,9 +69,14 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase{
         if($reason != null){
             $this->assertStringMatchesFormat('%s', $reason);
         }
+        $NameId = $request->getNameID();
+        $this->assertInstanceOf('AerialShip\LightSaml\Model\Assertion\NameID', $NameId);
+        $this->assertNotEmpty($NameId->getFormat());
     }
 
     private function checkRequestXml(\DOMDocument $doc, LogoutRequest $request) {
+//        $xml = $doc->saveXML();
+//        print "\n\n$xml\n\n";
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace('samlp', Protocol::SAML2);
         $xpath->registerNamespace('saml', Protocol::NS_ASSERTION);
@@ -93,9 +98,13 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase{
 
         $list = $xpath->query('/samlp:LogoutRequest/saml:Issuer');
         $this->assertEquals(1, $list->length);
-        /** @var $node \DOMElement */
         $node = $list->item(0);
         $this->assertEquals($this->issuer, $node->textContent);
 
+        $list = $xpath->query('/samlp:LogoutRequest/saml:NameID');
+        $this->assertEquals(1, $list->length);
+        $node = $list->item(0);
+        $this->assertEquals($request->getNameID()->getFormat(), $node->getAttribute('Format'));
+        $this->assertEquals($request->getNameID()->getValue(), $node->textContent);
     }
 } 

@@ -8,6 +8,7 @@ namespace AerialShip\LightSaml\Meta;
 
 
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Model\Assertion\NameID;
 use AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService;
 use AerialShip\LightSaml\Model\Protocol\LogoutRequest;
 
@@ -35,7 +36,7 @@ class LogoutRequestBuilder extends AbstractRequestBuilder{
     /**
      * @return LogoutRequest
      */
-    function build() {
+    function build($NameIDFormat, $NameIDValue, $sessionIndex = null, $reason = null) {
         $result = new LogoutRequest();
         $edSP = $this->getEdSP();
         $sp = $this->getSpSsoDescriptor();
@@ -44,7 +45,13 @@ class LogoutRequestBuilder extends AbstractRequestBuilder{
         $result->setDestination($this->getDestination());
         $result->setIssueInstant(time());
         $result->setNotOnOrAfter(new \DateTime('now', new \DateTimeZone('UTC')));
-        $result->setReason('LogoutRequestBuilder');
+        if($reason) $result->setReason($reason);
+        if($sessionIndex) $result->setSessionIndex($sessionIndex);
+
+        $nameID = new NameID();
+        $nameID->setFormat($NameIDFormat);
+        $nameID->setValue($NameIDValue);
+        $result->setNameID($nameID);
 
         $asc = $this->getAssertionConsumerService($sp);
         $result->setIssuer($edSP->getEntityID());

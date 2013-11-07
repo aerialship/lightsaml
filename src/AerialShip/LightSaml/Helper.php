@@ -5,6 +5,8 @@ namespace AerialShip\LightSaml;
 
 final class Helper
 {
+    const REGEXP_ANYURI = '" (?:(http(?:s?)|ftp)(?:\:\/\/)) # protocol (?:(\w+\:\w+)(?:\@))? # usrpwd ([^/\r\n\:]+)? # domain (\:\d+)? # port ((?:\/[^\?]*)*\/)? # path (.*?\.(\w{2,4}))? # filename.ext (\??(?:\w+\=[^\#]+)(?:\&?\w+\=\w+)*)* # qrystr (\#[\w\d]+)? # bkmrk "six';
+
     /**
      * @param string $time
      * @return int

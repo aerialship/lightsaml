@@ -2,8 +2,9 @@
 
 namespace AerialShip\LightSaml\Model\Assertion;
 
-use AerialShip\LightSaml\Error\InvalidNameIDException;
+use AerialShip\LightSaml\Error\InvalidAssertionException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
+use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Meta\SerializationContext;
@@ -12,15 +13,20 @@ use AerialShip\LightSaml\Protocol;
 
 class NameID implements GetXmlInterface, LoadFromXmlInterface
 {
-    private static $validAttributes = array('NameQualifier'=>1, 'SPNameQualifier'=>1, 'Format'=>1);
-
     /** @var string */
     protected $value;
 
-    /** @var string[] */
-    protected $attributes = array();
+    /** @var string */
+    protected $nameQualifier = null;
 
+    /** @var string */
+    protected $sPNameQualifier = null;
 
+    /** @var string */
+    protected $format = null;
+
+    /** @var string */
+    protected $sPProvidedID = null;
     /**
      * @param string $value
      */
@@ -36,35 +42,71 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
     }
 
     /**
-     * @return string[]
-     */
-    public function getAttributes() {
-        return $this->attributes;
-    }
-
-    /**
-     * @param string $name
-     * @return string|null
-     */
-    public function getAttribute($name) {
-        return @$this->attributes[$name];
-    }
-
-
-    /**
-     * @param string $name
-     * @param string $value
-     * @throws \AerialShip\LightSaml\Error\InvalidNameIDException
+     * @param string $nameQualifier
      * @return $this
      */
-    public function addAttribute($name, $value) {
-        if (!isset(self::$validAttributes[$name])) {
-            throw new InvalidNameIDException("Invalid NameID attribute $name");
-        }
-        $this->attributes[$name] = trim($value);
+    public function setNameQualifier($nameQualifier){
+        $this->nameQualifier = $nameQualifier;
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getNameQualifier(){
+        return $this->nameQualifier;
+    }
+
+    /**
+     * @param string $sPNameQualifier
+     * @return $this
+     */
+    public function setSPNameQualifier($sPNameQualifier){
+        $this->sPNameQualifier = $sPNameQualifier;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSPNameQualifier(){
+        return $this->sPNameQualifier;
+    }
+
+    /**
+     * @param string $format
+     * @return $this
+     */
+    public function setFormat($format){
+//        if(!preg_match(Helper::REGEXP_ANYURI, trim($format))){
+//            throw new InvalidAssertionException("Format does not match anyURI [{$format}] according to pattern [".Helper::REGEXP_ANYURI."]");
+//        }
+        $this->format = trim($format);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat(){
+        return $this->format;
+    }
+
+    /**
+     * @param string $sPProvidedID
+     * @return $this
+     */
+    public function setSPProvidedID($sPProvidedID){
+        $this->sPProvidedID = $sPProvidedID;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSPProvidedID(){
+        return $this->sPProvidedID;
+    }
 
     /**
      * @param \DOMNode $parent
@@ -72,14 +114,15 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @return \DOMElement
      */
     function getXml(\DOMNode $parent, SerializationContext $context) {
-        $result = $context->getDocument()->createElement('NameID', $this->getValue());
+        $result = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:NameID', $this->getValue());
+
         $parent->appendChild($result);
 
-        foreach ($this->getAttributes() as $k=>$v) {
-            if ($v) {
-                $result->setAttribute($k, $v);
-            }
-        }
+        if($this->getSPNameQualifier()) $result->setAttribute('SPNameQualifier', $this->getSPNameQualifier());
+        if($this->getNameQualifier())   $result->setAttribute('NameQualifier',   $this->getNameQualifier());
+        if($this->getSPProvidedID())    $result->setAttribute('SPProvidedID',    $this->getSPProvidedID());
+        if($this->getFormat())          $result->setAttribute('Format',          $this->getFormat());
+
         return $result;
     }
 
@@ -89,16 +132,14 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
     function loadFromXml(\DOMElement $xml) {
-        if ($xml->localName != 'NameID' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
+        if ($xml->localName != 'NameID') {
             throw new InvalidXmlException('Expected NameID element got '.$xml->localName);
         }
-        $this->value = trim($xml->textContent);
-        foreach (array_keys(self::$validAttributes) as $name) {
-            if ($xml->hasAttribute($name)) {
-                $this->addAttribute($name, $xml->getAttribute($name));
-            }
-        }
+
+        if ($xml->hasAttribute('SPNameQualifier')) $this->setSPNameQualifier($xml->getAttribute('SPNameQualifier'));
+        if ($xml->hasAttribute('NameQualifier'))   $this->setNameQualifier($xml->getAttribute('NameQualifier'));
+        if ($xml->hasAttribute('SPProvidedID'))    $this->setSPProvidedID($xml->getAttribute('SPProvidedID'));
+        if ($xml->hasAttribute('Format'))          $this->setFormat($xml->getAttribute('Format'));
+        $this->setValue(trim($xml->textContent));
     }
-
-
 }
