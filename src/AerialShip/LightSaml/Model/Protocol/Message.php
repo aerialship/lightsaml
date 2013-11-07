@@ -60,10 +60,12 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
             case 'AuthnRequest':
                 $result = new AuthnRequest();
                 break;
-//            case 'LogoutResponse':
-//                return new SAML2_LogoutResponse($xml);
-//            case 'LogoutRequest':
-//                return new SAML2_LogoutRequest($xml);
+            case 'LogoutResponse':
+                $result = new LogoutResponse();
+                break;
+            case 'LogoutRequest':
+                $result = new LogoutRequest();
+                break;
             case 'Response':
                 $result = new Response();
                 break;
