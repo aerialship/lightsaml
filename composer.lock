@@ -3,18 +3,57 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "b3da9c9064cb8a3ca40da656a1cfa8bd",
+    "hash": "d8d2a26212fb9b17cb25863ab1ac04cd",
     "packages": [
         {
-            "name": "xmlseclibs/xmlseclibs",
-            "version": "1.3.1",
-            "dist": {
-                "type": "tar",
-                "url": "https://xmlseclibs.googlecode.com/files/xmlseclibs-1.3.1.tar.gz",
-                "reference": null,
-                "shasum": null
+            "name": "rnijveld/xmlseclibs",
+            "version": "v1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rnijveld/xmlseclibs.git",
+                "reference": "0a79da470eac5b836e65fe40a834a9d3b1c627cd"
             },
-            "type": "library"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rnijveld/xmlseclibs/zipball/0a79da470eac5b836e65fe40a834a9d3b1c627cd",
+                "reference": "0a79da470eac5b836e65fe40a834a9d3b1c627cd",
+                "shasum": ""
+            },
+            "replace": {
+                "cdatazone/xmlseclibs": "self.version",
+                "fr3d/xmlseclibs": "self.version"
+            },
+            "suggest": {
+                "ext/mcrypt": "",
+                "ext/openssl": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "xmlseclibs.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Richards"
+                }
+            ],
+            "description": "A PHP library for XML Security",
+            "homepage": "http://code.google.com/p/xmlseclibs/",
+            "keywords": [
+                "certificate",
+                "security",
+                "signature",
+                "signing",
+                "x.509",
+                "xml",
+                "xmlsec"
+            ],
+            "time": "2013-06-19 00:00:00"
         }
     ],
     "packages-dev": [
