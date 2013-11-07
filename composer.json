@@ -2,7 +2,7 @@
     "name": "aerialship/lightsaml",
     "license": "proprietary",
     "type": "project",
-    "description": "BWC Mosaic application for myappsco.com",
+    "description": "Light SAML2 php library",
     "autoload": {
         "psr-0": { "": "src/" },
         "files": [
