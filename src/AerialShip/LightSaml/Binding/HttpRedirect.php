@@ -2,9 +2,12 @@
 
 namespace AerialShip\LightSaml\Binding;
 
+use AerialShip\LightSaml\Error\BindingException;
+use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\Protocol\AbstractRequest;
 use AerialShip\LightSaml\Model\Protocol\Message;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureStringValidator;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -25,12 +28,23 @@ class HttpRedirect extends AbstractBinding
     }
 
     /**
+     * @param null $queryString
      * @throws \RuntimeException
+     * @throws \AerialShip\LightSaml\Error\BindingException
      * @return Message
      */
-    function receive() {
-        $data = $this->parseQuery();
+    function receive($queryString = null) {
+        $data = $this->parseQuery($queryString);
+        return $this->processData($data);
+    }
 
+    /**
+     * @param array $data
+     * @throws \RuntimeException
+     * @throws \AerialShip\LightSaml\Error\BindingException
+     * @return Message
+     */
+    function processData(array $data) {
         if (array_key_exists('SAMLRequest', $data)) {
             $msg = $data['SAMLRequest'];
         } elseif (array_key_exists('SAMLResponse', $data)) {
@@ -63,18 +77,14 @@ class HttpRedirect extends AbstractBinding
             $message->setRelayState($data['RelayState']);
         }
 
-//        if (array_key_exists('Signature', $data)) {
-//            if (!array_key_exists('SigAlg', $data)) {
-//                throw new Exception('Missing signature algorithm.');
-//            }
-//
-//            $signData = array(
-//                'Signature' => $data['Signature'],
-//                'SigAlg' => $data['SigAlg'],
-//                'Query' => $data['SignedQuery'],
-//            );
-//            $msg->addValidator(array(get_class($this), 'validateSignature'), $signData);
-//        }
+        if (array_key_exists('Signature', $data)) {
+            if (!array_key_exists('SigAlg', $data)) {
+                throw new BindingException('Missing signature algorithm.');
+            }
+            $message->setSignature(
+                new SignatureStringValidator($data['Signature'], $data['SigAlg'], $data['SignedQuery'])
+            );
+        }
 
         return $message;
     }
@@ -95,9 +105,9 @@ class HttpRedirect extends AbstractBinding
         /** @var $key \XMLSecurityKey */
         $key = $signature ? $signature->getXmlSecurityKey() : null;
 
-        $doc = new \DOMDocument();
-        $message->getXml($doc);
-        $xml = $doc->saveXML();
+        $context = new SerializationContext();
+        $message->getXml($context->getDocument(), $context);
+        $xml = $context->getDocument()->saveXML();
         $xml = gzdeflate($xml);
         $xml = base64_encode($xml);
 
@@ -129,9 +139,10 @@ class HttpRedirect extends AbstractBinding
 
 
     /**
+     * @param string|null $queryString
      * @return array
      */
-    private function parseQuery() {
+    function parseQuery($queryString = null) {
         /*
          * Parse the query string. We need to do this ourself, so that we get access
          * to the raw (urlencoded) values. This is required because different software
@@ -141,7 +152,8 @@ class HttpRedirect extends AbstractBinding
         $relayState = '';
         $sigAlg = '';
         $sigQuery = '';
-        foreach (explode('&', $_SERVER['QUERY_STRING']) as $e) {
+        $queryString = $queryString ? $queryString : $_SERVER['QUERY_STRING'];
+        foreach (explode('&', $queryString) as $e) {
             $tmp = explode('=', $e, 2);
             $name = $tmp[0];
             if (count($tmp) === 2) {

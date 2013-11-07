@@ -7,6 +7,7 @@ use AerialShip\LightSaml\Error\BuildRequestException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
+use AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
@@ -134,17 +135,35 @@ class AuthnRequestBuilder
     }
 
 
+    private function getDestination() {
+        $idp = $this->getIdpSsoDescriptor();
+        $result = null;
+        if ($this->spMeta->getAuthnRequestBinding()) {
+            $result = $idp->findSingleSignOnServices($this->spMeta->getAuthnRequestBinding());
+        }
+        if (!$result) {
+            $arr = $idp->findSingleSignOnServices();
+            /** @var SingleSignOnService $sso */
+            $sso = array_shift($arr);
+            $result = $sso->getLocation();
+        }
+        if (!$result) {
+            throw new \LogicException('Unable to find IDP destination');
+        }
+        return $result;
+    }
+
+
     /**
      * @return AuthnRequest
      */
     function build() {
         $result = new AuthnRequest();
         $edSP = $this->getEdSP();
-        $edIDP = $this->getEdIDP();
         $sp = $this->getSpSsoDescriptor();
 
         $result->setID(Helper::generateID());
-        $result->setDestination($edIDP->getEntityID());
+        $result->setDestination($this->getDestination());
         $result->setIssueInstant(time());
 
         $asc = $this->getAssertionConsumerService($sp);

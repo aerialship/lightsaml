@@ -10,34 +10,26 @@ use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Tests\CommonHelper;
 
 
 class AuthnRequestTest extends \PHPUnit_Framework_TestCase
 {
     private $issuer = 'https://mt.evo.team/simplesaml/module.php/saml/sp/metadata.php/default-sp';
-    private $destination = 'https://B1.bead.loc/adfs/services/trust';
+    private $destination = 'https://b1.bead.loc/adfs/ls/';
     private $ascURL = 'https://mt.evo.team/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp';
     private $protocolBinding = Bindings::SAML2_HTTP_POST;
     private $nameIDPolicyFormat = NameIDPolicy::PERSISTENT;
 
 
     function testOne() {
-        $doc = new \DOMDocument();
-        $doc->load(__DIR__.'/../../../../../resources/sample/EntityDescriptor/idp2-ed.xml');
-        $edIDP = new EntityDescriptor();
-        $edIDP->loadFromXml($doc->firstChild);
-
-        $doc = new \DOMDocument();
-        $doc->load(__DIR__.'/../../../../../resources/sample/EntityDescriptor/sp-ed2.xml');
-        $edSP = new EntityDescriptor();
-        $edSP->loadFromXml($doc->firstChild);
-        unset($doc);
-
         $spMeta = new SpMeta();
         $spMeta->setNameIdFormat(NameIDPolicy::PERSISTENT);
-
-        $builder = new AuthnRequestBuilder($edSP, $edIDP, $spMeta);
-        $request = $builder->build();
+        $request = CommonHelper::buildAuthnRequestFromEntityDescriptors(
+            __DIR__.'/../../../../../resources/sample/EntityDescriptor/sp-ed2.xml',
+            __DIR__.'/../../../../../resources/sample/EntityDescriptor/idp2-ed.xml',
+            $spMeta
+        );
 
         $id = $request->getID();
         $this->assertNotEmpty($id);

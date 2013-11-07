@@ -5,7 +5,8 @@ namespace AerialShip\LightSaml\Tests\Response;
 use AerialShip\LightSaml\ClaimTypes;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Protocol\Response;
-use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureValidatorInterface;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\KeyHelper;
@@ -48,10 +49,11 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($idpEntityID, $assertion->getIssuer());
 
         $key = $this->getXmlKey();
-        /** @var $signature SignatureValidator */
+        /** @var $signature SignatureXmlValidator */
         $signature = $assertion->getSignature();
         $this->assertNotNull($signature);
-        $this->assertTrue($signature instanceof SignatureValidator, get_class($signature));
+        $this->assertTrue($signature instanceof SignatureValidatorInterface, get_class($signature));
+        $this->assertTrue($signature instanceof SignatureXmlValidator, get_class($signature));
         $signature->validate($key);
 
         $this->assertNotNull($assertion->getSubject());

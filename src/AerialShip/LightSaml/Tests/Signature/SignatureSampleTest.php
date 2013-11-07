@@ -2,7 +2,7 @@
 
 namespace AerialShip\LightSaml\Tests\Signature;
 
-use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\KeyHelper;
 use AerialShip\LightSaml\Security\X509Certificate;
@@ -25,7 +25,7 @@ class SignatureSampleTest extends \PHPUnit_Framework_TestCase
         /** @var $signatureNode \DOMElement */
         $signatureNode = $list->item(0);
 
-        $signatureValidator = new SignatureValidator();
+        $signatureValidator = new SignatureXmlValidator();
         $signatureValidator->loadFromXml($signatureNode);
 
         $list = $xpath->query('./ds:KeyInfo/ds:X509Data/ds:X509Certificate', $signatureNode);

@@ -71,7 +71,6 @@ class SignatureCreator extends Signature implements GetXmlInterface
     function getXml(\DOMNode $parent, SerializationContext $context) {
         $objXMLSecDSig = new \XMLSecurityDSig();
         $objXMLSecDSig->setCanonicalMethod($this->getCanonicalMethod());
-        $objXMLSecDSig->setCanonicalMethod($this->getCanonicalMethod());
         $key = $this->getXmlSecurityKey();
         switch ($key->type) {
             case \XMLSecurityKey::RSA_SHA256:
@@ -97,6 +96,10 @@ class SignatureCreator extends Signature implements GetXmlInterface
         $objXMLSecDSig->sign($key);
         $objXMLSecDSig->add509Cert($this->getCertificate()->getData(), false, false);
         $firstChild = $parent->hasChildNodes() ? $parent->firstChild : null;
+        if ($firstChild && $firstChild->localName == 'Issuer') {
+            // The signature node should come after the issuer node
+            $firstChild = $firstChild->nextSibling;
+        }
         $objXMLSecDSig->insertSignature($parent, $firstChild);
     }
 

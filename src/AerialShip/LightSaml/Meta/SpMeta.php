@@ -7,7 +7,12 @@ use AerialShip\LightSaml\NameIDPolicy;
 
 class SpMeta
 {
+    /** @var string */
     protected $nameIdFormat = NameIDPolicy::PERSISTENT;
+
+    /** @var string */
+    protected $authnRequestBinding;
+
 
 
     /**
@@ -28,6 +33,22 @@ class SpMeta
     public function getNameIdFormat() {
         return $this->nameIdFormat;
     }
+
+    /**
+     * @param string $authnRequestBinding
+     */
+    public function setAuthnRequestBinding($authnRequestBinding) {
+        $this->authnRequestBinding = $authnRequestBinding;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthnRequestBinding() {
+        return $this->authnRequestBinding;
+    }
+
+
 
 
 }

@@ -5,16 +5,18 @@ namespace AerialShip\LightSaml\Model\Protocol;
 use AerialShip\LightSaml\Error\InvalidMessageException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Helper;
+use AerialShip\LightSaml\Meta\GetSignedXmlInterface;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
 use AerialShip\LightSaml\Protocol;
 
 
-abstract class Message implements GetXmlInterface, LoadFromXmlInterface
+abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFromXmlInterface
 {
     use XmlRequiredAttributesTrait;
     use XmlChildrenLoaderTrait;
@@ -254,6 +256,25 @@ abstract class Message implements GetXmlInterface, LoadFromXmlInterface
         return $result;
     }
 
+    /**
+     * @param \DOMNode $parent
+     * @param SerializationContext $context
+     * @throws \AerialShip\LightSaml\Error\InvalidMessageException
+     * @return \DOMElement
+     */
+    function getSignedXml(\DOMNode $parent, SerializationContext $context) {
+        $result = $this->getSignedXml($parent, $context);
+
+        if ($signature = $this->getSignature()) {
+            if (!$signature instanceof SignatureCreator) {
+                throw new InvalidMessageException('Signature must be SignatureCreator');
+            }
+            $signature->getXml($result, $context);
+        }
+
+        return $result;
+    }
+
 
     /**
      * @param \DOMElement $xml
@@ -280,5 +301,8 @@ abstract class Message implements GetXmlInterface, LoadFromXmlInterface
             }
         });
     }
+
+
+
 
 } 

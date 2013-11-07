@@ -9,13 +9,45 @@ use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\KeyHelper;
 
 
-class SignatureValidator extends Signature implements LoadFromXmlInterface
+class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, SignatureValidatorInterface
 {
     /** @var \XMLSecurityDSig */
     protected $signature = null;
 
     /** @var string[] */
     protected $certificates;
+
+    /**
+     * @param \string[] $certificates
+     */
+    public function setCertificates($certificates) {
+        $this->certificates = $certificates;
+    }
+
+    /**
+     * @return \string[]
+     */
+    public function getCertificates() {
+        return $this->certificates;
+    }
+
+    /**
+     * @param \XMLSecurityDSig $signature
+     */
+    public function setSignature($signature) {
+        $this->signature = $signature;
+    }
+
+    /**
+     * @return \XMLSecurityDSig
+     */
+    public function getSignature() {
+        return $this->signature;
+    }
+
+
+
+
 
 
     /**

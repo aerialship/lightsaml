@@ -9,7 +9,8 @@ use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
-use AerialShip\LightSaml\Model\XmlDSig\SignatureValidator;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -312,6 +313,13 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
 
         $this->getAuthnStatement()->getXml($result, $context);
 
+        if ($signature = $this->getSignature()) {
+            if (!$signature instanceof SignatureCreator) {
+                throw new InvalidAssertionException('Signature must be SignatureCreator');
+            }
+            $signature->getXml($result, $context);
+        }
+
         return $result;
     }
 
@@ -372,7 +380,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
         }
 
         if ($signatureNode) {
-            $signature = new SignatureValidator();
+            $signature = new SignatureXmlValidator();
             $signature->loadFromXml($signatureNode);
             $this->setSignature($signature);
         }
