@@ -265,7 +265,7 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      * @return \DOMElement
      */
     function getSignedXml(\DOMNode $parent, SerializationContext $context) {
-        $result = $this->getSignedXml($parent, $context);
+        $result = $this->getXml($parent, $context);
 
         if ($signature = $this->getSignature()) {
             if (!$signature instanceof SignatureCreator) {

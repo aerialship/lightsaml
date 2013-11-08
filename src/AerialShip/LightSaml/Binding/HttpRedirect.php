@@ -96,7 +96,7 @@ class HttpRedirect extends AbstractBinding
      * @throws \RuntimeException
      */
     function getRedirectURL(Message $message) {
-        $destination = $message->getDestination();
+        $destination = $message->getDestination() ?: $this->getDestination();
         $relayState = $message->getRelayState();
         $signature = $message->getSignature();
         if ($signature && !$signature instanceof SignatureCreator) {

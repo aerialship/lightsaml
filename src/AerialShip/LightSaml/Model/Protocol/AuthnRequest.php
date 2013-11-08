@@ -5,6 +5,7 @@ namespace AerialShip\LightSaml\Model\Protocol;
 use AerialShip\LightSaml\Error\InvalidRequestException;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
 
@@ -154,6 +155,10 @@ class AuthnRequest extends AbstractRequest
                 $this->checkRequiredAttributes($node, array('Format', 'AllowCreate'));
                 $this->setNameIdPolicyFormat($node->getAttribute('Format'));
                 $this->setNameIdPolicyAllowCreate($node->getAttribute('AllowCreate') == 'true');
+            } else if ($node->localName == 'Signature' && $node->namespaceURI == Protocol::NS_XMLDSIG) {
+                $signature = new SignatureXmlValidator();
+                $signature->loadFromXml($node);
+                $this->setSignature($signature);
             }
         });
     }
