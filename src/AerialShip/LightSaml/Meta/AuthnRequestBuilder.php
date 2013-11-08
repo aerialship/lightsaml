@@ -12,7 +12,8 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
         $idp = $this->getIdpSsoDescriptor();
         $result = null;
         if ($this->spMeta->getAuthnRequestBinding()) {
-            $result = $idp->findSingleSignOnServices($this->spMeta->getAuthnRequestBinding());
+            $arr = $idp->findSingleSignOnServices($this->spMeta->getAuthnRequestBinding());
+            $result = $arr[0]->getLocation();
         }
         if (!$result) {
             $arr = $idp->findSingleSignOnServices();
