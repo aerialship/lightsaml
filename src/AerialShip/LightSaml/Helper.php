@@ -90,7 +90,8 @@ final class Helper
      */
     static function stringToHex($bytes) {
         $result = '';
-        for($i = 0; $i < strlen($bytes); $i++) {
+        $len = strlen($bytes);
+        for($i = 0; $i < $len; $i++) {
             $result .= sprintf('%02x', ord($bytes[$i]));
         }
         return $result;
