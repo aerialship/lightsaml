@@ -6,7 +6,6 @@ use AerialShip\LightSaml\Error\InvalidResponseException;
 use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\XmlChildrenLoaderTrait;
-use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\Assertion\Assertion;
 use AerialShip\LightSaml\Protocol;
 

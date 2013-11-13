@@ -55,8 +55,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
 
         $result = null;
         switch ($xml->localName) {
-//            case 'AttributeQuery':
-//                return new SAML2_AttributeQuery($xml);
+            case 'AttributeQuery':
+                throw new \Exception('Not implemented');
             case 'AuthnRequest':
                 $result = new AuthnRequest();
                 break;
@@ -69,10 +69,10 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
             case 'Response':
                 $result = new Response();
                 break;
-//            case 'ArtifactResponse':
-//                return new SAML2_ArtifactResponse($xml);
-//            case 'ArtifactResolve':
-//                return new SAML2_ArtifactResolve($xml);
+            case 'ArtifactResponse':
+                throw new \Exception('Not implemented');
+            case 'ArtifactResolve':
+                throw new \Exception('Not implemented');
             default:
                 throw new InvalidXmlException("Unknown SAML message $xml->localName");
         }
