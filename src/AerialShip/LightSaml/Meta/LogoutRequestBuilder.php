@@ -1,18 +1,15 @@
 <?php
-/**
- * @desc
- * @author Ostojić Aleksandar <ao@boutsourcing.com> 11/7/13
- */
 
 namespace AerialShip\LightSaml\Meta;
-
 
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Model\Assertion\NameID;
 use AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService;
 use AerialShip\LightSaml\Model\Protocol\LogoutRequest;
 
-class LogoutRequestBuilder extends AbstractRequestBuilder{
+
+class LogoutRequestBuilder extends AbstractRequestBuilder
+{
 
     private function getDestination() {
         $idp = $this->getIdpSsoDescriptor();
@@ -53,7 +50,6 @@ class LogoutRequestBuilder extends AbstractRequestBuilder{
         $nameID->setValue($NameIDValue);
         $result->setNameID($nameID);
 
-        $asc = $this->getAssertionConsumerService($sp);
         $result->setIssuer($edSP->getEntityID());
         return $result;
     }

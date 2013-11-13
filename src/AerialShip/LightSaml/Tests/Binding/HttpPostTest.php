@@ -4,7 +4,6 @@ namespace AerialShip\LightSaml\Tests\Binding;
 
 use AerialShip\LightSaml\Binding\HttpPost;
 use AerialShip\LightSaml\Binding\PostResponse;
-use AerialShip\LightSaml\Binding\RedirectResponse;
 use AerialShip\LightSaml\Binding\Request;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 

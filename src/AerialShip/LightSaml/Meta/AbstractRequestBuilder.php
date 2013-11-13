@@ -1,11 +1,6 @@
 <?php
-/**
- * @desc
- * @author Ostojić Aleksandar <ao@boutsourcing.com> 11/7/13
- */
 
 namespace AerialShip\LightSaml\Meta;
-
 
 use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Error\BuildRequestException;
@@ -15,7 +10,9 @@ use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
 use AerialShip\LightSaml\Protocol;
 
-class AbstractRequestBuilder {
+
+class AbstractRequestBuilder
+{
 
     /** @var EntityDescriptor */
     protected $edSP;

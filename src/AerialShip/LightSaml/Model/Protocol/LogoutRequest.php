@@ -1,11 +1,6 @@
 <?php
-/**
- * @desc
- * @author Ostojić Aleksandar <ao@boutsourcing.com> 11/6/13
- */
 
 namespace AerialShip\LightSaml\Model\Protocol;
-
 
 use AerialShip\LightSaml\Error\InvalidRequestException;
 use AerialShip\LightSaml\Helper;
@@ -13,12 +8,14 @@ use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\Assertion\NameID;
 use AerialShip\LightSaml\Protocol;
 
-class LogoutRequest extends AbstractRequest{
 
-    const FORMAT_NotOnOrAfter = 'Y-m-d\TH:i:s\Z';
+class LogoutRequest extends AbstractRequest
+{
+
+    const FORMAT_NOT_ON_OR_AFTER = 'Y-m-d\TH:i:s\Z';
 
     /**
-     * @var DateTime|null UTC
+     * @var \DateTime|null UTC
      */
     protected $notOnOrAfter;
 
@@ -49,7 +46,8 @@ class LogoutRequest extends AbstractRequest{
      * The time at which the request expires, after which the recipient may discard the message.
      * The time value is encoded in UTC
      *
-     * @param DateTime $time UTC datetime
+     * @param \DateTime $time UTC datetime
+     * @return LogoutRequest
      */
     public function setNotOnOrAfter(\DateTime $time){
         if($time->getTimezone()->getName() != 'UTC'){
@@ -59,14 +57,17 @@ class LogoutRequest extends AbstractRequest{
         return $this;
     }
 
+    /**
+     * @return \DateTime|null
+     */
     public function getNotOnOrAfter(){
         return $this->notOnOrAfter;
     }
 
     /**
      * An indication of the reason for the logout
-     *
      * @param string $reason
+     * @return LogoutRequest
      */
     public function setReason($reason){
         $this->reason = $reason;
@@ -114,7 +115,7 @@ class LogoutRequest extends AbstractRequest{
         $result = parent::getXml($parent, $context);
 
         if($this->getNotOnOrAfter()){
-            $result->setAttribute('NotOnOrAfter', $this->getNotOnOrAfter()->format(self::FORMAT_NotOnOrAfter));
+            $result->setAttribute('NotOnOrAfter', $this->getNotOnOrAfter()->format(self::FORMAT_NOT_ON_OR_AFTER));
         }
         if($this->getReason()){
             $result->setAttribute('Reason', $this->getReason());

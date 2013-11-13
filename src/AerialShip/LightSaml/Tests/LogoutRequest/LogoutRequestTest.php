@@ -1,11 +1,6 @@
 <?php
-/**
- * @desc
- * @author Ostojić Aleksandar <ao@boutsourcing.com> 11/7/13
- */
 
 namespace AerialShip\LightSaml\Tests\LogoutRequest;
-
 
 use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Helper;
@@ -16,13 +11,12 @@ use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Tests\CommonHelper;
 
-class LogoutRequestTest extends \PHPUnit_Framework_TestCase{
+
+class LogoutRequestTest extends \PHPUnit_Framework_TestCase
+{
 
     private $issuer = 'https://mt.evo.team/simplesaml/module.php/saml/sp/metadata.php/default-sp';
     private $destination = 'https://b1.bead.loc/adfs/ls/';
-    private $ascURL = 'https://mt.evo.team/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp';
-    private $protocolBinding = Bindings::SAML2_HTTP_POST;
-    private $nameIDPolicyFormat = NameIDPolicy::PERSISTENT;
 
 
     function testOne() {
@@ -46,7 +40,7 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase{
         $this->checkRequestObject($request, $id, $time);
 
         $context = new SerializationContext();
-        $xml = $request->getXml($context->getDocument(), $context);
+        $request->getXml($context->getDocument(), $context);
         $this->checkRequestXml($context->getDocument(), $request);
 
         $request = new LogoutRequest();
@@ -63,7 +57,7 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase{
 
         $notOnOrAfter = $request->getNotOnOrAfter();
         if($time != null){
-            $this->assertEquals($notOnOrAfter->format('U'), Helper::parseSAMLTime($notOnOrAfter->format(LogoutRequest::FORMAT_NotOnOrAfter)));
+            $this->assertEquals($notOnOrAfter->format('U'), Helper::parseSAMLTime($notOnOrAfter->format(LogoutRequest::FORMAT_NOT_ON_OR_AFTER)));
         }
         $reason = $request->getReason();
         if($reason != null){
@@ -89,7 +83,7 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase{
 
         $this->assertEquals($request->getReason(), $node->getAttribute('Reason'));
         $this->assertEquals(
-            $request->getNotOnOrAfter()->format(LogoutRequest::FORMAT_NotOnOrAfter),
+            $request->getNotOnOrAfter()->format(LogoutRequest::FORMAT_NOT_ON_OR_AFTER),
             $node->getAttribute('NotOnOrAfter')
         );
         $this->assertEquals($request->getID(), $node->getAttribute('ID'));

@@ -1,15 +1,12 @@
 <?php
-/**
- * @desc
- * @author Ostojić Aleksandar <ao@boutsourcing.com> 11/7/13
- */
 
 namespace AerialShip\LightSaml\Model\Protocol;
 
-
 use AerialShip\LightSaml\Protocol;
 
-class LogoutResponse extends Response{
+
+class LogoutResponse extends Response
+{
 
     /**
      * @return string

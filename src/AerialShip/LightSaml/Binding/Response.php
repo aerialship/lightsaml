@@ -3,6 +3,7 @@
 namespace AerialShip\LightSaml\Binding;
 
 
-abstract class Response {
+abstract class Response
+{
 
 } 
