@@ -14,27 +14,25 @@ use AerialShip\LightSaml\Protocol;
 class HttpRedirect extends AbstractBinding
 {
 
-
     /**
      * @param Message $message
-     * @return void
+     * @return RedirectResponse
      */
     function send(Message $message) {
         $url = $this->getRedirectURL($message);
-        header('Location: ' . $url, true, 302);
-        header('Pragma: no-cache');
-        header('Cache-Control: no-cache, must-revalidate');
-        exit;
+        $result = new RedirectResponse($url);
+        return $result;
     }
 
+
     /**
-     * @param null $queryString
+     * @param Request $request
      * @throws \RuntimeException
      * @throws \AerialShip\LightSaml\Error\BindingException
      * @return Message
      */
-    function receive($queryString = null) {
-        $data = $this->parseQuery($queryString);
+    function receive(Request $request) {
+        $data = $this->parseQuery($request);
         return $this->processData($data);
     }
 
@@ -44,7 +42,7 @@ class HttpRedirect extends AbstractBinding
      * @throws \AerialShip\LightSaml\Error\BindingException
      * @return Message
      */
-    function processData(array $data) {
+    private function processData(array $data) {
         if (array_key_exists('SAMLRequest', $data)) {
             $msg = $data['SAMLRequest'];
         } elseif (array_key_exists('SAMLResponse', $data)) {
@@ -95,7 +93,7 @@ class HttpRedirect extends AbstractBinding
      * @return string
      * @throws \RuntimeException
      */
-    function getRedirectURL(Message $message) {
+    private function getRedirectURL(Message $message) {
         $destination = $message->getDestination() ?: $this->getDestination();
         $relayState = $message->getRelayState();
         $signature = $message->getSignature();
@@ -139,32 +137,20 @@ class HttpRedirect extends AbstractBinding
 
 
     /**
-     * @param string|null $queryString
+     * @param Request $request
      * @return array
      */
-    function parseQuery($queryString = null) {
+    private function parseQuery(Request $request) {
         /*
          * Parse the query string. We need to do this ourself, so that we get access
          * to the raw (urlencoded) values. This is required because different software
          * can urlencode to different values.
          */
-        $data = array();
-        $relayState = '';
-        $sigAlg = '';
-        $sigQuery = '';
-        $queryString = $queryString ? $queryString : $_SERVER['QUERY_STRING'];
-        foreach (explode('&', $queryString) as $e) {
-            $tmp = explode('=', $e, 2);
-            $name = $tmp[0];
-            if (count($tmp) === 2) {
-                $value = $tmp[1];
-            } else {
-                /* No value for this paramter. */
-                $value = '';
-            }
-            $name = urldecode($name);
-            $data[$name] = urldecode($value);
-
+        $sigQuery = $relayState = $sigAlg = '';
+        $data = $request->parseQueryString(null, false);
+        $result = array();
+        foreach ($data as $name=>$value) {
+            $result[$name] = urldecode($value);
             switch ($name) {
                 case 'SAMLRequest':
                 case 'SAMLResponse':
@@ -178,10 +164,8 @@ class HttpRedirect extends AbstractBinding
                     break;
             }
         }
-
-        $data['SignedQuery'] = $sigQuery . $relayState . $sigAlg;
-
-        return $data;
+        $result['SignedQuery'] = $sigQuery . $relayState . $sigAlg;
+        return $result;
     }
 
 } 

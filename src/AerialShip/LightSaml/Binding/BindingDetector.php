@@ -31,29 +31,28 @@ class BindingDetector
 
 
     /**
-     * @param string $requestMethod $_SERVER['REQUEST_METHOD']
-     * @param string $contentType $_SERVER['CONTENT_TYPE']
-     * @param array $get
-     * @param array $post
+     * @param Request $request
      * @throws \AerialShip\LightSaml\Error\InvalidBindingException
      * @return string
      */
-    function getBinding($requestMethod, $contentType, array $get, array $post) {
-        $requestMethod = trim(strtoupper($requestMethod));
+    function getBinding(Request $request) {
+        $requestMethod = trim(strtoupper($request->getRequestMethod()));
         if ($requestMethod == 'GET') {
-            if (array_key_exists('SAMLRequest', $_GET) || array_key_exists('SAMLResponse', $_GET)) {
+            $get = $request->getGet();
+            if (array_key_exists('SAMLRequest', $get) || array_key_exists('SAMLResponse', $get)) {
                 return Bindings::SAML2_HTTP_REDIRECT;
-            } elseif (array_key_exists('SAMLart', $_GET) ){
+            } elseif (array_key_exists('SAMLart', $get) ){
                 return Bindings::SAML2_HTTP_ARTIFACT;
             }
         } else if ($requestMethod == 'POST') {
-            if (array_key_exists('SAMLRequest', $_POST) || array_key_exists('SAMLResponse', $_POST)) {
+            $post = $request->getPost();
+            if (array_key_exists('SAMLRequest', $post) || array_key_exists('SAMLResponse', $post)) {
                 return Bindings::SAML2_HTTP_POST;
-            } elseif (array_key_exists('SAMLart', $_POST) ){
+            } elseif (array_key_exists('SAMLart', $post) ){
                 return Bindings::SAML2_HTTP_ARTIFACT;
             } else {
-                if ($contentType) {
-                    $contentType = explode(';', $contentType);
+                if ($request->getContentType()) {
+                    $contentType = explode(';', $request->getContentType());
                     $contentType = $contentType[0]; /* Remove charset. */
                     if ($contentType === 'text/xml') {
                         return Bindings::SAML2_SOAP;

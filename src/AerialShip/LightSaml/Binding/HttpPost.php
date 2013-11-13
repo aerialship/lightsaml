@@ -13,23 +13,9 @@ class HttpPost extends AbstractBinding
 
     /**
      * @param Message $message
-     * @return void
+     * @return PostResponse
      */
     function send(Message $message) {
-        $data = $this->getPostData($message);
-        $template = new HttpPostTemplate($data);
-        $template->render();
-        exit;
-    }
-
-
-    /**
-     * @param Message $message
-     * @return array
-     *      destination => string
-     *      post => array( name => value )
-     */
-    function getPostData(Message $message) {
         $destination = $message->getDestination() ?: $this->getDestination();
 
         $context = new SerializationContext();
@@ -39,27 +25,23 @@ class HttpPost extends AbstractBinding
 
         $type = $message instanceof AbstractRequest ? 'SAMLRequest' : 'SAMLResponse';
 
-        $result = array(
-            'destination' => $destination,
-            'post' => array($type => $msgStr)
-        );
+        $data = array($type => $msgStr);
         if ($message->getRelayState()) {
-            $result['post']['RelayState'] = $message->getRelayState();
+            $data['RelayState'] = $message->getRelayState();
         }
+
+        $result = new PostResponse($destination, $data);
         return $result;
     }
 
 
     /**
-     * @param array $post
-     * @throws \AerialShip\LightSaml\Error\BindingException
+     * @param Request $request
      * @return Message
+     * @throws \AerialShip\LightSaml\Error\BindingException
      */
-    function receive(array $post = null) {
-        if (!$post) {
-            $post = $_POST;
-        }
-
+    function receive(Request $request) {
+        $post = $request->getPost();
         if (array_key_exists('SAMLRequest', $post)) {
             $msg = $post['SAMLRequest'];
         } elseif (array_key_exists('SAMLResponse', $post)) {

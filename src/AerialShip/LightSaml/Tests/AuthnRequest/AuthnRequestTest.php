@@ -3,11 +3,9 @@
 namespace AerialShip\LightSaml\Tests\AuthnRequest;
 
 use AerialShip\LightSaml\Bindings;
-use AerialShip\LightSaml\Meta\AuthnRequestBuilder;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\SpMeta;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
-use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Tests\CommonHelper;

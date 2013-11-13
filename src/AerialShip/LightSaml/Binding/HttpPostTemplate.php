@@ -5,18 +5,15 @@ namespace AerialShip\LightSaml\Binding;
 
 class HttpPostTemplate
 {
-    /**
-     * array(
-     *    destination => string
-     *    post => array( name=>value )
-     * )
-     * @var array
-     *
-     */
+    /** @var  string */
+    private $destination;
+
+    /** @var array */
     private $data;
 
 
-    function __construct(array $data) {
+    function __construct($destination, array $data) {
+        $this->destination = $destination;
         $this->data = $data;
     }
 
@@ -36,7 +33,7 @@ class HttpPostTemplate
     <p><strong>Note:</strong> Since your browser does not support JavaScript, you must press the button below once to proceed.</p>
 </noscript>
 
-<form method="post" action="<?php print htmlspecialchars($this->data['destination']); ?>">
+<form method="post" action="<?php print htmlspecialchars($this->destination); ?>">
     <input type="submit" style="display:none;" />
 
 <?php foreach ($this->data['post'] as $name=>$value) {  ?>

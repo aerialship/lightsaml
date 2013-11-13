@@ -3,23 +3,33 @@
 namespace AerialShip\LightSaml\Tests\Binding;
 
 use AerialShip\LightSaml\Binding\HttpPost;
+use AerialShip\LightSaml\Binding\PostResponse;
+use AerialShip\LightSaml\Binding\RedirectResponse;
+use AerialShip\LightSaml\Binding\Request;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 
 
 class HttpPostTest extends Base
 {
     function testAuthnRequest() {
-        $request = $this->getRequest();
-        $id = $request->getID();
-        $time = $request->getIssueInstant();
+        $authnRequest = $this->getRequest();
+        $id = $authnRequest->getID();
+        $time = $authnRequest->getIssueInstant();
 
         $binding = new HttpPost();
-        $data = $binding->getPostData($request);
-        $this->assertArrayHasKey('destination', $data);
-        $this->assertEquals($this->destination, $data['destination']);
 
-        $request = $binding->receive($data['post']);
-        $this->assertTrue($request instanceof AuthnRequest);
-        $this->checkRequest($request, $id, $time);
+        /** @var PostResponse $response */
+        $response = $binding->send($authnRequest);
+        $this->assertNotNull($response);
+        $this->assertTrue($response instanceof PostResponse);
+        $this->assertEquals($this->destination, $response->getDestination());
+
+        /** @var $authnRequest AuthnRequest */
+        $bindingRequest = new Request();
+        $bindingRequest->setPost($response->getData());
+        $authnRequest = $binding->receive($bindingRequest);
+        $this->assertTrue($authnRequest instanceof AuthnRequest);
+        $this->checkRequest($authnRequest, $id, $time);
     }
-} 
+
+}

@@ -32,7 +32,7 @@ abstract class AbstractBinding
 
     /**
      * @param Message $message
-     * @return void
+     * @return Response
      */
     abstract function send(Message $message);
 
@@ -40,6 +40,6 @@ abstract class AbstractBinding
     /**
      * @return Message
      */
-    abstract function receive();
+    abstract function receive(Request $request);
 
 } 
