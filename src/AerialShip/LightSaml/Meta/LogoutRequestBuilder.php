@@ -31,12 +31,15 @@ class LogoutRequestBuilder extends AbstractRequestBuilder
 
 
     /**
+     * @param $NameIDFormat
+     * @param $NameIDValue
+     * @param null $sessionIndex
+     * @param null $reason
      * @return LogoutRequest
      */
     function build($NameIDFormat, $NameIDValue, $sessionIndex = null, $reason = null) {
         $result = new LogoutRequest();
         $edSP = $this->getEdSP();
-        $sp = $this->getSpSsoDescriptor();
 
         $result->setID(Helper::generateID());
         $result->setDestination($this->getDestination());

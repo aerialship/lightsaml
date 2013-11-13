@@ -76,9 +76,6 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @return $this
      */
     public function setFormat($format){
-//        if(!preg_match(Helper::REGEXP_ANYURI, trim($format))){
-//            throw new InvalidAssertionException("Format does not match anyURI [{$format}] according to pattern [".Helper::REGEXP_ANYURI."]");
-//        }
         $this->format = trim($format);
         return $this;
     }

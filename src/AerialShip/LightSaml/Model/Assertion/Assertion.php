@@ -275,6 +275,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param \DOMNode $parent
      * @param \AerialShip\LightSaml\Meta\SerializationContext $context
+     * @throws \AerialShip\LightSaml\Error\InvalidAssertionException
      * @return \DOMElement
      */
     function getXml(\DOMNode $parent, SerializationContext $context) {

@@ -38,6 +38,7 @@ abstract class AbstractBinding
 
 
     /**
+     * @param Request $request
      * @return Message
      */
     abstract function receive(Request $request);

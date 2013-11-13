@@ -47,6 +47,7 @@ class LogoutRequest extends AbstractRequest
      * The time value is encoded in UTC
      *
      * @param \DateTime $time UTC datetime
+     * @throws \AerialShip\LightSaml\Error\InvalidRequestException
      * @return LogoutRequest
      */
     public function setNotOnOrAfter(\DateTime $time){
