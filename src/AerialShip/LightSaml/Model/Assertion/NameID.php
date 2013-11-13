@@ -137,4 +137,5 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
         if ($xml->hasAttribute('Format'))          $this->setFormat($xml->getAttribute('Format'));
         $this->setValue(trim($xml->textContent));
     }
+    
 }
