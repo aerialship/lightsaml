@@ -4,7 +4,6 @@ namespace AerialShip\LightSaml\Model\Protocol;
 
 use AerialShip\LightSaml\Error\InvalidRequestException;
 use AerialShip\LightSaml\Meta\SerializationContext;
-use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\NameIDPolicy;
 use AerialShip\LightSaml\Protocol;
@@ -12,7 +11,6 @@ use AerialShip\LightSaml\Protocol;
 
 class AuthnRequest extends AbstractRequest
 {
-    use XmlRequiredAttributesTrait;
 
     /** @var string */
     protected $assertionConsumerServiceURL;
