@@ -1,6 +1,6 @@
 {
     "name": "aerialship/lightsaml",
-    "license": "proprietary",
+    "license": "MIT",
     "type": "project",
     "description": "Light SAML2 php library",
     "autoload": {
