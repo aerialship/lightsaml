@@ -14,25 +14,26 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
 {
     use XmlChildrenLoaderTrait;
 
-
-    /** @var string */
-    protected $code;
+    /** @var  StatusCode */
+    protected $statusCode;
 
     /** @var string */
     protected $message;
 
+
+
     /**
-     * @param string $code
+     * @param \AerialShip\LightSaml\Model\Protocol\StatusCode $statusCode
      */
-    public function setCode($code) {
-        $this->code = $code;
+    public function setStatusCode($statusCode) {
+        $this->statusCode = $statusCode;
     }
 
     /**
-     * @return string
+     * @return \AerialShip\LightSaml\Model\Protocol\StatusCode
      */
-    public function getCode() {
-        return $this->code;
+    public function getStatusCode() {
+        return $this->statusCode;
     }
 
     /**
@@ -52,18 +53,20 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
 
 
     public function isSuccess() {
-        return $this->getCode() == Protocol::STATUS_SUCCESS;
+        $result = $this->getStatusCode() && $this->getStatusCode()->getValue() == Protocol::STATUS_SUCCESS;
+        return $result;
     }
 
 
     public function setSuccess() {
-        $this->setCode(Protocol::STATUS_SUCCESS);
+        $this->setStatusCode(new StatusCode());
+        $this->getStatusCode()->setValue(Protocol::STATUS_SUCCESS);
     }
 
 
 
     protected function prepareForXml() {
-        if (!$this->getCode()) {
+        if (!$this->getStatusCode()) {
             throw new InvalidXmlException('StatusCode not set');
         }
     }
@@ -80,9 +83,7 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
         $result = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:Status');
         $parent->appendChild($result);
 
-        $statusCodeNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:StatusCode');
-        $result->appendChild($statusCodeNode);
-        $statusCodeNode->setAttribute('Value', $this->getCode());
+        $this->getStatusCode()->getXml($result, $context);
 
         if ($this->getMessage()) {
             $statusMessageNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:StatusMessage', $this->getMessage());
@@ -104,17 +105,16 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
 
         $this->iterateChildrenElements($xml, function(\DOMElement $node) {
             if ($node->localName == 'StatusCode' && $node->namespaceURI == Protocol::SAML2) {
-                if (!$node->hasAttribute('Value')) {
-                    throw new InvalidXmlException('StatusCode element missing Value attribute');
-                }
-                $this->setCode($node->getAttribute('Value'));
+                $statusCode = new StatusCode();
+                $statusCode->loadFromXml($node);
+                $this->setStatusCode($statusCode);
             } else if ($node->localName == 'StatusMessage' && $node->namespaceURI == Protocol::SAML2) {
                 $this->setMessage($node->textContent);
             }
         });
 
-        if (!$this->getCode()) {
-            throw new InvalidXmlException('Missing Status node');
+        if (!$this->getStatusCode()) {
+            throw new InvalidXmlException('Missing StatusCode node');
         }
     }
 

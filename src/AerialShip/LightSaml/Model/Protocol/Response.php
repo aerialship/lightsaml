@@ -81,9 +81,6 @@ class Response extends StatusResponse
                 $this->addAssertion($assertion);
             }
         });
-        if (!$this->getAllAssertions()) {
-            throw new InvalidXmlException('Missing Assertion element');
-        }
     }
 
 }

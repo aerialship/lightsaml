@@ -38,7 +38,8 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull($response->getStatus());
         $this->assertTrue($response->getStatus()->isSuccess());
-        $this->assertEquals(Protocol::STATUS_SUCCESS, $response->getStatus()->getCode());
+        $this->assertNotNull($response->getStatus()->getStatusCode());
+        $this->assertEquals(Protocol::STATUS_SUCCESS, $response->getStatus()->getStatusCode()->getValue());
 
 
         $arrAssertions = $response->getAllAssertions();
