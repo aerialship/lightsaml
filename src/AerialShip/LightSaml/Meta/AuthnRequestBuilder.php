@@ -13,7 +13,9 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
         $result = null;
         if ($this->spMeta->getAuthnRequestBinding()) {
             $arr = $idp->findSingleSignOnServices($this->spMeta->getAuthnRequestBinding());
-            $result = $arr[0]->getLocation();
+            if ($arr) {
+                $result = $arr[0]->getLocation();
+            }
         }
         if (!$result) {
             $arr = $idp->findSingleSignOnServices();
@@ -28,6 +30,20 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
     }
 
 
+    private function getProtocolBinding() {
+        $result = $this->spMeta->getAuthnRequestBinding();
+        if (!$result) {
+            $asc = $this->getAssertionConsumerService($this->getSpSsoDescriptor());
+            if ($asc) {
+                $result = $asc->getBinding();
+            }
+        }
+        if (!$result) {
+            throw new \LogicException('Unable to determine protocol binding');
+        }
+        return $result;
+    }
+
     /**
      * @return AuthnRequest
      */
@@ -40,8 +56,8 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
         $result->setDestination($this->getDestination());
         $result->setIssueInstant(time());
 
+        $result->setProtocolBinding($this->getProtocolBinding());
         $asc = $this->getAssertionConsumerService($sp);
-        $result->setProtocolBinding($asc->getBinding());
         $result->setAssertionConsumerServiceURL($asc->getLocation());
 
         $result->setIssuer($edSP->getEntityID());

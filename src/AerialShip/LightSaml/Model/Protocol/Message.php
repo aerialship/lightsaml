@@ -290,7 +290,7 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
             throw new InvalidXmlException('Expected '.$this->getXmlNodeNamespace().' namespace but got'.$xml->namespaceURI);
         }
 
-        $this->checkRequiredAttributes($xml, array('ID', 'Version', 'IssueInstant', 'Destination'));
+        $this->checkRequiredAttributes($xml, array('ID', 'Version', 'IssueInstant'));
         $this->setID($xml->getAttribute('ID'));
         $this->setVersion($xml->getAttribute('Version'));
         $this->setIssueInstant(Helper::parseSAMLTime($xml->getAttribute('IssueInstant')));
