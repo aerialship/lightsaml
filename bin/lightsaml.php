@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+require_once '../autoload.php';
+
+$app = new \Symfony\Component\Console\Application('lightsaml', '1.0');
+$input = new \Symfony\Component\Console\Input\ArgvInput();
+
+$app->add(new \AerialShip\LightSaml\Command\BuildSPMetadataCommand());
+$app->run($input);

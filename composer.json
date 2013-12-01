@@ -8,7 +8,8 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "rnijveld/xmlseclibs": "1.3.1"
+        "rnijveld/xmlseclibs": "1.3.1",
+        "symfony/console": ">=2.2"
     },
     "scripts": {
         "post-install-cmd": [
@@ -19,6 +20,7 @@
     "config": {
         "bin-dir": "bin"
     },
+    "bin": ["bin/lightsaml"],
     "prefer-stable": true,
     "minimum-stability": "stable"
 }
