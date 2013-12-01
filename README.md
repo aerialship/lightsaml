@@ -1,11 +1,11 @@
-LighSaml - A SAML 2.0 PHP Component
-===================================
+SAML 2.0 PHP Component
+======================
 
-Implements basic SAML 2.0 data model classes, serialization/deserialization to/from xml with XML security and
+LightSaml Implements basic SAML 2.0 data model classes, serialization/deserialization to/from xml with XML security and
 certificates support, and message encapsulations to bindings. Covered with unit tests.
 
-[Travis Continuous Integration](https://travis-ci.org/aerialship/lightsaml)
-[Symfony2 Bundle](https://github.com/aerialship/SamlSPBundle)
+* [Travis Continuous Integration](https://travis-ci.org/aerialship/lightsaml)
+* [Symfony2 Bundle](https://github.com/aerialship/SamlSPBundle)
 
 
 DOCUMENTATION
