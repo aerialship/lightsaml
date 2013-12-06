@@ -13,6 +13,8 @@ class SpMeta
     /** @var string */
     protected $authnRequestBinding;
 
+    /** @var  string */
+    protected $logoutRequestBinding;
 
 
     /**
@@ -46,6 +48,20 @@ class SpMeta
      */
     public function getAuthnRequestBinding() {
         return $this->authnRequestBinding;
+    }
+
+    /**
+     * @param string $logoutRequestBinding
+     */
+    public function setLogoutRequestBinding($logoutRequestBinding) {
+        $this->logoutRequestBinding = $logoutRequestBinding;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogoutRequestBinding() {
+        return $this->logoutRequestBinding;
     }
 
 

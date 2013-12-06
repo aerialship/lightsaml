@@ -14,8 +14,12 @@ class LogoutRequestBuilder extends AbstractRequestBuilder
     private function getDestination() {
         $idp = $this->getIdpSsoDescriptor();
         $result = null;
-        if ($this->spMeta->getAuthnRequestBinding()) {
-            $result = $idp->findSingleLogoutServices($this->spMeta->getAuthnRequestBinding());
+        if ($this->spMeta->getLogoutRequestBinding()) {
+            $arr = $idp->findSingleLogoutServices($this->spMeta->getLogoutRequestBinding());
+            if ($arr) {
+                $sso = array_shift($arr);
+                $result = $sso->getLocation();
+            }
         }
         if (!$result) {
             $arr = $idp->findSingleLogoutServices();
