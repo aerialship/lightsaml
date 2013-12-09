@@ -286,7 +286,7 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
 
         $result->setAttribute('ID', $this->getID());
         $result->setAttribute('Version', $this->getVersion());
-        $result->setAttribute('IssueInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getIssueInstant()));
+        $result->setAttribute('IssueInstant', Helper::time2string($this->getIssueInstant()));
 
         $issuerNode = $context->getDocument()->createElement('Issuer', $this->getIssuer());
         $result->appendChild($issuerNode);
@@ -295,8 +295,8 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
 
         $conditionsNode = $context->getDocument()->createElement('Conditions');
         $result->appendChild($conditionsNode);
-        $conditionsNode->setAttribute('NotBefore', gmdate('Y-m-d\TH:i:s\Z', $this->getNotBefore()));
-        $conditionsNode->setAttribute('NotOnOrAfter', gmdate('Y-m-d\TH:i:s\Z', $this->getNotOnOrAfter()));
+        $conditionsNode->setAttribute('NotBefore', Helper::time2string($this->getNotBefore()));
+        $conditionsNode->setAttribute('NotOnOrAfter', Helper::time2string($this->getNotOnOrAfter()));
         if ($this->getValidAudience()) {
             $audienceRestrictionNode = $context->getDocument()->createElement('AudienceRestriction');
             $conditionsNode->appendChild($audienceRestrictionNode);

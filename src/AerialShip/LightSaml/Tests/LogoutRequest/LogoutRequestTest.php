@@ -54,10 +54,6 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($time, $request->getIssueInstant());
         $this->assertEquals($this->issuer, $request->getIssuer());
 
-        $notOnOrAfter = $request->getNotOnOrAfter();
-        if($time != null){
-            $this->assertEquals($notOnOrAfter->format('U'), Helper::parseSAMLTime($notOnOrAfter->format(LogoutRequest::FORMAT_NOT_ON_OR_AFTER)));
-        }
         $reason = $request->getReason();
         if($reason != null){
             $this->assertStringMatchesFormat('%s', $reason);
@@ -67,9 +63,8 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($NameId->getFormat());
     }
 
-    private function checkRequestXml(\DOMDocument $doc, LogoutRequest $request) {
-//        $xml = $doc->saveXML();
-//        print "\n\n$xml\n\n";
+    private function checkRequestXml(\DOMDocument $doc, LogoutRequest $request)
+    {
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace('samlp', Protocol::SAML2);
         $xpath->registerNamespace('saml', Protocol::NS_ASSERTION);
@@ -82,8 +77,8 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($request->getReason(), $node->getAttribute('Reason'));
         $this->assertEquals(
-            $request->getNotOnOrAfter()->format(LogoutRequest::FORMAT_NOT_ON_OR_AFTER),
-            $node->getAttribute('NotOnOrAfter')
+            $request->getNotOnOrAfter(),
+            Helper::parseSAMLTime($node->getAttribute('NotOnOrAfter'))
         );
         $this->assertEquals($request->getID(), $node->getAttribute('ID'));
         $this->assertEquals('2.0', $node->getAttribute('Version'));

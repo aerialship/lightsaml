@@ -126,10 +126,10 @@ class SubjectConfirmationData implements GetXmlInterface, LoadFromXmlInterface
         $parent->appendChild($result);
 
         if ($this->getNotBefore()) {
-            $result->setAttribute('NotBefore', gmdate('Y-m-d\TH:i:s\Z', $this->getNotBefore()));
+            $result->setAttribute('NotBefore', Helper::time2string($this->getNotBefore()));
         }
         if ($this->getNotOnOrAfter()) {
-            $result->setAttribute('NotOnOrAfter', gmdate('Y-m-d\TH:i:s\Z', $this->getNotBefore()));
+            $result->setAttribute('NotOnOrAfter', Helper::time2string($this->getNotBefore()));
         }
 
         foreach (array('Recipient', 'InResponseTo', 'Address') as $name) {

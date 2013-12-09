@@ -5,13 +5,25 @@ namespace AerialShip\LightSaml;
 
 final class Helper
 {
+    const TIME_FORMAT = 'Y-m-d\TH:i:s\Z';
+
+
+    /**
+     * @param int $time
+     * @return string
+     */
+    static public function time2string($time)
+    {
+        return gmdate('Y-m-d\TH:i:s\Z', $time);
+    }
 
     /**
      * @param string $time
      * @return int
      * @throws \InvalidArgumentException
      */
-    static function parseSAMLTime($time) {
+    static public function parseSAMLTime($time)
+    {
         $matches = array();
         if(preg_match('/^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)T(\\d\\d):(\\d\\d):(\\d\\d)(?:\\.\\d+)?Z$/D',
             $time, $matches) == 0) {
@@ -31,7 +43,8 @@ final class Helper
     }
 
 
-    static function getClassNameOnly($value) {
+    static public function getClassNameOnly($value)
+    {
         if (is_object($value)) {
             $value = get_class($value);
         } else if (!is_string($value)) {
@@ -43,7 +56,8 @@ final class Helper
         return $value;
     }
 
-    static function doClassNameMatch($object, $class) {
+    static public function doClassNameMatch($object, $class)
+    {
         if (!is_string($class)) {
             throw new \InvalidArgumentException('class argument must be string');
         }
@@ -67,7 +81,8 @@ final class Helper
      * @return string
      * @throws \InvalidArgumentException
      */
-    static function generateRandomBytes($length) {
+    static public function generateRandomBytes($length)
+    {
         $length = intval($length);
         if (!$length) {
             throw new \InvalidArgumentException();
@@ -88,7 +103,8 @@ final class Helper
      * @param string $bytes
      * @return string
      */
-    static function stringToHex($bytes) {
+    static public function stringToHex($bytes)
+    {
         $result = '';
         $len = strlen($bytes);
         for($i = 0; $i < $len; $i++) {
@@ -101,7 +117,8 @@ final class Helper
     /**
      * @return string
      */
-    static function generateID() {
+    static public function generateID()
+    {
         return '_'.self::stringToHex(self::generateRandomBytes(21));
     }
 

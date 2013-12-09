@@ -2,7 +2,6 @@
 
 namespace AerialShip\LightSaml\Model\Protocol;
 
-use AerialShip\LightSaml\Error\InvalidRequestException;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\Assertion\NameID;
@@ -11,28 +10,24 @@ use AerialShip\LightSaml\Protocol;
 
 class LogoutRequest extends AbstractRequest
 {
-
-    const FORMAT_NOT_ON_OR_AFTER = 'Y-m-d\TH:i:s\Z';
-
-    /**
-     * @var \DateTime|null UTC
-     */
+    /** @var int|null */
     protected $notOnOrAfter;
 
     /** @var string|null */
     protected $reason;
 
-    /** @var null @var NameID|null */
-    protected $nameID = null;
+    /** @var NameID */
+    protected $nameID;
 
     /** @var string|null */
-    protected $sessionIndex = null;
+    protected $sessionIndex;
+
 
     /**
      * @return string
      */
     function getXmlNodeLocalName() {
-        return 'LogoutRequest';
+        return 'samlp:LogoutRequest';
     }
 
     /**
@@ -46,20 +41,22 @@ class LogoutRequest extends AbstractRequest
      * The time at which the request expires, after which the recipient may discard the message.
      * The time value is encoded in UTC
      *
-     * @param \DateTime $time UTC datetime
-     * @throws \AerialShip\LightSaml\Error\InvalidRequestException
+     * @param int|string $notOnOrAfter
      * @return LogoutRequest
+     * @throws \InvalidArgumentException
      */
-    public function setNotOnOrAfter(\DateTime $time){
-        if($time->getTimezone()->getName() != 'UTC'){
-            throw new InvalidRequestException('Time zone must be UTC, given ['.$time->getTimezone()->getName().']');
+    public function setNotOnOrAfter($notOnOrAfter){
+        if (is_string($notOnOrAfter)) {
+            $notOnOrAfter = Helper::parseSAMLTime($notOnOrAfter);
+        } else if (!is_int($notOnOrAfter) || $notOnOrAfter < 1) {
+            throw new \InvalidArgumentException();
         }
-        $this->notOnOrAfter =  $time;
+        $this->notOnOrAfter = $notOnOrAfter;
         return $this;
     }
 
     /**
-     * @return \DateTime|null
+     * @return int
      */
     public function getNotOnOrAfter(){
         return $this->notOnOrAfter;
@@ -71,7 +68,7 @@ class LogoutRequest extends AbstractRequest
      * @return LogoutRequest
      */
     public function setReason($reason){
-        $this->reason = $reason;
+        $this->reason = trim($reason);
         return $this;
     }
 
@@ -81,7 +78,7 @@ class LogoutRequest extends AbstractRequest
 
     /**
      * @param NameID $nameId
-     * @return $this
+     * @return LogoutRequest
      */
     public function setNameID(NameID $nameId){
         $this->nameID = $nameId;
@@ -97,7 +94,7 @@ class LogoutRequest extends AbstractRequest
 
     /**
      * @param string $sessionIndex
-     * @return $this
+     * @return LogoutRequest
      */
     public function setSessionIndex($sessionIndex){
         $this->sessionIndex = $sessionIndex;
@@ -111,23 +108,31 @@ class LogoutRequest extends AbstractRequest
         return $this->sessionIndex;
     }
 
-    function getXml(\DOMNode $parent, SerializationContext $context){
 
+
+    function getXml(\DOMNode $parent, SerializationContext $context)
+    {
         $result = parent::getXml($parent, $context);
 
-        if($this->getNotOnOrAfter()){
-            $result->setAttribute('NotOnOrAfter', $this->getNotOnOrAfter()->format(self::FORMAT_NOT_ON_OR_AFTER));
+        if ($this->getNotOnOrAfter()) {
+            $result->setAttribute('NotOnOrAfter', Helper::time2string($this->getNotOnOrAfter()));
         }
-        if($this->getReason()){
+        if ($this->getReason()) {
             $result->setAttribute('Reason', $this->getReason());
         }
-        if($this->getNameID()){
+        if ($this->getNameID()) {
             $result->appendChild($this->getNameID()->getXml($parent, $context));
         }
-        if($this->getSessionIndex()){
-            $sessionIndex = $context->getDocument()->createElement('samlp:SessionIndex', $this->getSessionIndex());
+        if ($this->getSessionIndex()) {
+            $sessionIndex = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:SessionIndex', $this->getSessionIndex());
             $result->appendChild($sessionIndex);
         }
+//        if ($signatureCreator = $this->getSignature()) {
+//            if (!$signatureCreator instanceof SignatureCreator) {
+//                throw new \RuntimeException('Signature must be SignatureCreator');
+//            }
+//            $signatureCreator->getXml($result, $context);
+//        }
         return $result;
     }
 

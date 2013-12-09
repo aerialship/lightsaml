@@ -2,9 +2,12 @@
 
 namespace AerialShip\LightSaml\Meta;
 
+use AerialShip\LightSaml\Binding\BindingDetector;
+use AerialShip\LightSaml\Binding\HttpRedirect;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
+use AerialShip\LightSaml\Model\Protocol\Message;
 
 class AuthnRequestBuilder extends AbstractRequestBuilder
 {
@@ -33,7 +36,7 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
     private function getProtocolBinding() {
         $result = $this->spMeta->getAuthnRequestBinding();
         if (!$result) {
-            $asc = $this->getAssertionConsumerService($this->getSpSsoDescriptor());
+            $asc = $this->getAssertionConsumerService();
             if ($asc) {
                 $result = $asc->getBinding();
             }
@@ -47,17 +50,17 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
     /**
      * @return AuthnRequest
      */
-    function build() {
+    public function build()
+    {
         $result = new AuthnRequest();
         $edSP = $this->getEdSP();
-        $sp = $this->getSpSsoDescriptor();
 
         $result->setID(Helper::generateID());
         $result->setDestination($this->getDestination());
         $result->setIssueInstant(time());
 
         $result->setProtocolBinding($this->getProtocolBinding());
-        $asc = $this->getAssertionConsumerService($sp);
+        $asc = $this->getAssertionConsumerService();
         $result->setAssertionConsumerServiceURL($asc->getLocation());
 
         $result->setIssuer($edSP->getEntityID());
@@ -67,5 +70,24 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
 
         return $result;
     }
+
+
+    /**
+     * @param Message $message
+     * @return \AerialShip\LightSaml\Binding\Response
+     */
+    public function send(Message $message)
+    {
+        $bindingType = $this->spMeta->getAuthnRequestBinding();
+        if ($bindingType) {
+            $detector = new BindingDetector();
+            $binding = $detector->instantiate($bindingType);
+        } else {
+            $binding = new HttpRedirect();
+        }
+        $result = $binding->send($message);
+        return $result;
+    }
+
 
 }

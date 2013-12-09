@@ -18,18 +18,21 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
     protected $nameQualifier = null;
 
     /** @var string */
-    protected $sPNameQualifier = null;
+    protected $spNameQualifier = null;
 
     /** @var string */
     protected $format = null;
 
     /** @var string */
-    protected $sPProvidedID = null;
+    protected $spProvidedID = null;
+
+
+
     /**
      * @param string $value
      */
     public function setValue($value) {
-        $this->value = $value;
+        $this->value = trim($value);
     }
 
     /**
@@ -60,7 +63,7 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @return $this
      */
     public function setSPNameQualifier($sPNameQualifier){
-        $this->sPNameQualifier = $sPNameQualifier;
+        $this->spNameQualifier = $sPNameQualifier;
         return $this;
     }
 
@@ -68,7 +71,7 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @return string
      */
     public function getSPNameQualifier(){
-        return $this->sPNameQualifier;
+        return $this->spNameQualifier;
     }
 
     /**
@@ -92,7 +95,7 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @return $this
      */
     public function setSPProvidedID($sPProvidedID){
-        $this->sPProvidedID = $sPProvidedID;
+        $this->spProvidedID = $sPProvidedID;
         return $this;
     }
 
@@ -100,23 +103,35 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
      * @return string
      */
     public function getSPProvidedID(){
-        return $this->sPProvidedID;
+        return $this->spProvidedID;
     }
+
+
+
 
     /**
      * @param \DOMNode $parent
      * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent, SerializationContext $context) {
+    public function getXml(\DOMNode $parent, SerializationContext $context)
+    {
         $result = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:NameID', $this->getValue());
 
         $parent->appendChild($result);
 
-        if($this->getSPNameQualifier()) $result->setAttribute('SPNameQualifier', $this->getSPNameQualifier());
-        if($this->getNameQualifier())   $result->setAttribute('NameQualifier',   $this->getNameQualifier());
-        if($this->getSPProvidedID())    $result->setAttribute('SPProvidedID',    $this->getSPProvidedID());
-        if($this->getFormat())          $result->setAttribute('Format',          $this->getFormat());
+        if($this->getSPNameQualifier()) {
+            $result->setAttribute('SPNameQualifier', $this->getSPNameQualifier());
+        }
+        if($this->getNameQualifier()) {
+            $result->setAttribute('NameQualifier',   $this->getNameQualifier());
+        }
+        if($this->getSPProvidedID()) {
+            $result->setAttribute('SPProvidedID',    $this->getSPProvidedID());
+        }
+        if($this->getFormat()) {
+            $result->setAttribute('Format',          $this->getFormat());
+        }
 
         return $result;
     }
@@ -131,10 +146,18 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
             throw new InvalidXmlException('Expected NameID element got '.$xml->localName);
         }
 
-        if ($xml->hasAttribute('SPNameQualifier')) $this->setSPNameQualifier($xml->getAttribute('SPNameQualifier'));
-        if ($xml->hasAttribute('NameQualifier'))   $this->setNameQualifier($xml->getAttribute('NameQualifier'));
-        if ($xml->hasAttribute('SPProvidedID'))    $this->setSPProvidedID($xml->getAttribute('SPProvidedID'));
-        if ($xml->hasAttribute('Format'))          $this->setFormat($xml->getAttribute('Format'));
+        if ($xml->hasAttribute('SPNameQualifier')) {
+            $this->setSPNameQualifier($xml->getAttribute('SPNameQualifier'));
+        }
+        if ($xml->hasAttribute('NameQualifier')) {
+            $this->setNameQualifier($xml->getAttribute('NameQualifier'));
+        }
+        if ($xml->hasAttribute('SPProvidedID')) {
+            $this->setSPProvidedID($xml->getAttribute('SPProvidedID'));
+        }
+        if ($xml->hasAttribute('Format')) {
+            $this->setFormat($xml->getAttribute('Format'));
+        }
         $this->setValue(trim($xml->textContent));
     }
 

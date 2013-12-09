@@ -8,10 +8,11 @@ use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
+use AerialShip\LightSaml\Model\Protocol\Message;
 use AerialShip\LightSaml\Protocol;
 
 
-class AbstractRequestBuilder
+abstract class AbstractRequestBuilder
 {
 
     /** @var EntityDescriptor */
@@ -30,12 +31,19 @@ class AbstractRequestBuilder
      * @param EntityDescriptor $edIDP
      * @param SpMeta $spMeta
      */
-    function __construct(EntityDescriptor $edSP, EntityDescriptor $edIDP, SpMeta $spMeta) {
+    public function __construct(EntityDescriptor $edSP, EntityDescriptor $edIDP, SpMeta $spMeta)
+    {
         $this->edSP = $edSP;
         $this->edIDP = $edIDP;
         $this->spMeta = $spMeta;
     }
 
+
+    /**
+     * @param Message $message
+     * @return \AerialShip\LightSaml\Binding\Response
+     */
+    abstract public function send(Message $message);
 
 
     /**
@@ -67,11 +75,14 @@ class AbstractRequestBuilder
     }
 
 
+
+
     /**
      * @return SpSsoDescriptor
      * @throws BuildRequestException
      */
-    protected function getSpSsoDescriptor() {
+    protected function getSpSsoDescriptor()
+    {
         $ed = $this->getEdSP();
         if (!$ed) {
             throw new BuildRequestException('No SP EntityDescriptor set');
@@ -92,7 +103,8 @@ class AbstractRequestBuilder
      * @return IdpSsoDescriptor
      * @throws BuildRequestException
      */
-    protected function getIdpSsoDescriptor() {
+    protected function getIdpSsoDescriptor()
+    {
         $ed = $this->getEdIDP();
         if (!$ed) {
             throw new BuildRequestException('No IDP EntityDescriptor set');
@@ -110,11 +122,12 @@ class AbstractRequestBuilder
 
 
     /**
-     * @param SpSsoDescriptor $sp
      * @return AssertionConsumerService
      * @throws BuildRequestException
      */
-    protected function getAssertionConsumerService(SpSsoDescriptor $sp) {
+    protected function getAssertionConsumerService()
+    {
+        $sp = $this->getSpSsoDescriptor();
         $arr = $sp->findAssertionConsumerServices();
         if (empty($arr)) {
             throw new BuildRequestException('SPSSODescriptor has not AssertionConsumerService');

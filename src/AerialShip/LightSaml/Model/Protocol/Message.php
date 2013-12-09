@@ -14,6 +14,7 @@ use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
 use AerialShip\LightSaml\Protocol;
+use AerialShip\LightSaml\Security\X509Certificate;
 
 
 abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFromXmlInterface
@@ -99,7 +100,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      * @param string $id
      * @throws \InvalidArgumentException
      */
-    public function setID($id) {
+    public function setID($id)
+    {
         $this->id = trim($id);
         if (!$this->id) {
             throw new \InvalidArgumentException('AuthnRequest ID field can not be empty');
@@ -109,21 +111,24 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     /**
      * @return string
      */
-    public function getID() {
+    public function getID()
+    {
         return $this->id;
     }
 
     /**
      * @param string $version
      */
-    public function setVersion($version) {
+    public function setVersion($version)
+    {
         $this->version = trim($version);
     }
 
     /**
      * @return string
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
 
@@ -131,7 +136,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      * @param int $issueInstant
      * @throws \InvalidArgumentException
      */
-    public function setIssueInstant($issueInstant) {
+    public function setIssueInstant($issueInstant)
+    {
         if (is_string($issueInstant)) {
             $issueInstant = Helper::parseSAMLTime($issueInstant);
         } else if (!is_int($issueInstant) || $issueInstant < 1) {
@@ -143,21 +149,24 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     /**
      * @return int
      */
-    public function getIssueInstant() {
+    public function getIssueInstant()
+    {
         return $this->issueInstant;
     }
 
     /**
      * @param string $destination
      */
-    public function setDestination($destination) {
+    public function setDestination($destination)
+    {
         $this->destination = trim($destination);
     }
 
     /**
      * @return string
      */
-    public function getDestination() {
+    public function getDestination()
+    {
         return $this->destination;
     }
 
@@ -165,28 +174,32 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     /**
      * @param int $issuer
      */
-    public function setIssuer($issuer) {
+    public function setIssuer($issuer)
+    {
         $this->issuer = trim($issuer);
     }
 
     /**
      * @return string
      */
-    public function getIssuer() {
+    public function getIssuer()
+    {
         return $this->issuer;
     }
 
     /**
      * @param \AerialShip\LightSaml\Model\XmlDSig\Signature $signature
      */
-    public function setSignature($signature) {
+    public function setSignature($signature)
+    {
         $this->signature = $signature;
     }
 
     /**
      * @return \AerialShip\LightSaml\Model\XmlDSig\Signature
      */
-    public function getSignature() {
+    public function getSignature()
+    {
         return $this->signature;
     }
 
@@ -194,14 +207,16 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     /**
      * @param string $relayState
      */
-    public function setRelayState($relayState) {
+    public function setRelayState($relayState)
+    {
         $this->relayState = $relayState;
     }
 
     /**
      * @return string
      */
-    public function getRelayState() {
+    public function getRelayState()
+    {
         return $this->relayState;
     }
 
@@ -213,7 +228,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     /**
      * @throws \AerialShip\LightSaml\Error\InvalidRequestException
      */
-    protected function prepareForXml() {
+    protected function prepareForXml()
+    {
         if (!$this->getID()) {
             throw new InvalidMessageException('ID not set');
         }
@@ -237,7 +253,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent, SerializationContext $context) {
+    public function getXml(\DOMNode $parent, SerializationContext $context)
+    {
         $this->prepareForXml();
 
         if ($this->getXmlNodeNamespace()) {
@@ -249,7 +266,7 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
 
         $result->setAttribute('ID', $this->getID());
         $result->setAttribute('Version', $this->getVersion());
-        $result->setAttribute('IssueInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getIssueInstant()));
+        $result->setAttribute('IssueInstant', Helper::time2string($this->getIssueInstant()));
         $result->setAttribute('Destination', $this->getDestination());
 
         $issuerNode = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:Issuer', $this->getIssuer());
@@ -264,7 +281,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      * @throws \AerialShip\LightSaml\Error\InvalidMessageException
      * @return \DOMElement
      */
-    function getSignedXml(\DOMNode $parent, SerializationContext $context) {
+    public function getSignedXml(\DOMNode $parent, SerializationContext $context)
+    {
         $result = $this->getXml($parent, $context);
 
         if ($signature = $this->getSignature()) {
@@ -282,7 +300,8 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml) {
+    public function loadFromXml(\DOMElement $xml)
+    {
         if ($xml->localName != $this->getXmlNodeLocalName()) {
             throw new InvalidXmlException('Expected '.$this->getXmlNodeLocalName().' node but got '.$xml->localName);
         }
@@ -305,6 +324,12 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     }
 
 
-
+    public function sign(X509Certificate $certificate, \XMLSecurityKey $key)
+    {
+        $signature = new SignatureCreator();
+        $signature->setCertificate($certificate);
+        $signature->setXmlSecurityKey($key);
+        $this->setSignature($signature);
+    }
 
 } 

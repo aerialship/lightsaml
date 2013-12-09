@@ -36,7 +36,7 @@ class HttpPostTemplate
 <form method="post" action="<?php print htmlspecialchars($this->destination); ?>">
     <input type="submit" style="display:none;" />
 
-<?php foreach ($this->data['post'] as $name=>$value) {  ?>
+<?php foreach ($this->data as $name=>$value) {  ?>
     <input type="hidden" name="<?php print htmlspecialchars($name); ?>" value="<?php print htmlspecialchars($value); ?>" />
 <?php } ?>
 

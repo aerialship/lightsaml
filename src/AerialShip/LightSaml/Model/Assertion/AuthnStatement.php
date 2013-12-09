@@ -94,7 +94,7 @@ class AuthnStatement implements GetXmlInterface, LoadFromXmlInterface
         $result = $context->getDocument()->createElement('AuthnStatement');
         $parent->appendChild($result);
 
-        $result->setAttribute('AuthnInstant', gmdate('Y-m-d\TH:i:s\Z', $this->getAuthnInstant()));
+        $result->setAttribute('AuthnInstant', Helper::time2string($this->getAuthnInstant()));
         if ($this->getSessionIndex()) {
             $result->setAttribute('SessionIndex', $this->getSessionIndex());
         }

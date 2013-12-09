@@ -51,7 +51,7 @@ class SignatureCreator extends Signature implements GetXmlInterface
     /**
      * @param \AerialShip\LightSaml\Security\X509Certificate $certificate
      */
-    public function setCertificate($certificate) {
+    public function setCertificate(X509Certificate $certificate) {
         $this->certificate = $certificate;
     }
 
