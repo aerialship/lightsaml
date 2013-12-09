@@ -27,7 +27,7 @@ class LogoutRequest extends AbstractRequest
      * @return string
      */
     function getXmlNodeLocalName() {
-        return 'samlp:LogoutRequest';
+        return 'LogoutRequest';
     }
 
     /**
