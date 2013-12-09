@@ -8,7 +8,7 @@ SAML 2.0 PHP Component
 LightSaml Implements basic SAML 2.0 data model classes, serialization/deserialization to/from xml with XML security and
 certificates support, and message encapsulations to bindings. Covered with unit tests.
 
-* [Symfony2 Bundle](https://github.com/aerialship/SamlSPBundle)
+* [PHP SAML Symfony2 Bundle](https://github.com/aerialship/SamlSPBundle)
 
 
 DOCUMENTATION
