@@ -1,10 +1,13 @@
 SAML 2.0 PHP Component
 ======================
 
+[![Build Status](https://travis-ci.org/aerialship/lightsaml.png)](https://travis-ci.org/aerialship/lightsaml)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/aerialship/lightsaml/badges/quality-score.png?s=bc6dc951b7ec67e23699ff28a35ccd98bf97415b)](https://scrutinizer-ci.com/g/aerialship/lightsaml/)
+
+
 LightSaml Implements basic SAML 2.0 data model classes, serialization/deserialization to/from xml with XML security and
 certificates support, and message encapsulations to bindings. Covered with unit tests.
 
-* [Travis Continuous Integration](https://travis-ci.org/aerialship/lightsaml)
 * [Symfony2 Bundle](https://github.com/aerialship/SamlSPBundle)
 
 
