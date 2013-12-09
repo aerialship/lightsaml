@@ -95,6 +95,11 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     abstract function getXmlNodeNamespace();
 
 
+    function getXmlNSPrefix()
+    {
+        return 'saml';
+    }
+
 
     /**
      * @param string $id
@@ -258,7 +263,7 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
         $this->prepareForXml();
 
         if ($this->getXmlNodeNamespace()) {
-            $result = $context->getDocument()->createElementNS($this->getXmlNodeNamespace(), $this->getXmlNodeLocalName());
+            $result = $context->getDocument()->createElementNS($this->getXmlNodeNamespace(), $this->getXmlNSPrefix().'.'.$this->getXmlNodeLocalName());
         } else {
             $result = $context->getDocument()->createElement($this->getXmlNodeLocalName());
         }
