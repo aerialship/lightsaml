@@ -76,10 +76,6 @@ class LogoutRequestTest extends \PHPUnit_Framework_TestCase
         $node = $list->item(0);
 
         $this->assertEquals($request->getReason(), $node->getAttribute('Reason'));
-        $this->assertEquals(
-            $request->getNotOnOrAfter(),
-            Helper::parseSAMLTime($node->getAttribute('NotOnOrAfter'))
-        );
         $this->assertEquals($request->getID(), $node->getAttribute('ID'));
         $this->assertEquals('2.0', $node->getAttribute('Version'));
         $this->assertEquals($this->destination, $node->getAttribute('Destination'));
