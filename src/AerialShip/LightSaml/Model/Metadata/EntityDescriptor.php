@@ -79,13 +79,17 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
 
     /**
      * @param string $class
+     * @param int|bool $count
      * @return GetXmlInterface[]|LoadFromXmlInterface[]
      */
-    public function getItemsByType($class) {
+    public function getItemsByType($class, $count = false) {
         $result = array();
         foreach ($this->items as $item) {
             if (Helper::doClassNameMatch($item, $class)) {
                 $result[] = $item;
+                if ($count && count($result) >= $count) {
+                    break;
+                }
             }
         }
         return $result;
@@ -94,17 +98,39 @@ class EntityDescriptor implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @return SpSsoDescriptor[]
      */
-    public function getSpSsoDescriptors() {
+    public function getAllSpSsoDescriptors() {
         $result = $this->getItemsByType('AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor');
         return $result;
     }
 
     /**
+     * @return SpSsoDescriptor|null
+     */
+    public function getFirstSpSsoDescriptor() {
+        $arr = $this->getItemsByType('AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor', 1);
+        if ($arr) {
+            return array_pop($arr);
+        }
+        return null;
+    }
+
+    /**
      * @return IdpSsoDescriptor[]
      */
-    public function getIdpSsoDescriptors() {
+    public function getAllIdpSsoDescriptors() {
         $result = $this->getItemsByType('AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor');
         return $result;
+    }
+
+    /**
+     * @return IdpSsoDescriptor|null
+     */
+    public function getFirstIdpSsoDescriptor() {
+        $arr = $this->getItemsByType('AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor', 1);
+        if ($arr) {
+            return array_pop($arr);
+        }
+        return null;
     }
 
     /**

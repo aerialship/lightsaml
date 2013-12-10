@@ -87,7 +87,7 @@ abstract class AbstractRequestBuilder
         if (!$ed) {
             throw new BuildRequestException('No SP EntityDescriptor set');
         }
-        $arr = $ed->getSpSsoDescriptors();
+        $arr = $ed->getAllSpSsoDescriptors();
         if (empty($arr)) {
             throw new BuildRequestException('SP EntityDescriptor has no SPSSODescriptor');
         }
@@ -109,7 +109,7 @@ abstract class AbstractRequestBuilder
         if (!$ed) {
             throw new BuildRequestException('No IDP EntityDescriptor set');
         }
-        $arr = $ed->getIdpSsoDescriptors();
+        $arr = $ed->getAllIdpSsoDescriptors();
         if (empty($arr)) {
             throw new BuildRequestException('IDP EntityDescriptor has no IDPSSODescriptor');
         }

@@ -24,7 +24,7 @@ class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
     }
 
     private function checkIDP(EntityDescriptor $ed, $url) {
-        $arr = $ed->getIdpSsoDescriptors();
+        $arr = $ed->getAllIdpSsoDescriptors();
         $this->assertEquals(1, count($arr));
         $idp = $arr[0];
 
@@ -70,7 +70,7 @@ class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
     }
 
     private function checkSP(EntityDescriptor $ed, $url) {
-        $arr = $ed->getSpSsoDescriptors();
+        $arr = $ed->getAllSpSsoDescriptors();
         $this->assertEquals(1, count($arr));
         $sp = $arr[0];
 

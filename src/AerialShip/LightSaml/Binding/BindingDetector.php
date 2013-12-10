@@ -33,7 +33,7 @@ class BindingDetector
     /**
      * @param Request $request
      * @throws \AerialShip\LightSaml\Error\InvalidBindingException
-     * @return string
+     * @return string|null
      */
     function getBinding(Request $request) {
         $requestMethod = trim(strtoupper($request->getRequestMethod()));
@@ -60,7 +60,7 @@ class BindingDetector
                 }
             }
         }
-        throw new InvalidBindingException('Unable to determine current binding');
+        return null;
     }
 
 }

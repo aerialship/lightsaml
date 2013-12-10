@@ -5,7 +5,7 @@ namespace AerialShip\LightSaml\Model\Protocol;
 use AerialShip\LightSaml\Protocol;
 
 
-class LogoutResponse extends Response
+class LogoutResponse extends StatusResponse
 {
 
     /**
