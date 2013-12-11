@@ -16,6 +16,7 @@ DOCUMENTATION
 
 * [Usage](doc/index.md)
 * [Console](doc/console.md)
+* [Signing and Certificates](doc/signing_and_certificates.md)
 
 
 CONTRIBUTING
