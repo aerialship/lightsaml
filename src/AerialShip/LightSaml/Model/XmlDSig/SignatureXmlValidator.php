@@ -80,7 +80,8 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
     }
 
 
-    function validate(\XMLSecurityKey $key) {
+    public function validate(\XMLSecurityKey $key)
+    {
         if ($this->signature == null) {
             return false;
         }
@@ -88,6 +89,36 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
             throw new SecurityException('Key type must be RSA_SHA1 but got '.$key->type);
         }
 
+        $key = $this->castKeyIfNecessary($key);
+
+        $ok = $this->signature->verify($key);
+        if (!$ok) {
+            throw new SecurityException('Unable to verify Signature');
+        }
+        return true;
+    }
+
+
+    /**
+     * @param \XMLSecurityKey $key
+     * @return \XMLSecurityKey
+     */
+    private function castKeyIfNecessary(\XMLSecurityKey $key)
+    {
+        $algorithm = $this->getAlgorithm();
+        if ($key->type === \XMLSecurityKey::RSA_SHA1 && $algorithm !== $key->type) {
+            $key = KeyHelper::castKey($key, $algorithm);
+        }
+
+        return $key;
+    }
+
+    /**
+     * @return string
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     */
+    private function getAlgorithm()
+    {
         $xpath = new \DOMXPath($this->signature->sigNode instanceof \DOMDocument ? $this->signature->sigNode : $this->signature->sigNode->ownerDocument);
         $list = $xpath->query('./ds:SignedInfo/ds:SignatureMethod', $this->signature->sigNode);
         if ($list->length == 0) {
@@ -100,17 +131,7 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
         }
         $algorithm = $sigMethod->getAttribute('Algorithm');
 
-        if ($key->type === \XMLSecurityKey::RSA_SHA1 && $algorithm !== $key->type) {
-            $key = KeyHelper::castKey($key, $algorithm);
-        }
-
-        $ok = $this->signature->verify($key);
-        if (!$ok) {
-            throw new SecurityException('Unable to verify Signature');
-        }
-        return true;
+        return $algorithm;
     }
-
-
 
 }
