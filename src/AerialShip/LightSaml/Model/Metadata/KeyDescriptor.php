@@ -6,12 +6,16 @@ use AerialShip\LightSaml\Error\InvalidXmlException;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Meta\SerializationContext;
+use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
 class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
 {
+    use XmlRequiredAttributesTrait;
+
+
     const USE_SIGNING = 'signing';
     const USE_ENCRYPTION = 'encryption';
 
@@ -90,32 +94,18 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
         if ($xml->localName != 'KeyDescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
             throw new InvalidXmlException('Expected KeyDescriptor element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
-        if (!$xml->hasAttribute('use')) {
-            throw new InvalidXmlException("Missing use attribute");
-        }
+
+        $this->checkRequiredAttributes($xml, array('use'));
         $this->setUse($xml->getAttribute('use'));
 
-        $list = $xml->getElementsByTagName('KeyInfo');
-        if ($list->length != 1) {
-            throw new InvalidXmlException("Missing KeyInfo node");
-        }
-        /** @var $keyInfoNode \DOMElement */
-        $keyInfoNode = $list->item(0);
-        if ($keyInfoNode->namespaceURI != Protocol::NS_XMLDSIG) {
-            throw new InvalidXmlException("Invalid namespace of KeyInfo node");
-        }
+        $xpath = new \DOMXPath($xml instanceof \DOMDocument ? $xml : $xml->ownerDocument);
+        $xpath->registerNamespace('ds', \XMLSecurityDSig::XMLDSIGNS);
 
-        $list = $keyInfoNode->getElementsByTagName('X509Data');
-        if ($list->length != 1) {
-            throw new InvalidXmlException("Missing X509Data node");
-        }
-        /** @var $x509DataNode \DOMElement */
-        $x509DataNode = $list->item(0);
-
-        $list = $x509DataNode->getElementsByTagName('X509Certificate');
+        $list = $xpath->query('./ds:KeyInfo/ds:X509Data/ds:X509Certificate', $xml);
         if ($list->length != 1) {
             throw new InvalidXmlException("Missing X509Certificate node");
         }
+
         /** @var $x509CertificateNode \DOMElement */
         $x509CertificateNode = $list->item(0);
         $certificateData = trim($x509CertificateNode->nodeValue);
@@ -126,6 +116,7 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
         $this->certificate = new X509Certificate();
         $this->certificate->setData($certificateData);
     }
+
 
 
     /**
