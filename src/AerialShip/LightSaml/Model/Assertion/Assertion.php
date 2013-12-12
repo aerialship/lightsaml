@@ -8,6 +8,7 @@ use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\GetXmlInterface;
 use AerialShip\LightSaml\Meta\LoadFromXmlInterface;
 use AerialShip\LightSaml\Meta\SerializationContext;
+use AerialShip\LightSaml\Meta\XmlRequiredAttributesTrait;
 use AerialShip\LightSaml\Model\XmlDSig\Signature;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
@@ -16,6 +17,9 @@ use AerialShip\LightSaml\Protocol;
 
 class Assertion implements GetXmlInterface, LoadFromXmlInterface
 {
+    use XmlRequiredAttributesTrait;
+
+
     /** @var string */
     protected $id;
 
@@ -333,13 +337,10 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
             throw new InvalidXmlException('Expected Assertion element but got '.$xml->localName);
         }
 
-        foreach (array('ID', 'Version', 'IssueInstant') as $name) {
-            if (!$xml->hasAttribute($name)) {
-                throw new InvalidXmlException('Missing Assertion attribute '.$name);
-            }
-            $method = 'set'.$name;
-            $this->$method($xml->getAttribute($name));
-        }
+        $this->checkRequiredAttributes($xml, array('ID', 'Version', 'IssueInstant'));
+        $this->setID($xml->getAttribute('ID'));
+        $this->setVersion($xml->getAttribute('Version'));
+        $this->setIssueInstant($xml->getAttribute('IssueInstant'));
 
         $xpath = new \DOMXPath($xml instanceof \DOMDocument ? $xml : $xml->ownerDocument);
         $xpath->registerNamespace('saml', Protocol::NS_ASSERTION);
@@ -353,25 +354,9 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
                 $this->setSubject(new Subject());
                 $this->getSubject()->loadFromXml($node);
             } else if ($node->localName == 'Conditions') {
-                if ($node->hasAttribute('NotBefore')) {
-                    $this->setNotBefore($node->getAttribute('NotBefore'));
-                }
-                if ($node->hasAttribute('NotOnOrAfter')) {
-                    $this->setNotOnOrAfter($node->getAttribute('NotOnOrAfter'));
-                }
-                /** @var $list \DOMElement[] */
-                $list = $xpath->query('./saml:AudienceRestriction/saml:Audience', $node);
-                foreach ($list as $a) {
-                    $this->addValidAudience($a->textContent);
-                }
+                $this->loadXmlConditions($node, $xpath);
             } else if ($node->localName == 'AttributeStatement') {
-                /** @var $list \DOMElement[] */
-                $list = $xpath->query('./saml:AttributeStatement/saml:Attribute', $xml);
-                foreach ($list as $a) {
-                    $attr = new Attribute();
-                    $attr->loadFromXml($a);
-                    $this->addAttribute($attr);
-                }
+                $this->loadXmlAttributeStatement($xml, $xpath);
             } else if ($node->localName == 'AuthnStatement') {
                 $this->setAuthnStatement(new AuthnStatement());
                 $this->getAuthnStatement()->loadFromXml($node);
@@ -387,5 +372,32 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
         }
     }
 
+
+    private function loadXmlConditions(\DOMElement $node, \DOMXPath $xpath)
+    {
+        if ($node->hasAttribute('NotBefore')) {
+            $this->setNotBefore($node->getAttribute('NotBefore'));
+        }
+        if ($node->hasAttribute('NotOnOrAfter')) {
+            $this->setNotOnOrAfter($node->getAttribute('NotOnOrAfter'));
+        }
+        /** @var $list \DOMElement[] */
+        $list = $xpath->query('./saml:AudienceRestriction/saml:Audience', $node);
+        foreach ($list as $a) {
+            $this->addValidAudience($a->textContent);
+        }
+    }
+
+
+    private function loadXmlAttributeStatement(\DOMElement $root, \DOMXPath $xpath)
+    {
+        /** @var $list \DOMElement[] */
+        $list = $xpath->query('./saml:AttributeStatement/saml:Attribute', $root);
+        foreach ($list as $a) {
+            $attr = new Attribute();
+            $attr->loadFromXml($a);
+            $this->addAttribute($attr);
+        }
+    }
 
 }

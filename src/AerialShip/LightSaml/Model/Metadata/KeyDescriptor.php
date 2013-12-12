@@ -66,7 +66,8 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMNode
      */
-    function getXml(\DOMNode $parent, SerializationContext $context) {
+    function getXml(\DOMNode $parent, SerializationContext $context)
+    {
         $result = $context->getDocument()->createElementNS(Protocol::NS_METADATA, 'md:KeyDescriptor');
         $parent->appendChild($result);
         $result->setAttribute('use', $this->getUse());
@@ -84,7 +85,8 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml) {
+    function loadFromXml(\DOMElement $xml)
+    {
         if ($xml->localName != 'KeyDescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
             throw new InvalidXmlException('Expected KeyDescriptor element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
@@ -131,7 +133,8 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @return \DOMElement[]  Array of unknown elements that are not required
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    public function loadXml(\DOMElement $root) {
+    public function loadXml(\DOMElement $root)
+    {
         if (!$root->hasAttribute('use')) {
             throw new InvalidXmlException("Missing use attribute");
         }

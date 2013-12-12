@@ -35,28 +35,51 @@ class BindingDetector
      * @throws \AerialShip\LightSaml\Error\InvalidBindingException
      * @return string|null
      */
-    function getBinding(Request $request) {
+    public function getBinding(Request $request)
+    {
         $requestMethod = trim(strtoupper($request->getRequestMethod()));
         if ($requestMethod == 'GET') {
-            $get = $request->getGet();
-            if (array_key_exists('SAMLRequest', $get) || array_key_exists('SAMLResponse', $get)) {
-                return Bindings::SAML2_HTTP_REDIRECT;
-            } elseif (array_key_exists('SAMLart', $get) ){
-                return Bindings::SAML2_HTTP_ARTIFACT;
-            }
+            return $this->processGET($request);
         } else if ($requestMethod == 'POST') {
-            $post = $request->getPost();
-            if (array_key_exists('SAMLRequest', $post) || array_key_exists('SAMLResponse', $post)) {
-                return Bindings::SAML2_HTTP_POST;
-            } elseif (array_key_exists('SAMLart', $post) ){
-                return Bindings::SAML2_HTTP_ARTIFACT;
-            } else {
-                if ($request->getContentType()) {
-                    $contentType = explode(';', $request->getContentType());
-                    $contentType = $contentType[0]; /* Remove charset. */
-                    if ($contentType === 'text/xml') {
-                        return Bindings::SAML2_SOAP;
-                    }
+            return $this->processPOST($request);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    private function processGET(Request $request)
+    {
+        $get = $request->getGet();
+        if (array_key_exists('SAMLRequest', $get) || array_key_exists('SAMLResponse', $get)) {
+            return Bindings::SAML2_HTTP_REDIRECT;
+        } elseif (array_key_exists('SAMLart', $get) ){
+            return Bindings::SAML2_HTTP_ARTIFACT;
+        }
+        return null;
+    }
+
+
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    private function processPOST(Request $request)
+    {
+        $post = $request->getPost();
+        if (array_key_exists('SAMLRequest', $post) || array_key_exists('SAMLResponse', $post)) {
+            return Bindings::SAML2_HTTP_POST;
+        } elseif (array_key_exists('SAMLart', $post) ){
+            return Bindings::SAML2_HTTP_ARTIFACT;
+        } else {
+            if ($request->getContentType()) {
+                $contentType = explode(';', $request->getContentType());
+                $contentType = $contentType[0]; /* Remove charset. */
+                if ($contentType === 'text/xml') {
+                    return Bindings::SAML2_SOAP;
                 }
             }
         }
