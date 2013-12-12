@@ -46,39 +46,41 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
     protected $relayState;
 
 
-
-
-
-    public static function fromXML(\DOMElement $xml) {
+    /**
+     * @param \DOMElement $xml
+     * @return Message
+     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
+     * @throws \Exception
+     */
+    public static function fromXML(\DOMElement $xml)
+    {
         if ($xml->namespaceURI !== Protocol::SAML2) {
             throw new InvalidXmlException("Invalid namespace {$xml->namespaceURI}");
         }
 
-        $result = null;
-        switch ($xml->localName) {
-            case 'AttributeQuery':
+        $map = array(
+            'AttributeQuery' => null,
+            'AuthnRequest' => '\AerialShip\LightSaml\Model\Protocol\AuthnRequest',
+            'LogoutResponse' => '\AerialShip\LightSaml\Model\Protocol\LogoutResponse',
+            'LogoutRequest' => '\AerialShip\LightSaml\Model\Protocol\LogoutRequest',
+            'Response' => '\AerialShip\LightSaml\Model\Protocol\Response',
+            'ArtifactResponse' => null,
+            'ArtifactResolve' => null
+        );
+
+        if (array_key_exists($xml->localName, $map)) {
+            if ($class = $map[$xml->localName]) {
+                /** @var Message $result */
+                $result = new $class();
+            } else {
                 throw new \Exception('Not implemented');
-            case 'AuthnRequest':
-                $result = new AuthnRequest();
-                break;
-            case 'LogoutResponse':
-                $result = new LogoutResponse();
-                break;
-            case 'LogoutRequest':
-                $result = new LogoutRequest();
-                break;
-            case 'Response':
-                $result = new Response();
-                break;
-            case 'ArtifactResponse':
-                throw new \Exception('Not implemented');
-            case 'ArtifactResolve':
-                throw new \Exception('Not implemented');
-            default:
-                throw new InvalidXmlException("Unknown SAML message $xml->localName");
+            }
+        } else {
+            throw new InvalidXmlException("Unknown SAML message $xml->localName");
         }
 
         $result->loadFromXml($xml);
+
         return $result;
     }
 
