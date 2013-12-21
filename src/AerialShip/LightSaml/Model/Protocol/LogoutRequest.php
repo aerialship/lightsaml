@@ -127,12 +127,7 @@ class LogoutRequest extends AbstractRequest
             $sessionIndex = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:SessionIndex', $this->getSessionIndex());
             $result->appendChild($sessionIndex);
         }
-//        if ($signatureCreator = $this->getSignature()) {
-//            if (!$signatureCreator instanceof SignatureCreator) {
-//                throw new \RuntimeException('Signature must be SignatureCreator');
-//            }
-//            $signatureCreator->getXml($result, $context);
-//        }
+
         return $result;
     }
 
