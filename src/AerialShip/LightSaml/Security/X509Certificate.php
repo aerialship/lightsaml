@@ -15,7 +15,7 @@ class X509Certificate
      * @param string $data
      */
     public function setData($data) {
-        $this->data = $data;
+        $this->data = preg_replace('/\s+/', '', $data);
     }
 
     /**
