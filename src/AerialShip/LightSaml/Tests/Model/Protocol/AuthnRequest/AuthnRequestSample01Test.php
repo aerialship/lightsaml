@@ -1,6 +1,6 @@
 <?php
 
-namespace AerialShip\LightSaml\Tests\AuthnRequest;
+namespace AerialShip\LightSaml\Tests\Model\Protocol\AuthnRequest;
 
 use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Meta\SerializationContext;
@@ -11,7 +11,7 @@ use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Tests\CommonHelper;
 
 
-class AuthnRequestTest extends \PHPUnit_Framework_TestCase
+class AuthnRequestSample01Test extends \PHPUnit_Framework_TestCase
 {
     private $issuer = 'https://mt.evo.team/simplesaml/module.php/saml/sp/metadata.php/default-sp';
     private $destination = 'https://b1.bead.loc/adfs/ls/';
@@ -24,8 +24,8 @@ class AuthnRequestTest extends \PHPUnit_Framework_TestCase
         $spMeta = new SpMeta();
         $spMeta->setNameIdFormat(NameIDPolicy::PERSISTENT);
         $request = CommonHelper::buildAuthnRequestFromEntityDescriptors(
-            __DIR__.'/../../../../../resources/sample/EntityDescriptor/sp-ed2.xml',
-            __DIR__.'/../../../../../resources/sample/EntityDescriptor/idp2-ed.xml',
+            __DIR__.'/../../../../../../../resources/sample/EntityDescriptor/sp-ed2.xml',
+            __DIR__.'/../../../../../../../resources/sample/EntityDescriptor/idp2-ed.xml',
             $spMeta
         );
 

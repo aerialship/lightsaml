@@ -2,7 +2,6 @@
 
 namespace AerialShip\LightSaml\Tests;
 
-
 use AerialShip\LightSaml\Meta\AuthnRequestBuilder;
 use AerialShip\LightSaml\Meta\LogoutRequestBuilder;
 use AerialShip\LightSaml\Meta\SpMeta;
@@ -19,7 +18,8 @@ class CommonHelper
      * @return EntityDescriptor
      * @throws \InvalidArgumentException
      */
-    static function getEntityDescriptorFromXmlFile($file) {
+    public static function getEntityDescriptorFromXmlFile($file)
+    {
         if (!is_file($file)) {
             throw new \InvalidArgumentException("Specified EntityDescriptor path is not a file $file");
         }
@@ -38,7 +38,8 @@ class CommonHelper
      * @return AuthnRequest
      * @throws \InvalidArgumentException
      */
-    static function buildAuthnRequestFromEntityDescriptors($sp, $idp, SpMeta $spMeta = null) {
+    public static function buildAuthnRequestFromEntityDescriptors($sp, $idp, SpMeta $spMeta = null)
+    {
         if (is_string($sp)) {
             $sp = self::getEntityDescriptorFromXmlFile($sp);
         } else if (!$sp instanceof EntityDescriptor) {
@@ -68,7 +69,8 @@ class CommonHelper
      * @return LogoutRequest
      * @throws \InvalidArgumentException
      */
-    static function buildLogoutRequestFromEntityDescriptors($sp, $idp, SpMeta $spMeta = null){
+    public static function buildLogoutRequestFromEntityDescriptors($sp, $idp, SpMeta $spMeta = null)
+    {
         if (is_string($sp)) {
             $sp = self::getEntityDescriptorFromXmlFile($sp);
         } else if (!$sp instanceof EntityDescriptor) {
@@ -90,4 +92,5 @@ class CommonHelper
         $result = $builder->build('urn:oasis:names:tc:SAML:2.0:nameid-format:transient', 'user', '_677952a2-7fb3-4e7a-b439-326366e677db');
         return $result;
     }
+
 } 

@@ -1,6 +1,6 @@
 <?php
 
-namespace AerialShip\LightSaml\Tests\Signature;
+namespace AerialShip\LightSaml\Tests\Model\XmlDSig\Signature;
 
 use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\Protocol;
@@ -8,12 +8,12 @@ use AerialShip\LightSaml\Security\KeyHelper;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
-class SignatureSampleTest extends \PHPUnit_Framework_TestCase
+class SignatureSample01Test extends \PHPUnit_Framework_TestCase
 {
 
     function testOne() {
         $doc = new \DOMDocument();
-        $doc->load(__DIR__.'/../../../../../resources/sample/Response/response01.xml');
+        $doc->load(__DIR__.'/../../../../../../../resources/sample/Response/response01.xml');
 
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace('samlp', Protocol::SAML2);

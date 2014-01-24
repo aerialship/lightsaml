@@ -1,4 +1,7 @@
-<EntityDescriptor entityID="https://idp.testshib.org/idp/shibboleth">
+<EntityDescriptor
+        xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+        entityID="https://idp.testshib.org/idp/shibboleth">
     <IDPSSODescriptor
             protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:2.0:protocol">
         <KeyDescriptor>

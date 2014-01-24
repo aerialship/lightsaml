@@ -1,6 +1,6 @@
 <?php
 
-namespace AerialShip\LightSaml\Tests\Response;
+namespace AerialShip\LightSaml\Tests\Model\Protocol\Response;
 
 use AerialShip\LightSaml\ClaimTypes;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
@@ -12,7 +12,7 @@ use AerialShip\LightSaml\Protocol;
 use AerialShip\LightSaml\Security\KeyHelper;
 
 
-class ResponseSampleTest extends \PHPUnit_Framework_TestCase
+class ResponseSample01Test extends \PHPUnit_Framework_TestCase
 {
     function testOne() {
         $destinationURL = 'https://mt.evo.team/simplesaml/module.php/saml/sp/saml2-acs.php/b1';
@@ -23,7 +23,7 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
         $instant = 1382874937;
 
         $doc = new \DOMDocument();
-        $doc->load(__DIR__.'/../../../../../resources/sample/Response/response01.xml');
+        $doc->load(__DIR__.'/../../../../../../../resources/sample/Response/response01.xml');
 
         $response = new Response();
         $response->loadFromXml($doc->firstChild);
@@ -106,7 +106,7 @@ class ResponseSampleTest extends \PHPUnit_Framework_TestCase
     private function getCertificate() {
         $ed = new EntityDescriptor();
         $doc = new \DOMDocument();
-        $doc->load(__DIR__.'/../../../../../resources/sample/EntityDescriptor/idp2-ed.xml');
+        $doc->load(__DIR__.'/../../../../../../../resources/sample/EntityDescriptor/idp2-ed.xml');
         $ed->loadFromXml($doc->firstChild);
         $arrIdp = $ed->getAllIdpSsoDescriptors();
         $idp = $arrIdp[0];

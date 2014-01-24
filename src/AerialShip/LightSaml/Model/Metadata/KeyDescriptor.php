@@ -34,11 +34,15 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
     }
 
 
-
     /**
      * @param string $use
+     * @throws \InvalidArgumentException
      */
     public function setUse($use) {
+        $use = trim($use);
+        if ($use != '' && $use != self::USE_ENCRYPTION && $use != self::USE_SIGNING) {
+            throw new \InvalidArgumentException("Invalid use value: $use");
+        }
         $this->use = $use;
     }
 
@@ -74,7 +78,9 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
     {
         $result = $context->getDocument()->createElementNS(Protocol::NS_METADATA, 'md:KeyDescriptor');
         $parent->appendChild($result);
-        $result->setAttribute('use', $this->getUse());
+        if ($this->getUse()) {
+            $result->setAttribute('use', $this->getUse());
+        }
         $keyInfo = $parent->ownerDocument->createElementNS(Protocol::NS_XMLDSIG, 'ds:KeyInfo');
         $result->appendChild($keyInfo);
         $xData = $parent->ownerDocument->createElementNS(Protocol::NS_XMLDSIG, 'ds:X509Data');
@@ -89,13 +95,12 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml)
+    public function loadFromXml(\DOMElement $xml)
     {
         if ($xml->localName != 'KeyDescriptor' || $xml->namespaceURI != Protocol::NS_METADATA) {
             throw new InvalidXmlException('Expected KeyDescriptor element and '.Protocol::NS_METADATA.' namespace but got '.$xml->localName);
         }
 
-        $this->checkRequiredAttributes($xml, array('use'));
         $this->setUse($xml->getAttribute('use'));
 
         $xpath = new \DOMXPath($xml instanceof \DOMDocument ? $xml : $xml->ownerDocument);
@@ -115,53 +120,6 @@ class KeyDescriptor implements GetXmlInterface, LoadFromXmlInterface
 
         $this->certificate = new X509Certificate();
         $this->certificate->setData($certificateData);
-    }
-
-
-
-    /**
-     * @param \DOMElement $root
-     * @return \DOMElement[]  Array of unknown elements that are not required
-     * @throws \AerialShip\LightSaml\Error\InvalidXmlException
-     */
-    public function loadXml(\DOMElement $root)
-    {
-        if (!$root->hasAttribute('use')) {
-            throw new InvalidXmlException("Missing use attribute");
-        }
-        $this->use = $root->getAttribute('use');
-
-        $list = $root->getElementsByTagName('KeyInfo');
-        if ($list->length != 1) {
-            throw new InvalidXmlException("Missing KeyInfo node");
-        }
-        /** @var $keyInfoNode \DOMElement */
-        $keyInfoNode = $list->item(0);
-        if ($keyInfoNode->namespaceURI != Protocol::NS_XMLDSIG) {
-            throw new InvalidXmlException("Invalid namespace of KeyInfo node");
-        }
-
-        $list = $keyInfoNode->getElementsByTagName('X509Data');
-        if ($list->length != 1) {
-            throw new InvalidXmlException("Missing X509Data node");
-        }
-        /** @var $x509DataNode \DOMElement */
-        $x509DataNode = $list->item(0);
-
-        $list = $x509DataNode->getElementsByTagName('X509Certificate');
-        if ($list->length != 1) {
-            throw new InvalidXmlException("Missing X509Certificate node");
-        }
-        /** @var $x509CertificateNode \DOMElement */
-        $x509CertificateNode = $list->item(0);
-        $certificateData = trim($x509CertificateNode->nodeValue);
-        if (!$certificateData) {
-            throw new InvalidXmlException("Missing certificate data");
-        }
-
-        $this->certificate = new X509Certificate();
-        $this->certificate->setData($certificateData);
-        return array();
     }
 
 }

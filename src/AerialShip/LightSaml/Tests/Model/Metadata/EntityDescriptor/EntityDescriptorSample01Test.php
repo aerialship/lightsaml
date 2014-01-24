@@ -1,20 +1,20 @@
 <?php
 
-namespace AerialShip\LightSaml\Tests\EntityDescriptor;
+namespace AerialShip\LightSaml\Tests\Model\Metadata\EntityDescriptor;
 
 use AerialShip\LightSaml\Bindings;
 use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\KeyDescriptor;
 
 
-class EntityDescriptorSampleTest extends \PHPUnit_Framework_TestCase
+class EntityDescriptorSample01Test extends \PHPUnit_Framework_TestCase
 {
 
     function testOne() {
         $url = "https://b1.bead.loc/adfs/ls/";
 
         $doc = new \DOMDocument();
-        $doc->load(__DIR__.'/../../../../../resources/sample/EntityDescriptor/idp2-ed.xml');
+        $doc->load(__DIR__.'/../../../../../../../resources/sample/EntityDescriptor/idp2-ed.xml');
 
         $ed = new EntityDescriptor();
         $ed->loadFromXml($doc->firstChild);

@@ -1,6 +1,6 @@
 <?php
 
-namespace AerialShip\LightSaml\Tests\Signature;
+namespace AerialShip\LightSaml\Tests\Model\XmlDSig\Signature;
 
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
@@ -10,7 +10,7 @@ use AerialShip\LightSaml\Security\KeyHelper;
 use AerialShip\LightSaml\Security\X509Certificate;
 
 
-class SignatureCreatorValidatorTest extends \PHPUnit_Framework_TestCase
+class SignatureCreatorValidatorFunctionalTest extends \PHPUnit_Framework_TestCase
 {
     function testOne() {
         $xml = $this->getSignedXml();
@@ -36,7 +36,7 @@ class SignatureCreatorValidatorTest extends \PHPUnit_Framework_TestCase
 
 
         $certificate = new X509Certificate();
-        $certificate->loadFromFile(__DIR__.'/../../../../../resources/sample/Certificate/saml.crt');
+        $certificate->loadFromFile(__DIR__.'/../../../../../../../resources/sample/Certificate/saml.crt');
 
         $key = KeyHelper::createPublicKey($certificate);
 
@@ -59,10 +59,10 @@ class SignatureCreatorValidatorTest extends \PHPUnit_Framework_TestCase
         $other->appendChild($child);
 
         $certificate = new X509Certificate();
-        $certificate->loadFromFile(__DIR__.'/../../../../../resources/sample/Certificate/saml.crt');
+        $certificate->loadFromFile(__DIR__.'/../../../../../../../resources/sample/Certificate/saml.crt');
 
         $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type'=>'private'));
-        $key->loadKey(__DIR__.'/../../../../../resources/sample/Certificate/saml.pem', true);
+        $key->loadKey(__DIR__.'/../../../../../../../resources/sample/Certificate/saml.pem', true);
 
         $signatureCreator = new SignatureCreator();
         $signatureCreator->setCertificate($certificate);
@@ -73,11 +73,7 @@ class SignatureCreatorValidatorTest extends \PHPUnit_Framework_TestCase
 
         $xml = $doc->saveXML();
 
-        //file_put_contents(__DIR__.'/../../../../../resources/sample/foo.xml', $xml);
-        //print "\n\n".$xml."\n\n";
-
         return $xml;
-
     }
 
 

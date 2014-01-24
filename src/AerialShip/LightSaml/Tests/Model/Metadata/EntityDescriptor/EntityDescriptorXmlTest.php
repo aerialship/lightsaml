@@ -23,7 +23,7 @@ class EntityDescriptorXmlTest extends \PHPUnit_Framework_TestCase
         $locationLogout = 'http://example.com/logout';
         $locationLogin = 'http://example.com/login';
         $certificate = new X509Certificate();
-        $certificate->loadFromFile(__DIR__.'/../../../../../resources/sample/Certificate/saml.crt');
+        $certificate->loadFromFile(__DIR__.'/../../../../../../../resources/sample/Certificate/saml.crt');
         $ed = new EntityDescriptor(
             $entityID,
             array(

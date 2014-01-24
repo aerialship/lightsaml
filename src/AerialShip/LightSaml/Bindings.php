@@ -11,6 +11,8 @@ final class Bindings
     const SAML2_HTTP_ARTIFACT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact';
     const SAML2_SOAP = 'urn:oasis:names:tc:SAML:2.0:bindings:SOAP';
 
+    const SHIB1_AUTHN_REQUEST = 'urn:mace:shibboleth:1.0:profiles:AuthnRequest';
+
     const SAML1_BROWSER_POST = 'urn:oasis:names:tc:SAML:1.0:profiles:browser-post';
     const SAML1_ARTIFACT1 = 'urn:oasis:names:tc:SAML:1.0:profiles:artifact-01';
 
@@ -19,7 +21,8 @@ final class Bindings
         self::SAML2_HTTP_POST => Protocol::SAML2,
         self::SAML2_HTTP_ARTIFACT => Protocol::SAML2,
         self::SAML1_BROWSER_POST => Protocol::SAML1,
-        self::SAML1_ARTIFACT1 => Protocol::SAML1
+        self::SAML1_ARTIFACT1 => Protocol::SAML1,
+        self::SHIB1_AUTHN_REQUEST => Protocol::SHIB1
     );
 
 
