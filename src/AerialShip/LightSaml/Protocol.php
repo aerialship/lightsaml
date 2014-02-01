@@ -10,6 +10,7 @@ final class Protocol
     const SAML1 = 'urn:oasis:names:tc:SAML:1.0:protocol';
     const SAML11 = 'urn:oasis:names:tc:SAML:1.1:protocol';
     const SHIB1 = 'urn:mace:shibboleth:1.0';
+    const WS_FED = 'http://schemas.xmlsoap.org/ws/2003/07/secext???';
 
     const NS_METADATA = 'urn:oasis:names:tc:SAML:2.0:metadata';
     const NS_XMLDSIG = 'http://www.w3.org/2000/09/xmldsig#';

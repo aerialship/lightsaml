@@ -7,7 +7,7 @@ final class NameIDPolicy
 {
     const PERSISTENT = 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent';
     const TRANSIENT = 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient';
-
+    const SHIB_NAME_ID = 'urn:mace:shibboleth:1.0:nameIdentifier';
 
 
     private static $_constants = null;
