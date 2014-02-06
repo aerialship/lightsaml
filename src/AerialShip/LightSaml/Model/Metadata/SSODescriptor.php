@@ -103,13 +103,13 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
 
 
     /**
-     * @param string $use
+     * @param string|null $use
      * @return KeyDescriptor[]
      */
     function findKeyDescriptors($use) {
         $result = array();
         foreach ($this->getKeyDescriptors() as $kd) {
-            if ($kd->getUse() == $use) {
+            if ($use === null || !$kd->getUse() || $kd->getUse() == $use) {
                 $result[] = $kd;
             }
         }
