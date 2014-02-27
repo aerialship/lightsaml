@@ -19,7 +19,8 @@ class SignatureStringValidator extends Signature implements SignatureValidatorIn
 
 
 
-    function __construct($signature, $algorithm, $data) {
+    public function __construct($signature, $algorithm, $data)
+    {
         $this->signature = $signature;
         $this->algorithm = $algorithm;
         $this->data = $data;
@@ -30,42 +31,48 @@ class SignatureStringValidator extends Signature implements SignatureValidatorIn
     /**
      * @param string $algorithm
      */
-    public function setAlgorithm($algorithm) {
+    public function setAlgorithm($algorithm)
+    {
         $this->algorithm = $algorithm;
     }
 
     /**
      * @return string
      */
-    public function getAlgorithm() {
+    public function getAlgorithm()
+    {
         return $this->algorithm;
     }
 
     /**
      * @param string $data
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
     }
 
     /**
      * @return string
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
     /**
      * @param string $signature
      */
-    public function setSignature($signature) {
+    public function setSignature($signature)
+    {
         $this->signature = $signature;
     }
 
     /**
      * @return string
      */
-    public function getSignature() {
+    public function getSignature()
+    {
         return $this->signature;
     }
 
@@ -75,8 +82,13 @@ class SignatureStringValidator extends Signature implements SignatureValidatorIn
 
 
 
-
-    function validate(\XMLSecurityKey $key) {
+    /**
+     * @param \XMLSecurityKey $key
+     * @return bool True if validated, False if validation was not performed
+     * @throws \AerialShip\LightSaml\Error\SecurityException If validation fails
+     */
+    public function validate(\XMLSecurityKey $key)
+    {
         if ($this->getSignature() == null) {
             return false;
         }
@@ -97,5 +109,44 @@ class SignatureStringValidator extends Signature implements SignatureValidatorIn
     }
 
 
+
+    /**
+     * @param \XMLSecurityKey[] $keys
+     * @throws \LogicException
+     * @throws \InvalidArgumentException If some element of $keys array is not \XMLSecurityKey
+     * @throws \AerialShip\LightSaml\Error\SecurityException If validation fails
+     * @throws \Exception
+     * @throws null
+     * @return bool True if validated, False if validation was not performed
+     */
+    public function validateMulti(array $keys)
+    {
+        $lastException = null;
+
+        foreach ($keys as $key) {
+            if (!$key instanceof \XMLSecurityKey) {
+                throw new \InvalidArgumentException('Expected XMLSecurityKey but got '.get_class($key));
+            }
+
+            try {
+                $result = $this->validate($key);
+
+                if ($result === false) {
+                    return false;
+                }
+
+                return true;
+
+            } catch (SecurityException $ex) {
+                $lastException = $ex;
+            }
+        }
+
+        if ($lastException) {
+            throw $lastException;
+        } else {
+            throw new \LogicException('Should not get here???');
+        }
+    }
 
 }

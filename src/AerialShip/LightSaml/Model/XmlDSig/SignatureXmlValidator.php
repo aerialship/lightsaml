@@ -17,31 +17,36 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
     /** @var string[] */
     protected $certificates;
 
+
     /**
      * @param \string[] $certificates
      */
-    public function setCertificates($certificates) {
+    public function setCertificates($certificates)
+    {
         $this->certificates = $certificates;
     }
 
     /**
      * @return \string[]
      */
-    public function getCertificates() {
+    public function getCertificates()
+    {
         return $this->certificates;
     }
 
     /**
      * @param \XMLSecurityDSig $signature
      */
-    public function setSignature($signature) {
+    public function setSignature($signature)
+    {
         $this->signature = $signature;
     }
 
     /**
      * @return \XMLSecurityDSig
      */
-    public function getSignature() {
+    public function getSignature()
+    {
         return $this->signature;
     }
 
@@ -55,7 +60,8 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
      * @throws \AerialShip\LightSaml\Error\SecurityException
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml) {
+    public function loadFromXml(\DOMElement $xml)
+    {
         if ($xml->localName != 'Signature' || $xml->namespaceURI != Protocol::NS_XMLDSIG) {
             throw new InvalidXmlException('Expected Signature element and '.Protocol::NS_XMLDSIG.' namespace but got '.$xml->localName);
         }
@@ -80,6 +86,11 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
     }
 
 
+    /**
+     * @param \XMLSecurityKey $key
+     * @return bool
+     * @throws \AerialShip\LightSaml\Error\SecurityException
+     */
     public function validate(\XMLSecurityKey $key)
     {
         if ($this->signature == null) {
@@ -98,6 +109,46 @@ class SignatureXmlValidator extends Signature implements LoadFromXmlInterface, S
         return true;
     }
 
+
+    /**
+     * @param \XMLSecurityKey[] $keys
+     * @throws \LogicException
+     * @throws \InvalidArgumentException If some element of $keys array is not \XMLSecurityKey
+     * @throws \AerialShip\LightSaml\Error\SecurityException If validation fails
+     * @throws \Exception
+     * @throws null
+     * @return bool True if validated, False if validation was not performed
+     */
+    public function validateMulti(array $keys)
+    {
+        $lastException = null;
+
+        foreach ($keys as $key) {
+
+            if (!$key instanceof \XMLSecurityKey) {
+                throw new \InvalidArgumentException('Expected XMLSecurityKey but got '.get_class($key));
+            }
+
+            try {
+                $result = $this->validate($key);
+
+                if ($result === false) {
+                    return false;
+                }
+
+                return true;
+
+            } catch (SecurityException $ex) {
+                $lastException = $ex;
+            }
+        }
+
+        if ($lastException) {
+            throw $lastException;
+        } else {
+            throw new \LogicException('Should not get here???');
+        }
+    }
 
     /**
      * @param \XMLSecurityKey $key
