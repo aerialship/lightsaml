@@ -195,6 +195,20 @@ class EntitiesDescriptor implements GetXmlInterface, LoadFromXmlInterface
         return $result;
     }
 
+    /**
+     * @param string $entityId
+     * @return EntityDescriptor|null
+     */
+    public function getByEntityId($entityId)
+    {
+        foreach ($this->getAllEntityDescriptors() as $entityDescriptor) {
+            if ($entityDescriptor->getEntityID() == $entityId) {
+                return $entityDescriptor;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * @param \DOMNode $parent
