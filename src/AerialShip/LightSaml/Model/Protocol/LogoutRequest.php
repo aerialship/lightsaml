@@ -138,12 +138,11 @@ class LogoutRequest extends AbstractRequest
     function loadFromXml(\DOMElement $xml) {
         parent::loadFromXml($xml);
 
-        if($reason =$xml->getAttribute('Reason')){
-            $this->setReason($reason);
+        if($xml->hasAttribute('Reason')){
+            $this->setReason($xml->getAttribute('Reason'));
         }
-        if($time = $xml->getAttribute('NotOnOrAfter')){
-            $time = Helper::parseSAMLTime($time);
-            $this->setNotOnOrAfter(new \DateTime(strtotime($time), new \DateTimeZone('UTC')));
+        if($xml->hasAttribute('NotOnOrAfter')){
+            $this->setNotOnOrAfter($xml->getAttribute('NotOnOrAfter'));
         }
         $this->iterateChildrenElements($xml, function(\DOMElement $node) {
             if ($node->localName == 'NameID') {
