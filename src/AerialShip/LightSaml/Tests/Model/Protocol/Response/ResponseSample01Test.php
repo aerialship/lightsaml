@@ -91,6 +91,15 @@ class ResponseSample01Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Protocol::AC_WINDOWS, $assertion->getAuthnStatement()->getAuthnContext());
     }
 
+    function testNoInResponseTo() {
+        $doc = new \DOMDocument();
+        $doc->load(__DIR__ . '/../../../../../../../resources/sample/Response/response02.xml');
+
+        $response = new Response();
+        $response->loadFromXml($doc->firstChild);
+
+        $this->assertNull($response->getInResponseTo());
+    }
 
     /**
      * @return \XMLSecurityKey

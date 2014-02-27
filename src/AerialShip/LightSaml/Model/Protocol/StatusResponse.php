@@ -53,9 +53,6 @@ abstract class StatusResponse extends Message
 
     protected function prepareForXml() {
         parent::prepareForXml();
-        if (!$this->getInResponseTo()) {
-            throw new InvalidResponseException('Missing InResponseTo');
-        }
         if (!$this->getStatus()) {
             throw new InvalidResponseException('Missing Status');
         }
@@ -69,7 +66,10 @@ abstract class StatusResponse extends Message
      */
     function getXml(\DOMNode $parent, SerializationContext $context) {
         $result = parent::getXml($parent, $context);
-        $result->setAttribute('InResponseTo', $this->getInResponseTo());
+
+        if ($this->getInResponseTo()) {
+            $result->setAttribute('InResponseTo', $this->getInResponseTo());
+        }
         $this->getStatus()->getXml($result, $context);
         return $result;
     }
@@ -81,9 +81,9 @@ abstract class StatusResponse extends Message
     function loadFromXml(\DOMElement $xml) {
         parent::loadFromXml($xml);
 
-        $this->checkRequiredAttributes($xml, array('InResponseTo'));
-        $this->setInResponseTo($xml->getAttribute('InResponseTo'));
-
+        if ($xml->hasAttribute('InResponseTo')) {
+            $this->setInResponseTo($xml->getAttribute('InResponseTo'));
+        }
         $this->iterateChildrenElements($xml, function(\DOMElement $node) {
             if ($node->localName == 'Status' && $node->namespaceURI == Protocol::SAML2) {
                 $this->setStatus(new Status());
