@@ -5,35 +5,19 @@ namespace AerialShip\LightSaml\Binding;
 
 class RedirectResponse extends Response
 {
-    /** @var  string */
-    protected $url;
-
 
     /**
-     * @param string $url
+     * @param string $destination
      */
-    function __construct($url) {
-        $this->url = $url;
+    function __construct($destination) {
+        parent::__construct($destination);
     }
 
 
-    /**
-     * @param string $url
-     */
-    public function setUrl($url) {
-        $this->url = $url;
-    }
 
-    /**
-     * @return string
-     */
-    public function getUrl() {
-        return $this->url;
-    }
-
-
-    function render() {
-        header('Location: ' . $this->getUrl(), true, 302);
+    public function render()
+    {
+        header('Location: ' . $this->getDestination(), true, 302);
         header('Pragma: no-cache');
         header('Cache-Control: no-cache, must-revalidate');
     }

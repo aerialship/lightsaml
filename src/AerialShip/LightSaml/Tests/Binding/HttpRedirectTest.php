@@ -22,9 +22,9 @@ class HttpRedirectTest extends Base
         $response = $binding->send($authnRequest);
         $this->assertNotNull($response);
         $this->assertTrue($response instanceof RedirectResponse);
-        $pos = strpos($response->getUrl(), '?');
-        $destination = substr($response->getUrl(), 0, $pos);
-        $queryString = substr($response->getUrl(), $pos+1);
+        $pos = strpos($response->getDestination(), '?');
+        $destination = substr($response->getDestination(), 0, $pos);
+        $queryString = substr($response->getDestination(), $pos+1);
 
         $this->assertEquals($this->destination, $destination);
 

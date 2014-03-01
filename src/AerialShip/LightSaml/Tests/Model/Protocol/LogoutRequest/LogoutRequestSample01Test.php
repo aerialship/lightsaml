@@ -2,7 +2,6 @@
 
 namespace AerialShip\LightSaml\Tests\LogoutRequest;
 
-use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Meta\SpMeta;
 use AerialShip\LightSaml\Model\Protocol\LogoutRequest;

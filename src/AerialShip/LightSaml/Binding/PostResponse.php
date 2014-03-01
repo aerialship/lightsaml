@@ -3,11 +3,8 @@
 namespace AerialShip\LightSaml\Binding;
 
 
-class PostResponse
+class PostResponse extends Response
 {
-    /** @var  string */
-    protected $destination;
-
     /** @var  array */
     protected $data;
 
@@ -16,8 +13,9 @@ class PostResponse
      * @param string $destination
      * @param array $data
      */
-    function __construct($destination, array $data = array()) {
-        $this->destination = $destination;
+    public function __construct($destination, array $data = array())
+    {
+        parent::__construct($destination);
         $this->data = $data;
     }
 
@@ -25,38 +23,27 @@ class PostResponse
     /**
      * @param array $data
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
     }
 
     /**
      * @return array
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
-    /**
-     * @param string $destination
-     */
-    public function setDestination($destination) {
-        $this->destination = $destination;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDestination() {
-        return $this->destination;
-    }
-
 
 
 
     /**
      * @return string
      */
-    function render() {
+    public function render()
+    {
         $template = new HttpPostTemplate($this->getDestination(), $this->getData());
         ob_start();
         $template->render();

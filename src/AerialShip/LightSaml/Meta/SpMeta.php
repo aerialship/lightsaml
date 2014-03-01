@@ -13,6 +13,9 @@ class SpMeta
     /** @var string */
     protected $authnRequestBinding;
 
+    /** @var string */
+    protected $responseBinding;
+
     /** @var  string */
     protected $logoutRequestBinding;
 
@@ -21,7 +24,8 @@ class SpMeta
      * @param string $nameIdFormat
      * @throws \InvalidArgumentException
      */
-    public function setNameIdFormat($nameIdFormat) {
+    public function setNameIdFormat($nameIdFormat)
+    {
         if (!NameIDPolicy::isValid($nameIdFormat)) {
             throw new \InvalidArgumentException('Invalid NameIDFormat '.$nameIdFormat);
         }
@@ -32,38 +36,58 @@ class SpMeta
     /**
      * @return string
      */
-    public function getNameIdFormat() {
+    public function getNameIdFormat()
+    {
         return $this->nameIdFormat;
     }
 
     /**
      * @param string $authnRequestBinding
      */
-    public function setAuthnRequestBinding($authnRequestBinding) {
+    public function setAuthnRequestBinding($authnRequestBinding)
+    {
         $this->authnRequestBinding = $authnRequestBinding;
     }
 
     /**
      * @return string
      */
-    public function getAuthnRequestBinding() {
+    public function getAuthnRequestBinding()
+    {
         return $this->authnRequestBinding;
+    }
+
+    /**
+     * @param string $responseBinding
+     */
+    public function setResponseBinding($responseBinding)
+    {
+        $this->responseBinding = $responseBinding;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseBinding()
+    {
+        return $this->responseBinding;
     }
 
     /**
      * @param string $logoutRequestBinding
      */
-    public function setLogoutRequestBinding($logoutRequestBinding) {
+    public function setLogoutRequestBinding($logoutRequestBinding)
+    {
         $this->logoutRequestBinding = $logoutRequestBinding;
     }
 
     /**
      * @return string
      */
-    public function getLogoutRequestBinding() {
+    public function getLogoutRequestBinding()
+    {
         return $this->logoutRequestBinding;
     }
-
 
 
 
