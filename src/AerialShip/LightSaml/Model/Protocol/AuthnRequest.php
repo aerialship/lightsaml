@@ -128,10 +128,10 @@ class AuthnRequest extends AbstractRequest
         $result->setAttribute('AssertionConsumerServiceURL', $this->getAssertionConsumerServiceURL());
         $result->setAttribute('ProtocolBinding', $this->getProtocolBinding());
 
-        $nameIDPolicyNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:NameIDPolicy');
-        $result->appendChild($nameIDPolicyNode);
-        $nameIDPolicyNode->setAttribute('Format', $this->getNameIdPolicyFormat());
-        $nameIDPolicyNode->setAttribute('AllowCreate', $this->getNameIdPolicyAllowCreate() ? 'true' : 'false');
+        // $nameIDPolicyNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:NameIDPolicy');
+        // $result->appendChild($nameIDPolicyNode);
+        // $nameIDPolicyNode->setAttribute('Format', $this->getNameIdPolicyFormat());
+        // $nameIDPolicyNode->setAttribute('AllowCreate', $this->getNameIdPolicyAllowCreate() ? 'true' : 'false');
 
         return $result;
     }
