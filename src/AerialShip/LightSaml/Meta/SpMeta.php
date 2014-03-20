@@ -92,17 +92,17 @@ class SpMeta
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getSuppressNameIdPolicy() {
         return $this->suppressNameIdPolicy;
     }
 
     /**
-     * @param mixed $suppressNameIdPolicy
+     * @param bool $suppressNameIdPolicy
      */
     public function setSuppressNameIdPolicy($suppressNameIdPolicy) {
-        $this->suppressNameIdPolicy = $suppressNameIdPolicy;
+        $this->suppressNameIdPolicy = (bool)$suppressNameIdPolicy;
     }
 
 }
