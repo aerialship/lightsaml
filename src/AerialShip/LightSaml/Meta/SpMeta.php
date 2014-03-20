@@ -10,7 +10,7 @@ class SpMeta
     /** @var string */
     protected $nameIdFormat = NameIDPolicy::PERSISTENT;
 
-	protected $suppressNameIdPolicy = false;
+    protected $suppressNameIdPolicy = false;
 
     /** @var string */
     protected $authnRequestBinding;
@@ -91,18 +91,18 @@ class SpMeta
         return $this->logoutRequestBinding;
     }
 
-	/**
-	 * @return mixed
-	 */
-	public function getSuppressNameIdPolicy() {
-		return $this->suppressNameIdPolicy;
-	}
+    /**
+     * @return mixed
+     */
+    public function getSuppressNameIdPolicy() {
+        return $this->suppressNameIdPolicy;
+    }
 
-	/**
-	 * @param mixed $suppressNameIdPolicy
-	 */
-	public function setSuppressNameIdPolicy($suppressNameIdPolicy) {
-		$this->suppressNameIdPolicy = $suppressNameIdPolicy;
-	}
+    /**
+     * @param mixed $suppressNameIdPolicy
+     */
+    public function setSuppressNameIdPolicy($suppressNameIdPolicy) {
+        $this->suppressNameIdPolicy = $suppressNameIdPolicy;
+    }
 
 }

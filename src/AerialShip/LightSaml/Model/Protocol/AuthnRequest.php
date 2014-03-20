@@ -25,8 +25,8 @@ class AuthnRequest extends AbstractRequest
     /** @var bool */
     protected $nameIdPolicyAllowCreate = true;
 
-	/** @var bool */
-	protected $suppressNameIdPolicy = false;
+    /** @var bool */
+    protected $suppressNameIdPolicy = false;
 
 
 
@@ -38,22 +38,22 @@ class AuthnRequest extends AbstractRequest
         return Protocol::SAML2;
     }
 
-	/**
-	 * @return boolean
-	 */
-	public function getSuppressNameIdPolicy() {
-		return $this->suppressNameIdPolicy;
-	}
+    /**
+     * @return boolean
+     */
+    public function getSuppressNameIdPolicy() {
+        return $this->suppressNameIdPolicy;
+    }
 
-	/**
-	 * @param boolean $suppressNameIdPolicy
-	 */
-	public function setSuppressNameIdPolicy($suppressNameIdPolicy) {
-		$this->suppressNameIdPolicy = $suppressNameIdPolicy;
-	}
+    /**
+     * @param boolean $suppressNameIdPolicy
+     */
+    public function setSuppressNameIdPolicy($suppressNameIdPolicy) {
+        $this->suppressNameIdPolicy = $suppressNameIdPolicy;
+    }
 
 
-	/**
+    /**
      * @param string $assertionConsumerServiceURL
      */
     public function setAssertionConsumerServiceURL($assertionConsumerServiceURL) {
@@ -145,12 +145,12 @@ class AuthnRequest extends AbstractRequest
         $result->setAttribute('AssertionConsumerServiceURL', $this->getAssertionConsumerServiceURL());
         $result->setAttribute('ProtocolBinding', $this->getProtocolBinding());
 
-	    if (!$this->getSuppressNameIdPolicy()) {
-			$nameIDPolicyNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:NameIDPolicy');
-			$result->appendChild($nameIDPolicyNode);
-			$nameIDPolicyNode->setAttribute('Format', $this->getNameIdPolicyFormat());
-			$nameIDPolicyNode->setAttribute('AllowCreate', $this->getNameIdPolicyAllowCreate() ? 'true' : 'false');
-	    }
+        if (!$this->getSuppressNameIdPolicy()) {
+            $nameIDPolicyNode = $context->getDocument()->createElementNS(Protocol::SAML2, 'samlp:NameIDPolicy');
+            $result->appendChild($nameIDPolicyNode);
+            $nameIDPolicyNode->setAttribute('Format', $this->getNameIdPolicyFormat());
+            $nameIDPolicyNode->setAttribute('AllowCreate', $this->getNameIdPolicyAllowCreate() ? 'true' : 'false');
+        }
 
         return $result;
     }
