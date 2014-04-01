@@ -49,6 +49,9 @@ class HttpRedirect extends AbstractBinding
         $msg = $this->getMessageStringFromData($data);
         $encoding = $this->getEncodingFromData($data);
         $msg = $this->decodeMessageString($msg, $encoding);
+
+        $this->dispatchReceive($msg);
+
         $message = $this->loadMessageFromXml($msg);
 
         $this->loadRelayState($message, $data);
@@ -182,6 +185,9 @@ class HttpRedirect extends AbstractBinding
         $context = new SerializationContext();
         $message->getXml($context->getDocument(), $context);
         $xml = $context->getDocument()->saveXML();
+
+        $this->dispatchSend($xml);
+
         $xml = gzdeflate($xml);
         $xml = base64_encode($xml);
 

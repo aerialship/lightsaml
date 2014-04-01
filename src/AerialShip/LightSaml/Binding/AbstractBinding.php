@@ -9,6 +9,11 @@ abstract class AbstractBinding
     /** @var string */
     protected $destination;
 
+    /** @var array  */
+    protected $receiveListeners = array();
+
+    /** @var array  */
+    protected $sendListeners = array();
 
 
 
@@ -27,8 +32,42 @@ abstract class AbstractBinding
     }
 
 
+    /**
+     * @param $callable
+     */
+    public function addReceiveListener($callable)
+    {
+        $this->receiveListeners[] = $callable;
+    }
+
+    /**
+     * @param $callable
+     */
+    public function addSendListener($callable)
+    {
+        $this->sendListeners[] = $callable;
+    }
 
 
+    /**
+     * @param string $messageString
+     */
+    protected function dispatchReceive($messageString)
+    {
+        foreach ($this->receiveListeners as $callable) {
+            call_user_func($callable, $messageString);
+        }
+    }
+
+    /**
+     * @param string $messageString
+     */
+    protected function dispatchSend($messageString)
+    {
+        foreach ($this->sendListeners as $callable) {
+            call_user_func($callable, $messageString);
+        }
+    }
 
     /**
      * @param Message $message

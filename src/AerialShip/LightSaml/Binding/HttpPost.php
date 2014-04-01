@@ -21,6 +21,9 @@ class HttpPost extends AbstractBinding
         $context = new SerializationContext();
         $message->getSignedXml($context->getDocument(), $context);
         $msgStr = $context->getDocument()->saveXML();
+
+        $this->dispatchSend($msgStr);
+
         $msgStr = base64_encode($msgStr);
 
         $type = $message instanceof AbstractRequest ? 'SAMLRequest' : 'SAMLResponse';
@@ -51,6 +54,9 @@ class HttpPost extends AbstractBinding
         }
 
         $msg = base64_decode($msg);
+
+        $this->dispatchReceive($msg);
+
         $doc = new \DOMDocument();
         $doc->loadXML($msg);
         $result = Message::fromXML($doc->firstChild);
