@@ -66,6 +66,7 @@ class AuthnRequestSample01Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->issuer, $request->getIssuer());
         $this->assertEquals($this->nameIDPolicyFormat, $request->getNameIdPolicyFormat());
         $this->assertTrue($request->getNameIdPolicyAllowCreate());
+        $this->assertFalse($request->getSuppressNameIdPolicy());
     }
 
 
