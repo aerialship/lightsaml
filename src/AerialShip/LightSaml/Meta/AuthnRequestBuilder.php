@@ -31,8 +31,9 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
 
         $result->setIssuer($edSP->getEntityID());
 
-        $result->setNameIdPolicyAllowCreate(true);
-        $result->setNameIdPolicyFormat($this->spMeta->getNameIdFormat());
+        if ($this->spMeta->getNameIdFormat()) {
+            $result->setNameIdPolicyFormat($this->spMeta->getNameIdFormat());
+        }
 
         return $result;
     }

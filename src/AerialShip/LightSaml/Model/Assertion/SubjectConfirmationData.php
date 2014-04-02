@@ -133,7 +133,7 @@ class SubjectConfirmationData implements GetXmlInterface, LoadFromXmlInterface
         }
 
         foreach (array('Recipient', 'InResponseTo', 'Address') as $name) {
-            $method = "set{$name}";
+            $method = "get{$name}";
             if ($this->$method()) {
                 $result->setAttribute($name, $this->$method());
             }

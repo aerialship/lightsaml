@@ -5,6 +5,7 @@ namespace AerialShip\LightSaml;
 
 final class NameIDPolicy
 {
+    const NONE = null;
     const PERSISTENT = 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent';
     const TRANSIENT = 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient';
     const SHIB_NAME_ID = 'urn:mace:shibboleth:1.0:nameIdentifier';

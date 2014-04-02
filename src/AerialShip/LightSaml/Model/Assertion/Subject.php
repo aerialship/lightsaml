@@ -114,9 +114,6 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
                 $this->loadXmlCallback($object);
             }
         );
-        if (!$this->getNameID()) {
-            throw new InvalidXmlException('Missing NameID element in Subject');
-        }
         if (!$this->getSubjectConfirmations()) {
             throw new InvalidXmlException('Missing SubjectConfirmation element in Subject');
         }

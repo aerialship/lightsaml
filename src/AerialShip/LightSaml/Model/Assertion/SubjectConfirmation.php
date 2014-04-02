@@ -97,7 +97,9 @@ class SubjectConfirmation implements GetXmlInterface, LoadFromXmlInterface
 
         $result->setAttribute('Method', $this->getMethod());
 
-        $this->getNameID()->getXml($result, $context);
+        if ($this->getNameID()) {
+            $this->getNameID()->getXml($result, $context);
+        }
 
         $this->getData()->getXml($result, $context);
 
