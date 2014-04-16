@@ -10,8 +10,8 @@ use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService;
 use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
 use AerialShip\LightSaml\Security\X509Certificate;
-use AerialShip\SamlSPBundle\Config\SPSigningProviderInterface;
 
 /**
  * https://github.com/aerialship/lightsaml/issues/20
@@ -62,8 +62,18 @@ class AuthnRequestBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedReceiveBinding, $message->getProtocolBinding(), $name);
 
         // with signing
-        $signingProvider = new MockSigningProvder();
-        $builder = new AuthnRequestBuilder($edSP, $edIDP, $spMeta, $signingProvider);
+        $signature = new SignatureCreator();
+
+        $certificate = new X509Certificate();
+        $certificate->loadFromFile(__DIR__ . '/../../../../../resources/sample/Certificate/saml.crt');
+
+        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type' => 'private'));
+        $key->loadKey(__DIR__ . '/../../../../../resources/sample/Certificate/saml.pem', true);
+
+        $signature->setCertificate($certificate);
+        $signature->setXmlSecurityKey($key);
+
+        $builder = new AuthnRequestBuilder($edSP, $edIDP, $spMeta, $signature);
 
         $message = $builder->build();
         $response = $builder->send($message);
@@ -247,35 +257,4 @@ class AuthnRequestBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
 
-}
-
-class MockSigningProvder implements SPSigningProviderInterface
-{
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return true;
-    }
-
-    /**
-     * @return X509Certificate
-     */
-    public function getCertificate()
-    {
-        $certificate = new X509Certificate();
-        $certificate->loadFromFile(__DIR__ . '/../../../../../resources/sample/Certificate/saml.crt');
-        return $certificate;
-    }
-
-    /**
-     * @return \XMLSecurityKey
-     */
-    public function getPrivateKey()
-    {
-        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type' => 'private'));
-        $key->loadKey(__DIR__ . '/../../../../../resources/sample/Certificate/saml.pem', true);
-        return $key;
-    }
 }
