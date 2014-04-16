@@ -9,6 +9,8 @@ use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Protocol\AuthnRequest;
 use AerialShip\LightSaml\Model\Protocol\Message;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
+use AerialShip\SamlSPBundle\Config\SPSigningProviderNull;
 
 class AuthnRequestBuilder extends AbstractRequestBuilder
 {
@@ -33,6 +35,14 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
 
         if ($this->spMeta->getNameIdFormat()) {
             $result->setNameIdPolicyFormat($this->spMeta->getNameIdFormat());
+        }
+
+        $signingProvider = $this->getSigningProvider();
+        if ($signingProvider != null && !($signingProvider instanceof SPSigningProviderNull)) {
+            $signature = new SignatureCreator();
+            $signature->setXmlSecurityKey($signingProvider->getPrivateKey());
+            $signature->setCertificate($signingProvider->getCertificate());
+            $result->setSignature($signature);
         }
 
         return $result;

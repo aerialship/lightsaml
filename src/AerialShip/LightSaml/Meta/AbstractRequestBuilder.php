@@ -7,6 +7,7 @@ use AerialShip\LightSaml\Model\Metadata\EntityDescriptor;
 use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
 use AerialShip\LightSaml\Model\Protocol\Message;
+use AerialShip\SamlSPBundle\Config\SPSigningProviderInterface;
 
 
 abstract class AbstractRequestBuilder
@@ -21,18 +22,22 @@ abstract class AbstractRequestBuilder
     /** @var \AerialShip\LightSaml\Meta\SpMeta */
     protected $spMeta;
 
+    /** @var SPSigningProviderInterface */
+    protected $signingProvider;
 
 
     /**
      * @param EntityDescriptor $edSP
      * @param EntityDescriptor $edIDP
      * @param SpMeta $spMeta
+     * @param SPSigningProviderInterface $signingProvider
      */
-    public function __construct(EntityDescriptor $edSP, EntityDescriptor $edIDP, SpMeta $spMeta)
+    public function __construct(EntityDescriptor $edSP, EntityDescriptor $edIDP, SpMeta $spMeta, SPSigningProviderInterface $signingProvider = null)
     {
         $this->edSP = $edSP;
         $this->edIDP = $edIDP;
         $this->spMeta = $spMeta;
+        $this->signingProvider = $signingProvider;
     }
 
 
@@ -71,7 +76,21 @@ abstract class AbstractRequestBuilder
         return $this->edSP;
     }
 
+    /**
+     * @param SPSigningProviderInterface $signingProvider
+     */
+    public function setSigningProvider($signingProvider)
+    {
+        $this->signingProvider = $signingProvider;
+    }
 
+    /**
+     * @return SPSigningProviderInterface
+     */
+    public function getSigningProvider()
+    {
+        return $this->signingProvider;
+    }
 
 
     /**
