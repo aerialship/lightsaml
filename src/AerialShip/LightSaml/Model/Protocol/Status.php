@@ -21,6 +21,15 @@ class Status implements GetXmlInterface, LoadFromXmlInterface
     protected $message;
 
 
+    /**
+     * @param StatusCode|null $statusCode
+     * @param string $message
+     */
+    public function __construct(StatusCode $statusCode = null, $message = null)
+    {
+        $this->statusCode = $statusCode;
+        $this->message = $message;
+    }
 
     /**
      * @param \AerialShip\LightSaml\Model\Protocol\StatusCode $statusCode

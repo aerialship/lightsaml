@@ -20,6 +20,13 @@ class StatusCode implements GetXmlInterface, LoadFromXmlInterface
     protected $child;
 
 
+    /**
+     * @param string $value
+     */
+    public function __construct($value = null)
+    {
+        $this->value = $value;
+    }
 
     /**
      * @param string $value

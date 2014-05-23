@@ -21,6 +21,18 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
     protected $values = array();
 
 
+    /**
+     * @param string $name
+     * @param string[] $values
+     * @param string|null $friendlyName
+     */
+    public function __construct($name = null, array $values = array(), $friendlyName = null)
+    {
+        $this->name = $name;
+        $this->values = $values;
+        $this->friendlyName = $friendlyName;
+    }
+
 
     /**
      * @param string $name

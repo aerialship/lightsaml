@@ -29,6 +29,17 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
 
 
     /**
+     * @param null $value
+     * @param null $format
+     */
+    public function __construct($value = null, $format = null)
+    {
+        $this->value = $value;
+        $this->format = $format;
+    }
+
+
+    /**
      * @param string $value
      */
     public function setValue($value) {
