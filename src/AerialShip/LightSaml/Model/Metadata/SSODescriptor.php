@@ -26,10 +26,13 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
     /** @var KeyDescriptor[] */
     protected $keyDescriptors;
 
+    /** @var NameIDFormat[] */
+    protected $nameIdFormats = array();
 
 
 
-    function __construct(array $services = null, array $keyDescriptors = null) {
+    public function __construct(array $services = null, array $keyDescriptors = null)
+    {
         $this->services = $services ?: array();
         $this->keyDescriptors = $keyDescriptors ?: array();
     }
@@ -39,14 +42,16 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @return KeyDescriptor[]
      */
-    public function getKeyDescriptors() {
+    public function getKeyDescriptors()
+    {
         return $this->keyDescriptors;
     }
 
     /**
      * @param KeyDescriptor[] $keyDescriptors
      */
-    public function setKeyDescriptors(array $keyDescriptors) {
+    public function setKeyDescriptors(array $keyDescriptors)
+    {
         $this->keyDescriptors = $keyDescriptors;
     }
 
@@ -54,21 +59,24 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param KeyDescriptor $keyDescriptor
      */
-    public function addKeyDescriptor(KeyDescriptor $keyDescriptor) {
+    public function addKeyDescriptor(KeyDescriptor $keyDescriptor)
+    {
         $this->keyDescriptors[] = $keyDescriptor;
     }
 
     /**
      * @param AbstractService[] $services
      */
-    public function setServices(array $services) {
+    public function setServices(array $services)
+    {
         $this->services = $services;
     }
 
     /**
      * @return AbstractService[]
      */
-    public function getServices() {
+    public function getServices()
+    {
         return $this->services;
     }
 
@@ -76,16 +84,42 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param AbstractService $service
      * @return SpSsoDescriptor
      */
-    public function addService(AbstractService $service) {
+    public function addService(AbstractService $service)
+    {
         $this->services[] = $service;
         return $this;
+    }
+
+    /**
+     * @return NameIDFormat[]
+     */
+    public function getNameIdFormats()
+    {
+        return $this->nameIdFormats;
+    }
+
+    /**
+     * @param NameIDFormat $nameIDFormat
+     */
+    public function addNameIdFormat(NameIDFormat $nameIDFormat)
+    {
+        $this->nameIdFormats[] = $nameIDFormat;
+    }
+
+    /**
+     * @param NameIDFormat[] $nameIdFormats
+     */
+    public function setNameIdFormats(array $nameIdFormats)
+    {
+        $this->nameIdFormats = $nameIdFormats;
     }
 
 
     /**
      * @return string[]
      */
-    public function getSupportedProtocols() {
+    public function getSupportedProtocols()
+    {
         $arr = array();
         foreach ($this->getServices() as $service) {
             $protocol = Bindings::getBindingProtocol($service->getBinding());
@@ -97,7 +131,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @return string
      */
-    public function getProtocolSupportEnumeration() {
+    public function getProtocolSupportEnumeration()
+    {
         return join(' ', $this->getSupportedProtocols());
     }
 
@@ -106,7 +141,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param string|null $use
      * @return KeyDescriptor[]
      */
-    function findKeyDescriptors($use) {
+    public function findKeyDescriptors($use)
+    {
         $result = array();
         foreach ($this->getKeyDescriptors() as $kd) {
             if ($use === null || !$kd->getUse() || $kd->getUse() == $use) {
@@ -121,7 +157,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param string|null $binding
      * @return AbstractService[]
      */
-    function findServices($class, $binding) {
+    public function findServices($class, $binding)
+    {
         $result = array();
         foreach ($this->getServices() as $service) {
             if (Helper::doClassNameMatch($service, $class)) {
@@ -137,7 +174,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param string|null $binding
      * @return SingleLogoutService[]
      */
-    public function findSingleLogoutServices($binding = null) {
+    public function findSingleLogoutServices($binding = null)
+    {
         return $this->findServices('AerialShip\LightSaml\Model\Metadata\Service\SingleLogoutService', $binding);
     }
 
@@ -145,7 +183,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param string|null $binding
      * @return AssertionConsumerService[]
      */
-    public function findAssertionConsumerServices($binding = null) {
+    public function findAssertionConsumerServices($binding = null)
+    {
         return $this->findServices('AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService', $binding);
     }
 
@@ -153,7 +192,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param string|null $binding
      * @return Service\AbstractService[]
      */
-    public function findSingleSignOnServices($binding = null) {
+    public function findSingleSignOnServices($binding = null)
+    {
         return $this->findServices('AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService', $binding);
     }
 
@@ -169,7 +209,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent, SerializationContext $context) {
+    public function getXml(\DOMNode $parent, SerializationContext $context)
+    {
         $result = $context->getDocument()->createElementNS(Protocol::NS_METADATA, 'md:'.$this->getXmlNodeName());
         $parent->appendChild($result);
         $result->setAttribute('protocolSupportEnumeration', $this->getProtocolSupportEnumeration());
@@ -179,6 +220,9 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
         foreach ($this->getServices() as $service) {
             $service->getXml($result, $context);
         }
+        foreach ($this->getNameIdFormats() as $nameIdFormat) {
+            $nameIdFormat->getXml($result, $context);
+        }
         return $result;
     }
 
@@ -187,7 +231,8 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml) {
+    public function loadFromXml(\DOMElement $xml)
+    {
         $name = $this->getXmlNodeName();
         if ($xml->localName != $name || $xml->namespaceURI != Protocol::NS_METADATA) {
             throw new InvalidXmlException("Expected $name element and ".Protocol::NS_METADATA.' namespace but got '.$xml->localName);
@@ -212,12 +257,18 @@ abstract class SSODescriptor implements GetXmlInterface, LoadFromXmlInterface
                     'node' => array('name'=>'KeyDescriptor', 'ns'=>Protocol::NS_METADATA),
                     'class' => '\AerialShip\LightSaml\Model\Metadata\KeyDescriptor'
                 ),
+                array(
+                    'node' => array('name'=>'NameIDFormat', 'ns'=>Protocol::NS_METADATA),
+                    'class' => '\AerialShip\LightSaml\Model\Metadata\NameIDFormat'
+                ),
             ),
             function(LoadFromXmlInterface $obj) {
                 if ($obj instanceof AbstractService) {
                     $this->addService($obj);
                 } else if ($obj instanceof KeyDescriptor) {
                     $this->addKeyDescriptor($obj);
+                } else if ($obj instanceof NameIDFormat) {
+                    $this->addNameIdFormat($obj);
                 } else {
                     throw new \InvalidArgumentException('Invalid item type '.get_class($obj));
                 }
