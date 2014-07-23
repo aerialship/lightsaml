@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/aerialship/lightsaml.png?label=ready&title=Ready)](https://waffle.io/aerialship/lightsaml)
 SAML 2.0 PHP Component
 ======================
 
