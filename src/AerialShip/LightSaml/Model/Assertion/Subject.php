@@ -28,39 +28,37 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
     /**
      * @param NameID $nameID
      */
-    public function setNameID($nameID) {
+    public function setNameID(NameID $nameID)
+    {
         $this->nameID = $nameID;
     }
 
     /**
      * @return NameID
      */
-    public function getNameID() {
+    public function getNameID()
+    {
         return $this->nameID;
     }
 
     /**
      * @param SubjectConfirmation $subjectConfirmation
      */
-    public function addSubjectConfirmation($subjectConfirmation) {
+    public function addSubjectConfirmation($subjectConfirmation)
+    {
         $this->subjectConfirmations[] = $subjectConfirmation;
     }
 
     /**
      * @return SubjectConfirmation[]
      */
-    public function getSubjectConfirmations() {
+    public function getSubjectConfirmations()
+    {
         return $this->subjectConfirmations;
     }
 
 
 
-    protected function prepareForXml()
-    {
-        if (!$this->getNameID()) {
-            throw new InvalidSubjectException('No NameID set');
-        }
-    }
 
 
     /**
@@ -68,14 +66,14 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
      * @param \AerialShip\LightSaml\Meta\SerializationContext $context
      * @return \DOMElement
      */
-    function getXml(\DOMNode $parent, SerializationContext $context)
+    public function getXml(\DOMNode $parent, SerializationContext $context)
     {
-        $this->prepareForXml();
-
         $result = $context->getDocument()->createElement('Subject');
         $parent->appendChild($result);
 
-        $this->getNameID()->getXml($result, $context);
+        if ($this->getNameID()) {
+            $this->getNameID()->getXml($result, $context);
+        }
 
         foreach ($this->getSubjectConfirmations() as $sc) {
             $sc->getXml($result, $context);
@@ -89,7 +87,7 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
      * @throws \LogicException
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml)
+    public function loadFromXml(\DOMElement $xml)
     {
         if ($xml->localName != 'Subject' || $xml->namespaceURI != Protocol::NS_ASSERTION) {
             throw new InvalidXmlException('Expected Subject element but got '.$xml->localName);

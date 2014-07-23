@@ -144,7 +144,6 @@ class AuthnRequest extends AbstractRequest
     function loadFromXml(\DOMElement $xml) {
         parent::loadFromXml($xml);
 
-        $this->checkRequiredAttributes($xml, array('AssertionConsumerServiceURL', 'ProtocolBinding'));
         $this->setAssertionConsumerServiceURL($xml->getAttribute('AssertionConsumerServiceURL'));
         $this->setProtocolBinding($xml->getAttribute('ProtocolBinding'));
 

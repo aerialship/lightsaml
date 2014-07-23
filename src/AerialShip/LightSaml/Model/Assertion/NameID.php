@@ -29,8 +29,8 @@ class NameID implements GetXmlInterface, LoadFromXmlInterface
 
 
     /**
-     * @param null $value
-     * @param null $format
+     * @param string $value
+     * @param string $format
      */
     public function __construct($value = null, $format = null)
     {
