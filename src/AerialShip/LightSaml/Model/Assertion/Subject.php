@@ -68,7 +68,7 @@ class Subject implements GetXmlInterface, LoadFromXmlInterface
      */
     public function getXml(\DOMNode $parent, SerializationContext $context)
     {
-        $result = $context->getDocument()->createElement('Subject');
+        $result = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:Subject');
         $parent->appendChild($result);
 
         if ($this->getNameID()) {

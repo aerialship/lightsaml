@@ -122,14 +122,14 @@ class SubjectConfirmationData implements GetXmlInterface, LoadFromXmlInterface
      * @return \DOMElement
      */
     function getXml(\DOMNode $parent, SerializationContext $context) {
-        $result = $context->getDocument()->createElement('SubjectConfirmationData');
+        $result = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:SubjectConfirmationData');
         $parent->appendChild($result);
 
         if ($this->getNotBefore()) {
             $result->setAttribute('NotBefore', Helper::time2string($this->getNotBefore()));
         }
         if ($this->getNotOnOrAfter()) {
-            $result->setAttribute('NotOnOrAfter', Helper::time2string($this->getNotBefore()));
+            $result->setAttribute('NotOnOrAfter', Helper::time2string($this->getNotOnOrAfter()));
         }
 
         foreach (array('Recipient', 'InResponseTo', 'Address') as $name) {
