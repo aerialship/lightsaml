@@ -5,6 +5,7 @@ namespace AerialShip\LightSaml\Model\Protocol;
 use AerialShip\LightSaml\Helper;
 use AerialShip\LightSaml\Meta\SerializationContext;
 use AerialShip\LightSaml\Model\Assertion\NameID;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureXmlValidator;
 use AerialShip\LightSaml\Protocol;
 
 
@@ -135,16 +136,19 @@ class LogoutRequest extends AbstractRequest
      * @param \DOMElement $xml
      * @throws \AerialShip\LightSaml\Error\InvalidXmlException
      */
-    function loadFromXml(\DOMElement $xml) {
+    function loadFromXml(\DOMElement $xml)
+    {
         parent::loadFromXml($xml);
 
-        if($xml->hasAttribute('Reason')){
+        if ($xml->hasAttribute('Reason')) {
             $this->setReason($xml->getAttribute('Reason'));
         }
-        if($xml->hasAttribute('NotOnOrAfter')){
+        if ($xml->hasAttribute('NotOnOrAfter')) {
             $this->setNotOnOrAfter($xml->getAttribute('NotOnOrAfter'));
         }
-        $this->iterateChildrenElements($xml, function(\DOMElement $node) {
+
+        $signatureNode = null;
+        $this->iterateChildrenElements($xml, function(\DOMElement $node) use (&$signatureNode) {
             if ($node->localName == 'NameID') {
                 $nameID = new NameID();
                 $nameID->loadFromXml($node);
@@ -153,6 +157,16 @@ class LogoutRequest extends AbstractRequest
             if ($node->localName == 'SessionIndex') {
                 $this->setSessionIndex($node->textContent);
             }
+
+            if ($node->localName == 'Signature' && $node->namespaceURI == Protocol::NS_XMLDSIG) {
+                $signatureNode = $node;
+            }
         });
+
+        if (null !== $signatureNode) {
+            $signature = new SignatureXmlValidator;
+            $signature->loadFromXml($signatureNode);
+            $this->setSignature($signature);
+        }
     }
 }
