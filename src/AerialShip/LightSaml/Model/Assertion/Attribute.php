@@ -127,7 +127,7 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
      */
     public function getXml(\DOMNode $parent, SerializationContext $context)
     {
-        $result = $context->getDocument()->createElement('Attribute');
+        $result = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:Attribute');
         $parent->appendChild($result);
 
         $result->setAttribute('Name', $this->getName());
@@ -139,7 +139,7 @@ class Attribute implements GetXmlInterface, LoadFromXmlInterface
         }
 
         foreach ($this->getValues() as $v) {
-            $valueNode = $context->getDocument()->createElement('AttributeValue', $v);
+            $valueNode = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:AttributeValue', $v);
             $result->appendChild($valueNode);
         }
 

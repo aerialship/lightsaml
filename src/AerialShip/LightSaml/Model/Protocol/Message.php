@@ -241,9 +241,6 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
         if (!$this->getIssueInstant()) {
             $this->setIssueInstant(time());
         }
-        if (!$this->getDestination()) {
-            throw new InvalidMessageException('Destination not set');
-        }
         if (!$this->getIssuer()) {
             throw new InvalidMessageException('Issuer not set');
         }
@@ -269,7 +266,9 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
         $result->setAttribute('ID', $this->getID());
         $result->setAttribute('Version', $this->getVersion());
         $result->setAttribute('IssueInstant', Helper::time2string($this->getIssueInstant()));
-        $result->setAttribute('Destination', $this->getDestination());
+        if ($this->getDestination()) {
+            $result->setAttribute('Destination', $this->getDestination());
+        }
 
         $issuerNode = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'saml:Issuer', $this->getIssuer());
         $result->appendChild($issuerNode);
@@ -304,7 +303,11 @@ abstract class Message implements GetXmlInterface, GetSignedXmlInterface, LoadFr
      */
     public function loadFromXml(\DOMElement $xml)
     {
-        if ($xml->localName != $this->getXmlNodeLocalName()) {
+        $name = $this->getXmlNodeLocalName();
+        if (($pos = strpos($name, ':')) !== false) {
+            $name = substr($name, $pos+1);
+        }
+        if ($xml->localName != $name) {
             throw new InvalidXmlException('Expected '.$this->getXmlNodeLocalName().' node but got '.$xml->localName);
         }
         if ($this->getXmlNodeNamespace() && $xml->namespaceURI != $this->getXmlNodeNamespace()) {

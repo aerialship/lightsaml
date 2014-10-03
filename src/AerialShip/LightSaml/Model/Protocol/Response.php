@@ -19,7 +19,7 @@ class Response extends StatusResponse
      * @return string
      */
     function getXmlNodeLocalName() {
-        return 'Response';
+        return 'samlp:Response';
     }
 
     /**
