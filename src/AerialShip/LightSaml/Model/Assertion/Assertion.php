@@ -302,10 +302,10 @@ class Assertion implements GetXmlInterface, LoadFromXmlInterface
         $conditionsNode->setAttribute('NotBefore', Helper::time2string($this->getNotBefore()));
         $conditionsNode->setAttribute('NotOnOrAfter', Helper::time2string($this->getNotOnOrAfter()));
         if ($this->getValidAudience()) {
-            $audienceRestrictionNode = $context->getDocument()->createElement('AudienceRestriction');
+            $audienceRestrictionNode = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'AudienceRestriction');
             $conditionsNode->appendChild($audienceRestrictionNode);
             foreach ($this->getValidAudience() as $v) {
-                $audienceNode = $context->getDocument()->createElement('Audience', $v);
+                $audienceNode = $context->getDocument()->createElementNS(Protocol::NS_ASSERTION, 'Audience', $v);
                 $audienceRestrictionNode->appendChild($audienceNode);
             }
         }
