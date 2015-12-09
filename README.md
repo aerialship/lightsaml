@@ -1,6 +1,12 @@
 SAML 2.0 PHP Component
 ======================
 
+NEW VERSION
+-----------
+
+**New version of this library is in own organization: [lightsaml/lightsaml](https://github.com/lightsaml/lightsaml)**
+
+
 [![Stories in Ready](https://badge.waffle.io/aerialship/lightsaml.png?label=ready&title=Ready)](https://waffle.io/aerialship/lightsaml)
 [![Build Status](https://travis-ci.org/aerialship/lightsaml.svg)](https://travis-ci.org/aerialship/lightsaml)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/aerialship/lightsaml/badges/quality-score.png?s=bc6dc951b7ec67e23699ff28a35ccd98bf97415b)](https://scrutinizer-ci.com/g/aerialship/lightsaml/)
