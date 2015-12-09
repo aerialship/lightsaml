@@ -4,7 +4,8 @@ SAML 2.0 PHP Component
 NEW VERSION
 -----------
 
-**New version of this library is in own organization: [lightsaml/lightsaml](https://github.com/lightsaml/lightsaml)**
+**New version of this library is in own organization: [lightsaml/lightsaml](https://github.com/lightsaml/lightsaml)**. 
+Details can be found at [LightSAML website](http://www.lightsaml.com/LightSAML-Core/). 
 
 
 [![Stories in Ready](https://badge.waffle.io/aerialship/lightsaml.png?label=ready&title=Ready)](https://waffle.io/aerialship/lightsaml)
