@@ -35,6 +35,8 @@ class AuthnRequestBuilder extends AbstractRequestBuilder
             $result->setNameIdPolicyFormat($this->spMeta->getNameIdFormat());
         }
 
+        $result->setSignature($this->signature);
+
         return $result;
     }
 

@@ -10,6 +10,8 @@ use AerialShip\LightSaml\Model\Metadata\IdpSsoDescriptor;
 use AerialShip\LightSaml\Model\Metadata\Service\AssertionConsumerService;
 use AerialShip\LightSaml\Model\Metadata\Service\SingleSignOnService;
 use AerialShip\LightSaml\Model\Metadata\SpSsoDescriptor;
+use AerialShip\LightSaml\Model\XmlDSig\SignatureCreator;
+use AerialShip\LightSaml\Security\X509Certificate;
 
 /**
  * https://github.com/aerialship/lightsaml/issues/20
@@ -47,6 +49,7 @@ class AuthnRequestBuilderTest extends \PHPUnit_Framework_TestCase
             $spMeta->{$name}($value);
         }
 
+        // without signing
         $builder = new AuthnRequestBuilder($edSP, $edIDP, $spMeta);
 
         $message = $builder->build();
@@ -57,9 +60,30 @@ class AuthnRequestBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedReceiveUrl, $message->getAssertionConsumerServiceURL(), $name);
         $this->assertEquals($expectedReceiveBinding, $message->getProtocolBinding(), $name);
+
+        // with signing
+        $signature = new SignatureCreator();
+
+        $certificate = new X509Certificate();
+        $certificate->loadFromFile(__DIR__ . '/../../../../../resources/sample/Certificate/saml.crt');
+
+        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type' => 'private'));
+        $key->loadKey(__DIR__ . '/../../../../../resources/sample/Certificate/saml.pem', true);
+
+        $signature->setCertificate($certificate);
+        $signature->setXmlSecurityKey($key);
+
+        $builder = new AuthnRequestBuilder($edSP, $edIDP, $spMeta, $signature);
+
+        $message = $builder->build();
+        $response = $builder->send($message);
+
+        $this->assertStringStartsWith($expectedSendUrl, $response->getDestination(), $name);
+        $this->assertInstanceOf($expectedResponseType, $response, $name);
+
+        $this->assertEquals($expectedReceiveUrl, $message->getAssertionConsumerServiceURL(), $name);
+        $this->assertEquals($expectedReceiveBinding, $message->getProtocolBinding(), $name);
     }
-
-
 
     public function provider()
     {
