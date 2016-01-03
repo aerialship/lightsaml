@@ -29,7 +29,7 @@ Creating private key
 --------------------
 
 ``` php
-$privateKey = KeyHelper::createPrivateKey($filename, $pass);
+$privateKey = KeyHelper::createPrivateKey($filename, $pass, true);
 ```
 
 Signing SAML messages
